@@ -1,0 +1,46 @@
+@(header: => Html)(content: => Html)(implicit session: play.mvc.Scope.Session)
+
+@import controllers._
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+		<link rel="stylesheet" type="text/css" href="@asset("public/stylesheets/reset-min.css")" />
+		<link rel="stylesheet" type="text/css" href="@asset("public/stylesheets/fonts-min.css")" />
+		<script type="text/javascript" src="@asset("public/javascript/jquery-1.7.1.min.js")"></script>
+
+		<link rel="stylesheet" type="text/css" href="@asset("public/stylesheets/main.css")" />
+
+        <link rel="shortcut icon" type="image/png" href="@{"/public/images/favicon.png"}" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+        @header
+    </head>
+
+    <body>
+		<div class="container">
+			<div class="header bordered">
+                @if(!session.isEmpty) {
+                    <div class="navigation">
+                        <ul class="bordered">
+                            <div class="leftMenu">
+                                <li><a href="#">Home</a></li>
+                                <li><a href="#">Reporting</a></li>
+                                <li><a href="#">Rankings</a></li>
+                                <li><a href="#">History</a></li>
+                            </div>
+                            <div class="rightMenu">
+                                <li><a href="@action(Application.logout)">Log Out</a></li>
+                                <li><a href="#">Profile</a></li>
+                            </div>
+                        </ul>
+                    </div>
+                }
+			</div>
+			<div class="content bordered">
+                @content
+			</div>
+		</div>
+    </body>
+</html>
