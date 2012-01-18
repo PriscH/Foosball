@@ -68,28 +68,29 @@ html {
     );
 }
 
-.navigation ul li {
+.navigation li {
 	font-size: 140%;
 	font-weight: bold;
+	float: left;
 }
 
-.navigation ul li a {
-	float: left;
+.navigation a {
+	display: block;
 	text-decoration: none;
 	color: black;
 	padding: 10px 15px;
 }
 
-.navigation ul li:hover a {
+.navigation li:hover a {
 	color: #FFFBDD;
 	text-shadow: 2px 2px 2px #BBBBBB;
 }
 
-.leftMenu li {
+.leftMenu {
 	float: left;
 }
 
-.rightMenu li {
+.rightMenu {
 	float:right;
 }
 
