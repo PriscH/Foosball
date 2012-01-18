@@ -1,7 +1,5 @@
 @(header: => Html)(content: => Html)(implicit session: play.mvc.Scope.Session)
 
-@import controllers._
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -31,7 +29,7 @@
                                 <li><a href="#">History</a></li>
                             </div>
                             <div class="rightMenu">
-                                <li><a href="@action(Application.logout)">Log Out</a></li>
+                                <li><a href="@action(controllers.Application.logout)">Log Out</a></li>
                                 <li><a href="#">Profile</a></li>
                             </div>
                         </ul>

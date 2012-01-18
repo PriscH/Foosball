@@ -1,7 +1,5 @@
 @(users: Seq[models.User])(implicit session: play.mvc.Scope.Session, flash: play.mvc.Scope.Flash)
 
-@import controllers._
-
 @main {
     <title>Foosball - Login</title>
     <script type="text/javascript">
@@ -60,7 +58,7 @@
         </div>
     }
     <div class="accounts">
-        @form(Application.authenticate) {
+        @form(controllers.Application.authenticate) {
             @for(user <- users) {
                 <div class="account" name="@user.name">
                     <img class="avatar" src="@asset("public/images/avatar.jpg")" alt="Avatar" />
