@@ -2,31 +2,31 @@
 # Default password is 'secret'
 
 - !!models.User
-    id:       !!Id[Long] 1
-    name:     Ronaldo
-    password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
+  id:       !!Id[Long] 1
+  name:     Ronaldo
+  password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
 
 - !!models.User
-    id:       !!Id[Long] 2
-    name:     Maradona
-    password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
+  id:       !!Id[Long] 2
+  name:     Maradona
+  password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
 
 - !!models.User
-    id:       !!Id[Long] 3
-    name:     Zidane
-    password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
+  id:       !!Id[Long] 3
+  name:     Zidane
+  password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
 
 - !!models.User
-    id:       !!Id[Long] 4
-    name:     Beckham
-    password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
+  id:       !!Id[Long] 4
+  name:     Beckham
+  password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
 
 - !!models.User
-    id:       !!Id[Long] 5
-    name:     Pele
-    password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
+  id:       !!Id[Long] 5
+  name:     Pele
+  password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
 
 - !!models.User
-    id:       !!Id[Long] 6
-    name:     Messi
-    password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4
+  id:       !!Id[Long] 6
+  name:     Messi
+  password: e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4

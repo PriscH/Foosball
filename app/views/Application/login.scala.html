@@ -1,76 +1,77 @@
 @(users: Seq[models.User])(implicit session: play.mvc.Scope.Session, flash: play.mvc.Scope.Flash)
 
 @main {
-    <title>Foosball - Login</title>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $(document).click(function(event) {
-                var $allAccounts = $(".account")
+  <title>Foosball - Login</title>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(document).click(function(event) {
+        var $allAccounts = $(".account")
 
-                $allAccounts.removeClass("fade");
-                $allAccounts.removeClass("selected");
-                $allAccounts.off("keypress");
+        $allAccounts.removeClass("fade");
+        $allAccounts.removeClass("selected");
+        $allAccounts.off("keypress");
 
-                $("input[type='password']").addClass("hidden");
-                $("#password").val();
+        $("input[type='password']").addClass("hidden");
+        $("#password").val();
 
-                var $target = $(event.target);
-                var $account = null;
+        var $target = $(event.target);
+        var $account = null;
 
-                if ($target.hasClass("account")) {
-                    $account = $target;
-                } else {
-                    $account = $target.parents(".account");
-                }
-
-                if ($account.length > 0) {
-                    $(".account").addClass("fade");
-                    $account.removeClass("fade");
-                    $account.addClass("selected");
-
-                    var passwordField = $account.find("input[type='password']");
-                    passwordField.removeClass("hidden");
-                    passwordField.focus();
-
-                    $account.keypress(function(event) {
-                        if(event.which == 13){ // Enter
-                            var name = $account.attr("name");
-                            var password = $account.find(".password").val();
-
-                            $("#name").val(name);
-                            $("#password").val(password);
-
-                            $(".accounts form").submit();
-                        }
-                    });
-                }
-            });
-
-            $("input[type='password']").blur(function() {
-                $(this).val("");
-            });
-        });
-    </script>
-}{
-    @if(flash.get("error") != null) {
-        <div class="error">
-            @flash.get("error")
-        </div>
-    }
-    <div class="accounts">
-        @form(controllers.Application.authenticate) {
-            @for(user <- users) {
-                <div class="account" name="@user.name">
-                    <img class="avatar" src="@asset("public/images/avatar.jpg")" alt="Avatar" />
-                    <div class="userDetails">
-                        <div class="userName">@user.name</div>
-                        <input class="password hidden" type="password" />
-                    </div>
-                </div>
-            }
-
-            <input type="hidden" id="name" name="name" />
-            <input type="hidden" id="password" name="password" />
+        if ($target.hasClass("account")) {
+          $account = $target;
+        } else {
+          $account = $target.parents(".account");
         }
+
+        if ($account.length > 0) {
+          $(".account").addClass("fade");
+          $account.removeClass("fade");
+          $account.addClass("selected");
+
+          var passwordField = $account.find("input[type='password']");
+          passwordField.removeClass("hidden");
+          passwordField.focus();
+
+          $account.keypress(function(event) {
+            if(event.which == 13){ // Enter
+              var name = $account.attr("name");
+              var password = $account.find(".password").val();
+
+              $("#name").val(name);
+              $("#password").val(password);
+
+              $(".accounts form").submit();
+            }
+          });
+        }
+      });
+
+      $("input[type='password']").blur(function() {
+        $(this).val("");
+      });
+    });
+  </script>
+}{
+  @if(flash.get("error") != null) {
+    <div class="error">
+      @flash.get("error")
     </div>
+  }
+
+  <div class="accounts">
+    @form(controllers.Application.authenticate) {
+      @for(user <- users) {
+        <div class="account" name="@user.name">
+          <img class="avatar" src="@asset("public/images/avatar.jpg")" alt="Avatar" />
+          <div class="userDetails">
+            <div class="userName">@user.name</div>
+            <input class="password hidden" type="password" />
+          </div>
+        </div>
+      }
+
+      <input type="hidden" id="name" name="name" />
+      <input type="hidden" id="password" name="password" />
+    }
+  </div>
 }

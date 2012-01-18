@@ -1,1 +1,7 @@
+# Generated artifacts
 tmp
+
+# IntelliJ artifacts
+*.iml
+*.ipr
+*.iws

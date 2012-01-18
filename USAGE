@@ -1,0 +1,4 @@
+1. Download and install Play! (http://www.playframework.org)
+2. Install the Play! Scala module (play install scala-0.9.1)
+3. Ensure this project's dependencies are loaded (play dependencies)
+4. Run the application (play run)
