@@ -67,7 +67,7 @@
     @form(controllers.Application.authenticate) {
       @for(user <- users) {
         <div class="account" name="@user.name">
-          <img class="avatar" src="@asset("public/images/avatar.jpg")" alt="Avatar" />
+          <img class="avatar" src="@asset("public/images/avatars/default.jpg")" alt="Avatar" />
           <div class="userDetails">
             <div class="userName">@user.name</div>
             <input class="password hidden" type="password" />

@@ -6,7 +6,7 @@ import play.libs.Codec
 
 case class User(
   id: Pk[Long],
-  name: String, password: String
+  name: String, password: String, avatar: String
 )
 
 object User extends Magic[User] {
