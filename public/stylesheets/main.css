@@ -1,5 +1,25 @@
 /* COMMON */
 
+h1 {
+  font-weight: bold;
+  font-size: x-large;
+  text-shadow: 1px 1px 1px #BBB;
+}
+
+h2 {
+  font-size: large;
+}
+
+.title {
+  margin: 20px 0;
+  text-align: center;
+
+  font-family: Georgia;
+  letter-spacing: 0.1em;
+
+  color: #00005B;
+}
+
 .bordered {
   border: solid 2px darkBlue;
   border-radius: 10px;
@@ -69,7 +89,7 @@ html {
 }
 
 .navigation li {
-  font-size: 140%;
+  font-size: large;
   font-weight: bold;
   float: left;
 }
@@ -83,7 +103,7 @@ html {
 
 .navigation li:hover a {
   color: #FFFBDD;
-  text-shadow: 2px 2px 2px #BBBBBB;
+  text-shadow: 2px 2px 2px #BBB;
 }
 
 .leftMenu {
@@ -124,7 +144,7 @@ html {
 }
 
 .userName {
-  font-size: 2.5em;
+  font-size: xx-large;
 }
 
 .password {
