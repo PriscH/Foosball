@@ -6,7 +6,7 @@ import play.mvc._
 
 import models._
 import results.Redirect
-import views.Application._
+import views.application._
 import javax.mail.Session
 import java.awt.Desktop.Action
 

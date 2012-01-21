@@ -20,22 +20,14 @@ h2 {
   display:   none;
 }
 
-.singleColumn {
-  margin 0px auto;
-}
-
-.singleColumn > * {
+.singleColumn > div {
   margin: 5px 0px;
-  display: block;
-}
-
-.singleColumn > div > * {
-  display: inline-block;
 }
 
 .inputField {
   width: 200px;
   height: 35px;
+  font-size: x-large;
 }
 
 .linkButton {
@@ -52,6 +44,8 @@ h2 {
   width: 35px;
   height: 35px;
   vertical-align: top;
+
+  display: inline-block;
 }
 
 .deselected {
@@ -96,13 +90,13 @@ h2 {
   width: 310px;
 }
 
-#winner {
+.winner {
   color: green;
   background: lightGreen;
   border-color: green;
 }
 
-#loser {
+.loser {
   color: crimson;
   background: lightSalmon;
   border-color: crimson;
