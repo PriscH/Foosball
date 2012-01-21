@@ -10,16 +10,6 @@ h2 {
   font-size: large;
 }
 
-.title {
-  margin: 20px 0;
-  text-align: center;
-
-  font-family: Georgia;
-  letter-spacing: 0.1em;
-
-  color: #00005B;
-}
-
 .bordered {
   border: solid 2px darkBlue;
   border-radius: 10px;
@@ -28,6 +18,94 @@ h2 {
 
 .hidden {
   display:   none;
+}
+
+.singleColumn {
+  margin 0px auto;
+}
+
+.singleColumn > * {
+  margin: 5px 0px;
+  display: block;
+}
+
+.singleColumn > div > * {
+  display: inline-block;
+}
+
+.inputField {
+  width: 200px;
+  height: 35px;
+}
+
+.linkButton {
+  text-align: center;
+  text-decoration: none;
+  font-size: 220%;
+  font-weight: bold;
+
+  background: #EEE;
+  border: 1px solid #BBB;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+
+  width: 35px;
+  height: 35px;
+  vertical-align: top;
+}
+
+.deselected {
+  opacity: 0.3;
+}
+
+/* WIDGETS */
+
+.widget {
+  background: white;
+  border: 2px solid #7A98CC;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+}
+
+.widget > * {
+  padding: 3px 10px;
+}
+
+.widget h2 {
+  text-shadow: 1px 1px 1px #BBB;
+  border-bottom: 2px solid #7A98CC;
+
+  background-image: linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
+  background-image: -o-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
+  background-image: -moz-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
+  background-image: -webkit-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
+  background-image: -ms-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
+
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.75, rgb(139,170,227)),
+    color-stop(0.25, rgb(249,247,237))
+  );
+}
+
+/* TAGS */
+
+#quickResults {
+  width: 310px;
+}
+
+#winner {
+  color: green;
+  background: lightGreen;
+  border-color: green;
+}
+
+#loser {
+  color: crimson;
+  background: lightSalmon;
+  border-color: crimson;
 }
 
 /* TEMPLATE */
@@ -58,7 +136,7 @@ html {
 
 .content {
   background-color: #FEFDF8;
-  padding: 10px 20px 10px 20px;
+  padding: 20px 20px 20px 20px;
 }
 
 /* MENU */
@@ -115,6 +193,15 @@ html {
 }
 
 /* LOGIN */
+
+.title {
+  text-align: center;
+
+  font-family: Georgia;
+  letter-spacing: 0.1em;
+
+  color: #00005B;
+}
 
 .accounts {
   text-align: center;

@@ -2,6 +2,27 @@
 
 @main{
   <title>Foosball - Dashboard</title>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(".deselected").click(function(event) {
+        $(this).removeClass("deselected");
+      });
+    });
+  </script>
 }{
-  <h1>Welcome @text</h1>
+  <div id="quickResults" class="widget small">
+    <h2>Quick Results</h2>
+    <fieldset class="singleColumn">
+      <div>
+        <input class="inputField" id="player1"/>
+        <a class="linkButton fieldInput deselected" id="winner" href="#">♕</a>
+        <a class="linkButton fieldInput deselected" id="loser" href="#">☠</a>
+      </div>
+
+      <input class="inputField" id="player2"/>
+      <input class="inputField" id="player3"/>
+      <input class="inputField" id="player4"/>
+    </fieldset>
+  </div>
 }
