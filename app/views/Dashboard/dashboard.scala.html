@@ -8,8 +8,8 @@
       var players = [@users.map("'" + _.name + "'").mkString(",")];
 
       $(".inputField").autocomplete({
-			  source: players
-		  });
+        source: players
+      });
 
       $(".linkButton").click(function(event) {
         var $this = $(this);
