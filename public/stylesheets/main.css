@@ -263,3 +263,9 @@ html {
   background-repeat: no-repeat;
   background-position: 10px center;
 }
+
+/* JQUERY-UI */
+
+.ui-menu-item {
+  font-size: large;
+}
