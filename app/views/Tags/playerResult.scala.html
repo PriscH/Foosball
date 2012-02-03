@@ -1,7 +1,7 @@
-@(id: String)
+@(id: String, index: Integer)
 
 <div id="@id">
-  <input class="inputField"/>
+  <input class="inputField" tabindex="@index"/>
   <a class="linkButton deselected winner" href="#">♕</a>
   <a class="linkButton deselected loser" href="#">☠</a>
 </div>

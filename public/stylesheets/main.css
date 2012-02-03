@@ -69,18 +69,18 @@ h2 {
   text-shadow: 1px 1px 1px #BBB;
   border-bottom: 2px solid #7A98CC;
 
-  background-image: linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
-  background-image: -o-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
-  background-image: -moz-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
-  background-image: -webkit-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
-  background-image: -ms-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
+  background-image: linear-gradient(bottom, rgb(188,206,238) 25%, rgb(139,170,227) 75%);
+  background-image: -o-linear-gradient(bottom, rgb(188,206,238) 25%, rgb(139,170,227) 75%);
+  background-image: -moz-linear-gradient(bottom, rgb(188,206,238) 25%, rgb(139,170,227) 75%);
+  background-image: -webkit-linear-gradient(bottom, rgb(188,206,238) 25%, rgb(139,170,227) 75%);
+  background-image: -ms-linear-gradient(bottom, rgb(188,206,238) 25%, rgb(139,170,227) 75%);
 
   background-image: -webkit-gradient(
     linear,
     left bottom,
     left top,
     color-stop(0.75, rgb(139,170,227)),
-    color-stop(0.25, rgb(249,247,237))
+    color-stop(0.25, rgb(188,206,238))
   );
 }
 
