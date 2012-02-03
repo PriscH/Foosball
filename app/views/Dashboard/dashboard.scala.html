@@ -16,8 +16,38 @@
         if ($this.hasClass("deselected")) {
           $(".linkButton").addClass("deselected");
           $(this).removeClass("deselected");
-        } else {
-          $(this).addClass("deselected");
+
+          var playerName = $this.siblings("input")[0].value;
+
+          var $resultSubmit = $("#resultSubmit");
+          $resultSubmit.removeClass("winner");
+          $resultSubmit.removeClass("loser");
+          $resultSubmit.prop("disabled", false);
+
+          var buttonResult = $this.attr("result");
+          if (buttonResult == "win") {
+            $resultSubmit.addClass("winner");
+            $resultSubmit.html("Record a win for " + playerName);
+          } else {
+            $resultSubmit.addClass("loser");
+            $resultSubmit.html("Record a loss for " + playerName);
+          }
+        }
+      });
+
+      $(".playerName").keyup(function(event) {
+        var $this = $(this);
+
+        var siblingResults = $this.siblings(".linkButton").not(".deselected");
+        if (siblingResults.length) {
+          var $selectedResult = $(siblingResults[0]);
+          $selectedResult.addClass("deselected");
+
+          var $resultSubmit = $("#resultSubmit");
+          $resultSubmit.removeClass("winner");
+          $resultSubmit.removeClass("loser");
+          $resultSubmit.prop("disabled", true);
+          $resultSubmit.html("Select a result");
         }
       });
     });
@@ -30,6 +60,7 @@
       @views.tags.html.playerResult("player2", 2)
       @views.tags.html.playerResult("player3", 3)
       @views.tags.html.playerResult("player4", 4)
+      <button id="resultSubmit" disabled="true">Select a result</button>
     </fieldset>
   </div>
 }
