@@ -8,29 +8,48 @@
       var players = [@users.map("'" + _.name + "'").mkString(",")];
 
       $(".inputField").autocomplete({
-        source: players
+        source: players,
+        change: function (event, ui) {
+          var $this = $(this);
+
+          if (!$this.val()) {
+            return;
+          }
+
+          var compareValue = $this.val().toUpperCase();
+          for (var index = 0; index < players.length; index++) {
+            if (players[index].toUpperCase() === compareValue) {
+              $this.val(players[index]);
+              return;
+            }
+          }
+
+          $this.val("");
+        }
       });
 
       $(".linkButton").click(function(event) {
         var $this = $(this);
         if ($this.hasClass("deselected")) {
           $(".linkButton").addClass("deselected");
-          $(this).removeClass("deselected");
-
-          var playerName = $this.siblings("input")[0].value;
+          $this.removeClass("deselected");
 
           var $resultSubmit = $("#resultSubmit");
           $resultSubmit.removeClass("winner");
           $resultSubmit.removeClass("loser");
           $resultSubmit.prop("disabled", false);
 
+          var $playerInput = $this.siblings("input").eq(0);
+
           var buttonResult = $this.attr("result");
           if (buttonResult == "win") {
             $resultSubmit.addClass("winner");
-            $resultSubmit.html("Record a win for " + playerName);
+            $resultSubmit.html("Record a win for " + $playerInput.val());
+            $("#winner").val($playerInput.prop("name"));
           } else {
             $resultSubmit.addClass("loser");
-            $resultSubmit.html("Record a loss for " + playerName);
+            $resultSubmit.html("Record a loss for " + $playerInput.val());
+            $("#loser").val($playerInput.prop("name"));
           }
         }
       });
@@ -40,7 +59,7 @@
 
         var siblingResults = $this.siblings(".linkButton").not(".deselected");
         if (siblingResults.length) {
-          var $selectedResult = $(siblingResults[0]);
+          var $selectedResult = siblingResults.eq(0);
           $selectedResult.addClass("deselected");
 
           var $resultSubmit = $("#resultSubmit");
@@ -55,12 +74,16 @@
 }{
   <div id="quickResults" class="widget small">
     <h2>Quick Results</h2>
-    <fieldset class="singleColumn">
-      @views.tags.html.playerResult("player1", 1)
-      @views.tags.html.playerResult("player2", 2)
-      @views.tags.html.playerResult("player3", 3)
-      @views.tags.html.playerResult("player4", 4)
-      <button id="resultSubmit" disabled="true">Select a result</button>
-    </fieldset>
+    @form(controllers.Result.recordQuick) {
+      <fieldset class="singleColumn">
+        @views.tags.html.playerResult("player1", 1)
+        @views.tags.html.playerResult("player2", 2)
+        @views.tags.html.playerResult("player3", 3)
+        @views.tags.html.playerResult("player4", 4)
+        <button id="resultSubmit" disabled="true">Select a result</button>
+      </fieldset>
+      <input type="hidden" id="winner" name="winner" />
+      <input type="hidden" id="loser" name="loser" />
+    }
   </div>
 }
