@@ -19,4 +19,9 @@ object User extends Magic[User] {
       .first()
   }
 
+  def findByName(name: String) = {
+    find("name = {name}")
+      .on("name" -> name)
+      .first()
+  }
 }
