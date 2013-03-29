@@ -1,5 +1,7 @@
 package models
 
+import scala.language.postfixOps
+
 import play.api.db._
 import play.api.Play.current
 import play.api.libs.Codecs
