@@ -1,27 +1,52 @@
 package models
 
-import play.db.anorm._
-import play.db.anorm.defaults._
-import play.libs.Codec
+import play.api.db._
+import play.api.Play.current
+import play.api.libs.Codecs
 
-case class User(
-  id: Pk[Long],
-  name: String, password: String, avatar: String
-)
+import anorm._
+import anorm.SqlParser._
 
-object User extends Magic[User] {
+case class User(name: String, password: String, avatar: String)
 
-  def authenticate(username: String, password: String) = {
-    val hashedPassword = Codec.hexSHA1(password)
-
-    find("name = {name} and password = {password}")
-      .on("name" -> username, "password" -> hashedPassword)
-      .first()
+object User {
+  
+  // ===== ResultSet Parsers =====
+  
+  val simple = {
+  	get[String] ("user.name") ~
+  	get[String] ("user.password") ~
+  	get[String] ("user.avatar") map {
+  	  case name ~ password ~ avatar => User(name, password, avatar)
+  	}
   }
+  
+  // ===== Query Operations ======
+  
+  def all(): List[User] = DB.withConnection { implicit connection =>
+    SQL("select * from user").as(User.simple *)
+  }
+  
+  // ===== Persistance Operations =====
 
-  def findByName(name: String) = {
-    find("name = {name}")
-      .on("name" -> name)
-      .first()
+  def create(user: User): User = DB.withConnection { implicit connection =>
+    SQL("insert into user values ({name}, {password}, {avatar})").on(
+      'name     -> user.name,
+      'password -> user.password,
+      'avatar   -> user.avatar
+    ).executeUpdate()
+    
+    return user
+  }
+  
+  // ===== Functional Operations =====
+  
+  def authenticate(name: String, password: String): Option[User] = {
+    DB.withConnection { implicit connection =>
+      SQL("select * from user where name = {name} and password = {password}").on(
+        'name -> name,
+        'password -> Codecs.sha1(password)
+      ).as(User.simple.singleOpt)
+    }
   }
 }

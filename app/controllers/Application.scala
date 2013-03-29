@@ -1,42 +1,40 @@
 package controllers
 
-import play._
-import play.i18n._
-import play.mvc._
-
+import play.api._
+import play.api.mvc._
+import play.api.data._
+import play.api.data.Forms._
+import play.api.i18n.Messages
 import models._
-import results.Redirect
-import views.application._
-import javax.mail.Session
-import java.awt.Desktop.Action
+import views._
 
 object Application extends Controller {
+  
+  // ===== Forms =====
+  
+  val loginForm = Form(
+    tuple(
+      "name" -> text,
+      "password" -> text
+    )
+  )   
 
-  def login = {
-    if (!session.isEmpty) {
-      Action(Dashboard.show)
-    } else {
-      val users = User.find().list()
-      html.login(users)
+  // ===== Authentication Actions =====
+  
+  def login = Action { implicit request => {
+    val users = User.all
+    Ok(html.application.login(users))
+  }}
+  
+  
+  def authenticate = Action { implicit request =>
+    val (name, password) = loginForm.bindFromRequest.get
+    val authentication = User.authenticate(name, password)
+        
+    authentication match {
+      case Some(user)  => Redirect(routes.Dashboard.show).withSession("username" -> user.name) 
+      case None        => Redirect(routes.Application.login).flashing("error" -> Messages("password.error"))
     }
   }
-
-  def logout = {
-    session.clear
-    Action(Application.login)
-  }
-
-  def authenticate = {
-    val name = params.get("name")
-    val password = params.get("password")
-
-    val result = User.authenticate(name, password)
-    result match {
-      case Some(user)  => session.put("username", user.name);
-                          Action(Dashboard.show)
-      case None        => flash.put("error", Messages.get("error.password"))
-                          Action(Application.login)
-    }
-  }
-
+  
 }

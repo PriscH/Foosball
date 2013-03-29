@@ -1,16 +1,16 @@
 package controllers
 
-import play.mvc._
-
+import play.api._
+import play.api.mvc._
 import models._
-import views.dashboard._
-import util.security.Secure
+import views._
+import util.security._
 
-object Dashboard extends Controller with Secure {
+object Dashboard extends Controller with Secured {
 
-  def show = {
-    val users = User.find().list()
-    html.dashboard(users)
-  }
+  def show = SecuredAction { implicit request => {
+    val users = User.all
+    Ok(html.dashboard.index(users))
+  }}
   
 }

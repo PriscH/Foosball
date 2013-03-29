@@ -3,16 +3,13 @@
 # ~~~~
 
 # Home page
-*       /                                       Application.login
+GET     /                           controllers.Application.login
 
-# Ignore favicon requests
-GET     /favicon.ico                            404
+# Authentication
+POST    /login                      controllers.Application.authenticate   
 
-# Map static resources from the /app/public folder to the /public path
-GET     /public/                                staticDir:public
+# Dashboard
+GET     /dashboard                  controllers.Dashboard.show
 
-# Use 'show' as default loading
-*       /{controller}                           {controller}.show
-
-# Catch all
-*       /{controller}/{action}                  {controller}.{action}
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

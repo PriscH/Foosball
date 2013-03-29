@@ -1,5 +1,2 @@
-# You can specialize this file for each language.
-# For example, for French create a messages.fr file
-#
-
-error.password=The password you provided is incorrect.
+# Login Page
+password.error=The password you provided is incorrect.

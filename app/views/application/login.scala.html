@@ -1,9 +1,16 @@
-@(users: Seq[models.User])(implicit session: play.mvc.Scope.Session, flash: play.mvc.Scope.Flash)
+@(users: Seq[models.User])(implicit flash: Flash)
 
 @main {
   <title>Foosball - Login</title>
+  
   <script type="text/javascript">
     $(document).ready(function() {
+      $(".account").hover(function() {
+        $(this).addClass("glow");
+      }, function() {
+        $(this).removeClass("glow");
+      });
+    
       $(document).click(function(event) {
         var $allAccounts = $(".account")
 
@@ -52,9 +59,9 @@
     });
   </script>
 }{
-  @if(flash.get("error") != null) {
+  @flash.get("error").map { message =>
     <div class="error">
-      @flash.get("error")
+      @message
     </div>
   }
 
@@ -64,17 +71,17 @@
   </div>
 
   <div class="accounts">
-    @form(controllers.Application.authenticate) {
-      @for(user <- users) {
-        <div class="account" name="@user.name">
-          <img class="avatar" src="@asset("public/images/avatars/" + user.avatar + ".jpg")" alt="Avatar" />
+    @helper.form(routes.Application.authenticate) {
+	    @for(user <- users) {
+	      <div class="account" name="@user.name">
+          <img class="avatar" src="@routes.Assets.at("images/avatars/" + user.avatar + ".jpg")" alt="Avatar" />
           <div class="userDetails">
             <div class="userName">@user.name</div>
             <input class="password hidden" type="password" />
           </div>
         </div>
-      }
-
+	    }
+	    
       <input type="hidden" id="name" name="name" />
       <input type="hidden" id="password" name="password" />
     }

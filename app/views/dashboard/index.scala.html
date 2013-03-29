@@ -1,4 +1,4 @@
-@(users: Seq[models.User])(implicit session: play.mvc.Scope.Session)
+@(users: Seq[models.User])
 
 @main{
   <title>Foosball - Dashboard</title>
@@ -45,11 +45,11 @@
           if (buttonResult == "win") {
             $resultSubmit.addClass("winner");
             $resultSubmit.html("Record a win for " + $playerInput.val());
-            $("#winner").val($playerInput.prop("name"));
+            $("#winner").val($playerInput.val());
           } else {
             $resultSubmit.addClass("loser");
             $resultSubmit.html("Record a loss for " + $playerInput.val());
-            $("#loser").val($playerInput.prop("name"));
+            $("#loser").val($playerInput.val());
           }
         }
       });
@@ -73,17 +73,62 @@
   </script>
 }{
   <div id="quickResults" class="widget small">
-    <h2>Quick Results</h2>
-    @form(controllers.Result.recordQuick) {
+    <h2>Qick Results</h2>
+    <form>
       <fieldset class="singleColumn">
-        @views.tags.html.playerResult("player1", 1)
-        @views.tags.html.playerResult("player2", 2)
-        @views.tags.html.playerResult("player3", 3)
-        @views.tags.html.playerResult("player4", 4)
+        @tags.playerResult("player1", 1)
+        @tags.playerResult("player2", 2)
+        @tags.playerResult("player3", 3)
+        @tags.playerResult("player4", 4)
         <button id="resultSubmit" disabled="true">Select a result</button>
       </fieldset>
       <input type="hidden" id="winner" name="winner" />
       <input type="hidden" id="loser" name="loser" />
-    }
+    </form>
+  </div>
+
+  <div id="standings" class="widget small">
+    <h2>Standings</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player</th>
+          <th>Wins</th>
+          <th>Losses</th>
+          <th>Elo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Jaco</td>
+          <td>8</td>
+          <td>0</td>
+          <td>1450</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Pierre</td>
+          <td>6</td>
+          <td>1</td>
+          <td>1322</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Chris</td>
+          <td>2</td>
+          <td>2</td>
+          <td>1101</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Tiaan</td>
+          <td>1</td>
+          <td>6</td>
+          <td>998</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 }
