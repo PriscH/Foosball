@@ -1,10 +1,15 @@
-# Resolvable dependencies
-lib
-
-# Generated artifacts
+logs
+project/project
+project/target
+target
 tmp
-
-# IntelliJ artifacts
-*.iml
-*.ipr
-*.iws
+.history
+dist
+/.idea
+/*.iml
+/out
+/.idea_modules
+/.classpath
+/.project
+/RUNNING_PID
+/.settings
