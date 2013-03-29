@@ -25,7 +25,7 @@ object User {
   
   // ===== Query Operations ======
   
-  def all(): List[User] = DB.withConnection { implicit connection =>
+  def all(): Seq[User] = DB.withConnection { implicit connection =>
     SQL("select * from user").as(User.simple *)
   }
   
