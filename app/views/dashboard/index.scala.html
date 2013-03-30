@@ -4,131 +4,70 @@
   <title>Foosball - Dashboard</title>
 
   <script type="text/javascript">
+    var selectedPlayers = [];
+
     $(document).ready(function() {
-      var players = [@users.map("'" + _.name + "'").mkString(",")];
-
-      $(".inputField").autocomplete({
-        source: players,
-        change: function (event, ui) {
-          var $this = $(this);
-
-          if (!$this.val()) {
-            return;
-          }
-
-          var compareValue = $this.val().toUpperCase();
-          for (var index = 0; index < players.length; index++) {
-            if (players[index].toUpperCase() === compareValue) {
-              $this.val(players[index]);
-              return;
-            }
-          }
-
-          $this.val("");
-        }
-      });
-
       $(".linkButton").click(function(event) {
         var $this = $(this);
         if ($this.hasClass("deselected")) {
-          $(".linkButton").addClass("deselected");
+          $this.siblings(".linkButton").addClass("deselected");
           $this.removeClass("deselected");
-
-          var $resultSubmit = $("#resultSubmit");
-          $resultSubmit.removeClass("winner");
-          $resultSubmit.removeClass("loser");
-          $resultSubmit.prop("disabled", false);
-
-          var $playerInput = $this.siblings("input").eq(0);
-
-          var buttonResult = $this.attr("result");
-          if (buttonResult == "win") {
-            $resultSubmit.addClass("winner");
-            $resultSubmit.html("Record a win for " + $playerInput.val());
-            $("#winner").val($playerInput.val());
-          } else {
-            $resultSubmit.addClass("loser");
-            $resultSubmit.html("Record a loss for " + $playerInput.val());
-            $("#loser").val($playerInput.val());
-          }
         }
       });
-
-      $(".playerName").keyup(function(event) {
+      
+      $(".player").click(function(event) {
         var $this = $(this);
-
-        var siblingResults = $this.siblings(".linkButton").not(".deselected");
-        if (siblingResults.length) {
-          var $selectedResult = siblingResults.eq(0);
-          $selectedResult.addClass("deselected");
-
-          var $resultSubmit = $("#resultSubmit");
-          $resultSubmit.removeClass("winner");
-          $resultSubmit.removeClass("loser");
-          $resultSubmit.prop("disabled", true);
-          $resultSubmit.html("Select a result");
-        }
-      });
+        
+        if ($this.hasClass("selected")) {
+          var selectedPlayer = $this.attr("player");
+          
+          selectedPlayers = $.grep(selectedPlayers, function(value) {
+            return value != selectedPlayer;
+          });
+          
+          $(".matchPlayer[player=" + selectedPlayer + "]").html(
+            '<div class="selectPlayer">Select Player ' + selectedPlayer + '</div>'
+          ).removeClass("expose");
+          
+          $this.removeClass("expose").removeClass("selected");
+        } else {
+	        var selectedPlayer = 1;
+	        while ($.inArray(selectedPlayer, selectedPlayers) !== -1) {
+	          ++selectedPlayer;
+	        }
+	        
+	        if (selectedPlayer === 5) {
+	          return; // All 4 players have been selected
+	        }
+	          
+	        $(".matchPlayer[player=" + selectedPlayer + "]").html(
+	          '<img class="smallAvatar" src="/assets/images/avatars/default.jpg" alt="Avatar" />' +
+	          '<div class="matchPlayerName">' + $this.attr("name") + '</div>'
+	        ).addClass("expose");
+	        
+	        $this.addClass("expose").addClass("selected").attr("player", selectedPlayer);
+	
+	        selectedPlayers.push(selectedPlayer);
+	      }
+      });   
     });
   </script>
 }{
-  <div id="quickResults" class="widget small">
-    <h2>Qick Results</h2>
-    <form>
-      <fieldset class="singleColumn">
-        @tags.playerResult("player1", 1)
-        @tags.playerResult("player2", 2)
-        @tags.playerResult("player3", 3)
-        @tags.playerResult("player4", 4)
-        <button id="resultSubmit" disabled="true">Select a result</button>
-      </fieldset>
-      <input type="hidden" id="winner" name="winner" />
-      <input type="hidden" id="loser" name="loser" />
-    </form>
+  <div class="bigLeft">
+    <h1>Capture match results:</h1>
+    @tags.matchResults(2)
+    @tags.matchResults(3)
+    @tags.matchResults(4)
+    <div class="players">
+      @for(user <- users) {
+        <div class="player" name="@user.name">
+          <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + user.avatar + ".jpg")" alt="Avatar" />
+          <div class="playerName">@user.name</div>
+        </div>
+      }
+    </div>
   </div>
-
-  <div id="standings" class="widget small">
-    <h2>Standings</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Player</th>
-          <th>Wins</th>
-          <th>Losses</th>
-          <th>Elo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Jaco</td>
-          <td>8</td>
-          <td>0</td>
-          <td>1450</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Pierre</td>
-          <td>6</td>
-          <td>1</td>
-          <td>1322</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Chris</td>
-          <td>2</td>
-          <td>2</td>
-          <td>1101</td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td>Tiaan</td>
-          <td>1</td>
-          <td>6</td>
-          <td>998</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="smallRight">
+    <h1>Current standings:</h1>
   </div>
 }

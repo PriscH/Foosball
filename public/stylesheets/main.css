@@ -52,7 +52,7 @@ button {
   border-radius: 3px;
   -moz-border-radius: 3px;
 
-  width: 35px;
+  width: 50px;
   height: 35px;
   vertical-align: top;
 
@@ -108,18 +108,6 @@ button {
   height: 35px;
 }
 
-.winner {
-  color: green;
-  background: lightGreen;
-  border-color: green;
-}
-
-.loser {
-  color: crimson;
-  background: lightSalmon;
-  border-color: crimson;
-}
-
 /* TEMPLATE */
 
 html {
@@ -149,6 +137,17 @@ html {
 .content {
   background-color: #FEFDF8;
   padding: 20px 20px 20px 20px;
+  overflow: auto;
+}
+
+.bigLeft {
+  width: 65%;
+  float: left;
+}
+
+.smallRight {
+  width: 35%;
+  float: right;
 }
 
 /* MENU */
@@ -254,7 +253,7 @@ html {
 
 .selected {
   border-color: blue;
-  box-shadow: 0 0 20px darkBlue;
+  box-shadow: 0 0 15px darkBlue;
 }
 
 .fade {
@@ -282,6 +281,96 @@ html {
   background-image: url(../images/error.png);
   background-repeat: no-repeat;
   background-position: 10px center;
+}
+
+/* DASHBOARD */
+
+.smallAvatar {
+  float: left;
+  padding: 5px 5px 5px 5px;
+  height: 30px;
+  width: 30px;
+}
+
+.miniAvatar {
+  float: left;
+  padding: 3px 3px 3px 3px;
+  height: 24px;
+  width: 24px;
+}
+
+.players {
+  margin: 10px 0;
+}
+
+.player {
+  display: inline-block;
+  margin: 2px 0px;
+  border: 1px solid;
+  width: 182px;
+  cursor: pointer;
+  
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.playerName {
+  font-size: x-large;
+}
+
+.matchResults {
+  text-align:center;
+  margin: 15px 0;
+}
+
+.resultButtons {
+  display: inline-block;
+}
+
+.resultButton {
+  color: black;
+  background: Moccasin;
+  border-color: SaddleBrown;
+}
+
+.matchPlayers {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.matchPlayer {
+  display: block;
+  margin: 2px 0px;
+  border: 1px solid;
+  height: 40px;
+  width: 230px;
+  
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.matchPlayerName {
+  font-size: xx-large;
+  text-align: left;
+}
+
+.selectPlayer {
+  font-size: x-large;
+  font-style: italic;
+  line-height: 40px;
+  margin: 0 10px 0 0;
+  color: grey;
+}
+
+.expose {
+  background-color: white;
+}
+
+.versus {
+  font-size: x-large;
+  color: gold;
+  text-shadow: 2px 2px 3px saddleBrown;
+  margin: 0 7px 0 4px;
 }
 
 /* JQUERY-UI */
