@@ -6,6 +6,93 @@
   <script type="text/javascript">
     var selectedPlayers = [];
 
+    function determineResult() {
+      // If all the Players haven't been selected, or all the results haven't been provided, exit early
+      if (selectedPlayers.length !== 4 || $(".linkButton:not(.deselected)").length !== 3) {
+        return;
+      }
+      
+      var playerWins = [0, 0, 0, 0];
+      $(".linkButton:not(.deselected)").each(function() {
+        var winners = $(this).attr("winners").split(",");
+        
+        for (var index = 0; index < playerWins.length; index++) {
+          if ($.inArray((index + 1).toString(), winners) !== -1) {
+            playerWins[index] += 2;
+          } else if (!$(this).attr("straightWin")) {
+            playerWins[index] += 1;
+          }
+        }
+      });
+      
+      applyResult(playerWins);
+    }
+    
+    // TODO: Not happy with this algorithm, revisit and clean up at some stage
+    function applyResult(playerWins) {
+      // First remove players with the same number of wins (by setting to -1), as they can't be best, worst, or pseudo.
+      var cleanedWins = [];
+      var sameWinCount = -1;
+      for (var index = 0; index < playerWins.length; index++) {
+        cleanedWins[index] = playerWins[index];
+      
+        for (var subIndex = 0; subIndex < playerWins.length; subIndex++) {
+          if (index !== subIndex && playerWins[index] === playerWins[subIndex]) {
+            cleanedWins[index] = -1;
+            sameWinCount = playerWins[index];
+          }
+        }
+      }
+      
+      var winCount = 0;
+      var winner = -1;
+      var loseCount = 6;
+      var loser = -1;
+      
+      // Then determine how many wins the winner and losers got (might be the same if 3 other players had the same number of wins)
+      for (var index = 0; index < cleanedWins.length; ++index) {
+        if (cleanedWins[index] !== -1) {
+          if (cleanedWins[index] >= winCount) {
+            winCount = cleanedWins[index];
+            winner = index;
+          }
+          if (cleanedWins[index] <= loseCount) {
+            loseCount = cleanedWins[index];
+            loser = index;
+          }
+        }
+      }
+      
+      var $resultSubmit = $("#resultSubmit");
+      var winnerName = $("#player" + (winner + 1)).val();
+      var loserName = $("#player" + (loser + 1)).val();
+      
+      // In order to win outright, a player always requires exactly 6 wins, else someone lost
+      if (winCount === 6) {
+        $resultSubmit.removeClass("resultLoser").addClass("resultWinner").removeAttr("disabled");
+        
+        // If the winner and the loser is the same, there is no pseudo, else there is
+        if (winner === loser) {
+          $resultSubmit.html("Capture a win for " + winnerName);
+        } else if (loseCount > sameWinCount) {
+          $resultSubmit.html("Capture a win for " + winnerName + " (and a pseudo-win for " + loserName +")");
+        } else {
+          $resultSubmit.html("Capture a win for " + winnerName + " (and a pseudo-loss for " + loserName +")");
+        }
+      } else {
+        $resultSubmit.removeClass("resultWinner").addClass("resultLoser").removeAttr("disabled")
+        
+        // If the loser and the winner is the same, there is no pseudo, else there is
+        if (loser === winner) {
+          $resultSubmit.html("Capture a loss for " + loserName);
+        } else if (winCount > sameWinCount) {
+          $resultSubmit.html("Capture a loss for " + loserName + " (and a pseudo-win for " + winnerName +")");
+        } else {
+          $resultSubmit.html("Capture a loss for " + loserName + " (and a pseudo-loss for " + winnerName +")");
+        }
+      }
+	  }
+
     $(document).ready(function() {
       $(".linkButton").click(function(event) {
         var $this = $(this);
@@ -13,6 +100,8 @@
           $this.siblings(".linkButton").addClass("deselected");
           $this.removeClass("deselected");
         }
+        
+        determineResult();
       });
       
       $(".player").click(function(event) {
@@ -25,11 +114,15 @@
             return value != selectedPlayer;
           });
           
+          $("#player" + selectedPlayer).val("");
+          
           $(".matchPlayer[player=" + selectedPlayer + "]").html(
             '<div class="selectPlayer">Select Player ' + selectedPlayer + '</div>'
           ).removeClass("expose");
           
           $this.removeClass("expose").removeClass("selected");
+          
+          $("#resultSubmit").removeClass("resultWinner").removeClass("resultLoser").attr("disabled", "true").html("Capture match results");
         } else {
 	        var selectedPlayer = 1;
 	        while ($.inArray(selectedPlayer, selectedPlayers) !== -1) {
@@ -39,7 +132,9 @@
 	        if (selectedPlayer === 5) {
 	          return; // All 4 players have been selected
 	        }
-	          
+	        
+	        $("#player" + selectedPlayer).val($this.attr("name"));
+	        
 	        $(".matchPlayer[player=" + selectedPlayer + "]").html(
 	          '<img class="smallAvatar" src="/assets/images/avatars/default.jpg" alt="Avatar" />' +
 	          '<div class="matchPlayerName">' + $this.attr("name") + '</div>'
@@ -48,26 +143,44 @@
 	        $this.addClass("expose").addClass("selected").attr("player", selectedPlayer);
 	
 	        selectedPlayers.push(selectedPlayer);
+	        
+	        determineResult();
 	      }
-      });   
+      });
+      
+      $("#standings").height($("#matchResults").height());   
     });
   </script>
 }{
   <div class="bigLeft">
-    <h1>Capture match results:</h1>
-    @tags.matchResults(2)
-    @tags.matchResults(3)
-    @tags.matchResults(4)
-    <div class="players">
-      @for(user <- users) {
-        <div class="player" name="@user.name">
-          <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + user.avatar + ".jpg")" alt="Avatar" />
-          <div class="playerName">@user.name</div>
-        </div>
-      }
+    <div id="matchResults" class="widget">
+      <h1 class="centered">Capture match results:</h1>
+      @tags.matchResults(2)
+      @tags.matchResults(3)
+      @tags.matchResults(4)
+
+      <input type="hidden" id="player1" name="player1" />
+      <input type="hidden" id="player2" name="player2" />
+      <input type="hidden" id="player3" name="player3" />
+      <input type="hidden" id="player4" name="player4" />
+
+      <div class="centered">
+        <button id="resultSubmit" disabled="true">Capture match results</button>
+      </div>
+
+      <div class="players">
+        @for(user <- users) {
+          <div class="player" name="@user.name">
+            <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + user.avatar + ".jpg")" alt="Avatar" />
+            <div class="playerName">@user.name</div>
+          </div>
+        }
+      </div>
     </div>
   </div>
   <div class="smallRight">
-    <h1>Current standings:</h1>
+    <div id="standings" class="widget">
+      <h1 class="centered">Current standings:</h1>
+    </div>
   </div>
 }

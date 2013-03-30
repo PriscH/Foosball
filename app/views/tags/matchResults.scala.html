@@ -1,32 +1,33 @@
 @(partner: Int)
 
-<div class="matchResults" partner="@partner">
-  <div class="matchPlayers">
-    <div class="matchPlayer" player="1">
-      <div class="selectPlayer">Select Player 1</div>
-    </div>
-    <div class="matchPlayer" player="@partner">
-      <div class="selectPlayer">Select Player @partner</div>
-    </div>
-  </div>
-  <div class="resultButtons">
-      <a class="linkButton resultButton deselected" result="win" href="#">2-0</a>
-      <a class="linkButton resultButton deselected" result="win" href="#">2-1</a>
-      <span class="versus">VS</span>
-      <a class="linkButton resultButton deselected" result="win" href="#">1-2</a>
-      <a class="linkButton resultButton deselected" result="win" href="#">0-2</a>
-  </div>
-  <div class="matchPlayers">
-    @defining((partner - 1) % 3 + 2) { playerNumber =>
-	    <div class="matchPlayer" player="@playerNumber">
-        <div class="selectPlayer">Select Player @playerNumber</div>
+@defining((partner - 1) % 3 + 2) { opponent1 =>
+  @defining(partner % 3 + 2) { opponent2 =>
+    <div class="matchResults" partner="@partner">
+      <div class="matchPlayers">
+        <div class="matchPlayer" player="1">
+          <div class="selectPlayer">Select Player 1</div>
+        </div>
+        <div class="matchPlayer" player="@partner">
+          <div class="selectPlayer">Select Player @partner</div>
+        </div>
       </div>
-    }
-    
-    @defining(partner % 3 + 2) { playerNumber =>
-      <div class="matchPlayer" player="@playerNumber">
-        <div class="selectPlayer">Select Player @playerNumber</div>
+
+      <div class="resultButtons">
+          <a class="linkButton resultButton deselected" winners="1,@partner" straightWin="true">2-0</a>
+          <a class="linkButton resultButton deselected" winners="1,@partner">2-1</a>
+          <span class="versus">VS</span>
+          <a class="linkButton resultButton deselected" winners="@opponent1,@opponent2">1-2</a>
+          <a class="linkButton resultButton deselected" winners="@opponent1,@opponent2" straightWin="true">0-2</a>
       </div>
-    }
-  </div>
-</div>
+
+      <div class="matchPlayers">
+        <div class="matchPlayer" player="@opponent1">
+          <div class="selectPlayer">Select Player @opponent1</div>
+        </div>
+        <div class="matchPlayer" player="@opponent2">
+          <div class="selectPlayer">Select Player @opponent2</div>
+        </div>
+      </div>
+    </div> 
+  }
+}
