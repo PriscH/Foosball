@@ -27,12 +27,11 @@ button {
 }
 
 .glow {
-  border: solid 2px darkBlue;
-  box-shadow: 0 0 20px darkBlue;
+  box-shadow: 0 0 20px saddleBrown;
 }
 
 .hidden {
-  display:   none;
+  display: none;
 }
 
 .singleColumn > div {
@@ -238,8 +237,8 @@ html {
 }
 
 .selected {
-  border-color: blue;
-  box-shadow: 0 0 15px darkBlue;
+  border-color: gold;
+  box-shadow: 0 0 15px saddleBrown;  
 }
 
 .fade {
