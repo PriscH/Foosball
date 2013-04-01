@@ -6,6 +6,7 @@
   <script type="text/javascript">
     var selectedPlayers = [];
 
+    // Determines the result of the match (who won, lost and pseudos)
     function determineResult() {
       // If all the Players haven't been selected, or all the results haven't been provided, exit early
       if (selectedPlayers.length !== 4 || $(".linkButton:not(.deselected)").length !== 3) {
@@ -29,6 +30,7 @@
     }
     
     // TODO: Not happy with this algorithm, revisit and clean up at some stage
+    // Calculates who won/lost and pseudos based on the number of (game) wins per Player
     function applyResult(playerWins) {
       // First remove players with the same number of wins (by setting to -1), as they can't be best, worst, or pseudo.
       var cleanedWins = [];
@@ -94,6 +96,7 @@
 	  }
 
     $(document).ready(function() {
+      // User clicks on one of the match result buttons (for example 2-1)
       $(".linkButton").click(function(event) {
         var $this = $(this);
         if ($this.hasClass("deselected")) {
@@ -104,6 +107,14 @@
         determineResult();
       });
       
+      // User hovers over a Player
+      $(".player").hover(function() {
+        $(this).addClass("glow");
+      }, function() {
+        $(this).removeClass("glow");
+      });
+      
+      // User selects a Player to add to the match result
       $(".player").click(function(event) {
         var $this = $(this);
         
@@ -148,6 +159,50 @@
 	      }
       });
       
+      // Users clicks the "Capture match result" button
+      $("#resultSubmit").click(function(event) {
+        var players = ["1", "2", "3", "4"];
+      
+        var request = {};
+        request.games = [];
+        
+        for (var index = 0; index < 3; ++index) {
+          var game = {};
+          
+          game.winners = [];
+          game.losers = [];
+          
+          $(".matchResults[game=" + (index + 1) + "] .linkButton:not(.deselected)").each(function() {
+            var $this = $(this);
+            
+            var winners = $this.attr("winners").split(",");
+            var losers = $.grep(players, function(value) {
+              return ($.inArray(value, winners) === -1);
+            });
+            
+            for (var winnerIndex = 0; winnerIndex < winners.length; winnerIndex++) {
+              game.winners.push($("#player" + winners[winnerIndex]).val());
+            }
+            
+            for (var loserIndex = 0; loserIndex < losers.length; loserIndex++) {
+              game.losers.push($("#player" + losers[loserIndex]).val());
+            }
+            
+            // Reverse the results if the right side won (i.e. 1-2 becomes 2-1)
+            if ($this.text().charAt(2) === '2') {
+              game.result = $this.text().split("").reverse().join(""); // $.reverse() doesn't exist for some reason
+            } else {
+              game.result = $this.text();
+            }
+          });
+          
+          request.games.push(game);
+        }
+        
+        // Stores the JSON data in a form field
+        $("#results").val(JSON.stringify(request));    
+      });
+      
       $("#standings").height($("#matchResults").height());   
     });
   </script>
@@ -155,18 +210,23 @@
   <div class="bigLeft">
     <div id="matchResults" class="widget">
       <h1 class="centered">Capture match results:</h1>
+      @tags.matchResults(1)
       @tags.matchResults(2)
       @tags.matchResults(3)
-      @tags.matchResults(4)
+     
+      @helper.form(routes.Dashboard.captureMatch) {
+	    <input type="hidden" id="player1" name="player1" />
+	    <input type="hidden" id="player2" name="player2" />
+	    <input type="hidden" id="player3" name="player3" />
+	    <input type="hidden" id="player4" name="player4" />
 
-      <input type="hidden" id="player1" name="player1" />
-      <input type="hidden" id="player2" name="player2" />
-      <input type="hidden" id="player3" name="player3" />
-      <input type="hidden" id="player4" name="player4" />
+        <input type="hidden" id="results" name="results" />
+        
+	    <div class="centered">
+          <button id="resultSubmit" type="submit" disabled="true" style="cursor: pointer;">Capture match results</button>
+        </div>
+      }
 
-      <div class="centered">
-        <button id="resultSubmit" disabled="true">Capture match results</button>
-      </div>
 
       <div class="players">
         @for(user <- users) {

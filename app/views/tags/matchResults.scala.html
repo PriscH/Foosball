@@ -1,20 +1,20 @@
-@(partner: Int)
+@(game: Int)
 
-@defining((partner - 1) % 3 + 2) { opponent1 =>
-  @defining(partner % 3 + 2) { opponent2 =>
-    <div class="matchResults" partner="@partner">
+@defining(game % 3 + 2) { opponent1 =>
+  @defining((game + 1) % 3 + 2) { opponent2 =>
+    <div class="matchResults" game="@game">
       <div class="matchPlayers">
         <div class="matchPlayer" player="1">
           <div class="selectPlayer">Select Player 1</div>
         </div>
-        <div class="matchPlayer" player="@partner">
-          <div class="selectPlayer">Select Player @partner</div>
+        <div class="matchPlayer" player="@(game + 1)">
+          <div class="selectPlayer">Select Player @(game + 1)</div>
         </div>
       </div>
 
       <div class="resultButtons">
-          <a class="linkButton resultButton deselected" winners="1,@partner" straightWin="true">2-0</a>
-          <a class="linkButton resultButton deselected" winners="1,@partner">2-1</a>
+          <a class="linkButton resultButton deselected" winners="1,@(game + 1)" straightWin="true">2-0</a>
+          <a class="linkButton resultButton deselected" winners="1,@(game + 1)">2-1</a>
           <span class="versus">VS</span>
           <a class="linkButton resultButton deselected" winners="@opponent1,@opponent2">1-2</a>
           <a class="linkButton resultButton deselected" winners="@opponent1,@opponent2" straightWin="true">0-2</a>

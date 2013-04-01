@@ -12,14 +12,20 @@ import anorm.SqlParser._
 
 import util.db.AnormExtension.rowToDateTime
 
-case class Match(id: Long, capturedDate: DateTime, capturedBy: String, confirmedBy: Option[String], format: String)
+case class Match(id: Pk[Long], capturedDate: DateTime, capturedBy: String, confirmedBy: Option[String], format: String)
 
 object Match {
+  
+  // ===== Overloaded Apply =====
+  
+  def apply(id: Long, prototype: Match): Match = {
+    Match(Id(id), prototype.capturedDate, prototype.capturedBy, prototype.confirmedBy, prototype.format)
+  }
   
   // ===== ResultSet Parsers =====
   
   val simple = {
-    get[Long]           ("match.id") ~
+    get[Pk[Long]]       ("match.id") ~
     get[DateTime]       ("match.capturedDate") ~
     get[String]         ("match.capturedBy") ~
     get[Option[String]] ("match.confirmedBy") ~
@@ -37,12 +43,13 @@ object Match {
   // ===== Persistance Operations =====
 
   def create(foosMatch: Match): Match = DB.withConnection { implicit connection =>
-    SQL("insert into match values ({capturedDate}, {capturedBy}, {format})").on(
-      'capturedDate -> foosMatch.capturedDate,
+    SQL("insert into match (captured_date, captured_by, format) values ({capturedDate}, {capturedBy}, {format})").on(
+      'capturedDate -> foosMatch.capturedDate.toDate(),
       'capturedBy   -> foosMatch.capturedBy,
       'format       -> foosMatch.format
-    ).executeUpdate()
-    
-    return foosMatch
+    ).executeInsert() 
+  } match {
+    case Some(key) => Match(key, foosMatch)
+    case None      => throw new RuntimeException("Could not create a match.")
   }
 }

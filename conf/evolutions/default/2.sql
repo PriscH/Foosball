@@ -16,20 +16,20 @@ CREATE TABLE match_result (
   player    VARCHAR(255) NOT NULL,
   result    VARCHAR(255) NOT NULL,
   rank      TINYINT      NOT NULL,
+  score     TINYINT      NOT NULL,
   PRIMARY KEY (match_id, player),
   FOREIGN KEY (match_id) REFERENCES match (id),
   FOREIGN KEY (player)   REFERENCES user  (name)
 );
 
 CREATE TABLE game (
-  id         BIGINT(20)   NOT NULL,
+  id         BIGINT(20)   NOT NULL AUTO_INCREMENT,
   match_id   BIGINT(20)   NOT NULL,
   winner1    VARCHAR(255) NOT NULL,
   winner2    VARCHAR(255) NOT NULL,
   loser1     VARCHAR(255) NOT NULL,
   loser2     VARCHAR(255) NOT NULL,
-  win_score  TINYINT      NOT NULL,
-  lose_score TINYINT      NOT NULL,
+  result     VARCHAR(255) NOT NULL,
   PRIMARY KEY (id, match_id),
   FOREIGN KEY (winner1) REFERENCES user (name),
   FOREIGN KEY (winner2) REFERENCES user (name),

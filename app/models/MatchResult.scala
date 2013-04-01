@@ -12,7 +12,7 @@ import anorm.SqlParser._
 
 import util.db.AnormExtension.rowToDateTime
 
-case class MatchResult(matchId: Long, player: String, result: String, rank: Int)
+case class MatchResult(matchId: Long, player: String, result: String, rank: Int, score: Int)
 
 object MatchResult {
   
@@ -22,8 +22,9 @@ object MatchResult {
     get[Long]   ("matchResult.matchId") ~
     get[String] ("matchResult.player") ~
     get[String] ("matchResult.result") ~
-    get[Int]    ("matchResult.rank") map {
-      case matchId ~ player ~ result ~ rank => MatchResult(matchId, player, result, rank)
+    get[Int]    ("matchResult.rank") ~
+    get[Int]    ("matchResult.score") map {
+      case matchId ~ player ~ result ~ rank ~ score => MatchResult(matchId, player, result, rank, score)
     }
   }
   
@@ -36,11 +37,12 @@ object MatchResult {
   // ===== Persistance Operations =====
 
   def create(matchResult: MatchResult): MatchResult = DB.withConnection { implicit connection =>
-    SQL("insert into match_result values ({matchId}, {player}, {result}, {rank})").on(
+    SQL("insert into match_result values ({matchId}, {player}, {result}, {rank}, {score})").on(
       'matchId   -> matchResult.matchId,
       'player    -> matchResult.player,
       'result    -> matchResult.result,
-      'rank      -> matchResult.rank
+      'rank      -> matchResult.rank,
+      'score     -> matchResult.score
     ).executeUpdate()
     
     return matchResult

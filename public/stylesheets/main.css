@@ -27,7 +27,7 @@ button {
 }
 
 .glow {
-  box-shadow: 0 0 20px saddleBrown;
+  box-shadow: 0 0 15px saddleBrown;
 }
 
 .hidden {
@@ -61,6 +61,11 @@ button {
 
   cursor: pointer;
   display: inline-block;
+}
+
+.selected {
+  border-color: gold !important;
+  box-shadow: 0 0 15px saddleBrown;  
 }
 
 .deselected {
@@ -234,11 +239,6 @@ html {
 .password {
   font-size: 2em;
   width: 190px;
-}
-
-.selected {
-  border-color: gold;
-  box-shadow: 0 0 15px saddleBrown;  
 }
 
 .fade {
