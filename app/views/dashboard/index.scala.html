@@ -1,4 +1,4 @@
-@(users: Seq[models.User], unconfirmedMatches: Seq[domain.MatchWithResults])
+@(users: Seq[models.User], unconfirmedMatches: Seq[domain.MatchWithResults])(implicit flash: Flash)
 
 @main{
   <title>Foosball - Dashboard</title>
@@ -203,17 +203,35 @@
         $("#results").val(JSON.stringify(request));    
       });
       
+	  // User clicks on one of the confirmation messages
+	  $(".confirmButton").click(function(event) {
+		// TODO: Submit to server
+		$(this).closest(".warning").fadeOut();
+	  });
+	  
+	  // Adjust the standings height to match the results heigh
       $("#standings").height($("#matchResults").height());   
     });
   </script>
 }{
+  @flash.get("success").map { message =>
+    <div class="success">
+      @message
+    </div>
+  }
+
   @if(!unconfirmedMatches.isEmpty) {
-    <div class="warning">
-       @unconfirmedMatches.map { foosMatch =>
-         Can you confirm that @foosMatch.resultString?
-         <button>Confirm</button>
-         <br/> 
-       }
+    <div class="warning table">
+      @unconfirmedMatches.map { foosMatch =>
+		<div class="tableRow">
+		  <div class="tableCell">
+		    Can you confirm that @foosMatch.resultString?
+		  </div>
+		  <div class="tableCell">
+            <button type="button" class="confirmButton">Confirm</button>
+		  </div>
+		</div>
+      }
     </div>
   }
   

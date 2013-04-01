@@ -72,6 +72,18 @@ button {
   opacity: 0.3;
 }
 
+.table {
+  display: table;
+}
+
+.tableRow {
+  display: table-row;
+}
+
+.tableCell {
+  display: table-cell;
+}
+
 /* WIDGETS */
 
 .widget {
@@ -284,6 +296,21 @@ html {
   background-position: 10px center;
 }
 
+.success {
+  width: 1058px;
+  border: 1px solid;
+  margin: 10px auto 20px;
+  padding: 15px 10px 15px 50px;
+  color: #4F8A10;
+  font-weight: bold;
+  font-size: larger;
+
+  background-color: #DFF2BF;
+  background-image: url(../images/success.png);
+  background-repeat: no-repeat;
+  background-position: 10px center;
+}
+
 /* DASHBOARD */
 
 .smallAvatar {
@@ -385,6 +412,18 @@ html {
   color: gold;
   text-shadow: 2px 2px 3px saddleBrown;
   margin: 0 4px 0 2px;
+}
+
+.confirmButton {
+  font-weight: bold;
+  color: #9F6000;
+  background: #F7D14A;
+  border-color: #9F6000;
+  box-shadow: 2px 2px 3px saddleBrown;
+  
+  margin: 2px;
+  padding: 5px 5px;
+  cursor: pointer;
 }
 
 /* JQUERY-UI */

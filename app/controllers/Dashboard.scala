@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 
 import domain._
@@ -48,7 +49,7 @@ object Dashboard extends Controller with Secured {
     
     MatchService.captureMatch(games, request.session.get("username").get)
            
-    Redirect(routes.Dashboard.show)
+    Redirect(routes.Dashboard.show).flashing("success" -> Messages("match.capture.success"))
   }}
 
 }

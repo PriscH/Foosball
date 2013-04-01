@@ -1,2 +1,3 @@
 # Login Page
 password.error=The password you provided is incorrect.
+match.capture.success=Match successfully captured.
