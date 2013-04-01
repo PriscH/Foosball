@@ -39,10 +39,10 @@ object MatchService {
   
   // Visible for testing
   private[services] def playerResult(playerScore: Int, scores: Iterable[Int]): String = playerScore match {
+    case x if scores.count(_ == x) > 1                      => "Nothing"       // Always nothing if more than one person has this score
     case 6                                                  => "Winner"        // Outright winner always has exactly 6 points
     case x if scores.count(_ < x) >= 2                      => "Pseudo-Winner" // Not an outright winner, but has a better score than at least two other players
     case x if (scores.count(_ > x) == 3 && scores.max != 6) => "Loser"         // All three other players have a better score, but none of them are an outright winner
     case x if (scores.count(_ > x) >= 2)                    => "Pseudo-Loser"  // Not an outright loser, but has a worst score than at least two other players
-    case _                                                  => "Nothing"       // Not a winner, loser or a pseudo
   }
 }

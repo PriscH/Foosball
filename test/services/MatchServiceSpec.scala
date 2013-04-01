@@ -60,4 +60,37 @@ class MatchServiceSpec extends Specification {
     }
   }
   
+  "Nothing" should {
+    "result from 2-0, 2-0, 2-0" in {
+      MatchService.playerResult(2, List(6, 2, 2, 2)) mustEqual "Nothing" 
+    }
+    
+    "result from 2-1, 2-0, 2-0" in {
+      MatchService.playerResult(2, List(6, 3, 2, 2)) mustEqual "Nothing" 
+    }
+    
+    "result from 2-1, 2-1, 2-0" in {
+      MatchService.playerResult(3, List(6, 3, 3, 2)) mustEqual "Nothing" 
+    }
+    
+    "result from 2-1, 2-1, 2-1" in {
+      MatchService.playerResult(3, List(6, 3, 3, 3)) mustEqual "Nothing" 
+    }
+    
+    "result from 0-2 0-2 0-2" in {
+      MatchService.playerResult(4, List(0, 4, 4, 4)) mustEqual "Nothing" 
+    }
+    
+    "result from 1-2 0-2 0-2" in {
+      MatchService.playerResult(4, List(1, 5, 4, 4)) mustEqual "Nothing" 
+    }
+    
+    "result from 1-2 1-2 0-2" in {
+      MatchService.playerResult(5, List(2, 5, 5, 4)) mustEqual "Nothing" 
+    }
+    
+    "result from 1-2 1-2 1-2" in {
+      MatchService.playerResult(3, List(3, 5, 5, 5)) mustEqual "Loser" 
+    }
+  }
 }

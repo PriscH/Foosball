@@ -27,7 +27,7 @@ object Game {
   
   val simple = {
     get[Pk[Long]]   ("game.id") ~
-    get[Long]   ("game.matchId") ~
+    get[Long]   ("game.match_id") ~
     get[String] ("game.winner1") ~
     get[String] ("game.winner2") ~
     get[String] ("game.loser1") ~

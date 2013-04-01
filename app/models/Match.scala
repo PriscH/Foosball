@@ -26,9 +26,9 @@ object Match {
   
   val simple = {
     get[Pk[Long]]       ("match.id") ~
-    get[DateTime]       ("match.capturedDate") ~
-    get[String]         ("match.capturedBy") ~
-    get[Option[String]] ("match.confirmedBy") ~
+    get[DateTime]       ("match.captured_date") ~
+    get[String]         ("match.captured_by") ~
+    get[Option[String]] ("match.confirmed_by") ~
     get[String]         ("match.format") map {
       case id ~ capturedDate ~ capturedBy ~ confirmedBy ~ format => Match(id, capturedDate, capturedBy, confirmedBy, format)
     }
@@ -38,6 +38,18 @@ object Match {
   
   def all(): Seq[Match] = DB.withConnection { implicit connection =>
     SQL("select * from match").as(Match.simple *)
+  }
+  
+  def findUnconfirmedFor(player: String): Seq[Match] = DB.withConnection { implicit connection =>
+    SQL("""
+        select match.* from match 
+          left join match_result on (match.id = match_result.match_id)
+          where match.confirmed_by is null
+            and match.captured_by <> {player}
+            and match_result.player = {player}
+        """).on(
+        'player -> player
+      ).as(Match.simple *)
   }
   
   // ===== Persistance Operations =====

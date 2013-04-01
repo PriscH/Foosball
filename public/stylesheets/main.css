@@ -257,13 +257,29 @@ html {
 .error {
   width: 1058px;
   border: 1px solid;
-  margin: 10px auto;
+  margin: 10px auto 20px;
   padding: 15px 10px 15px 50px;
   color: #D8000C;
   font-weight: bold;
+  font-size: larger;
 
   background-color: #FFBABA;
   background-image: url(../images/error.png);
+  background-repeat: no-repeat;
+  background-position: 10px center;
+}
+
+.warning {
+  width: 1058px;
+  border: 1px solid;
+  margin: 10px auto 20px;
+  padding: 15px 10px 15px 50px;
+  color: #9F6000;
+  font-weight: bold;
+  font-size: larger;
+
+  background-color: #FEEFB3;
+  background-image: url(../images/warning.png);
   background-repeat: no-repeat;
   background-position: 10px center;
 }

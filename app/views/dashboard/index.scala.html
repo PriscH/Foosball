@@ -1,4 +1,4 @@
-@(users: Seq[models.User])
+@(users: Seq[models.User], unconfirmedMatches: Seq[domain.MatchWithResults])
 
 @main{
   <title>Foosball - Dashboard</title>
@@ -207,6 +207,16 @@
     });
   </script>
 }{
+  @if(!unconfirmedMatches.isEmpty) {
+    <div class="warning">
+       @unconfirmedMatches.map { foosMatch =>
+         Can you confirm that @foosMatch.resultString?
+         <button>Confirm</button>
+         <br/> 
+       }
+    </div>
+  }
+  
   <div class="bigLeft">
     <div id="matchResults" class="widget">
       <h1 class="centered">Capture match results:</h1>

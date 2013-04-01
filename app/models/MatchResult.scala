@@ -12,18 +12,30 @@ import anorm.SqlParser._
 
 import util.db.AnormExtension.rowToDateTime
 
-case class MatchResult(matchId: Long, player: String, result: String, rank: Int, score: Int)
+case class MatchResult(matchId: Long, player: String, result: String, rank: Int, score: Int) {
+  
+  def outrightResult: Boolean = {result == "Winner" || result == "Loser"}
+  
+  def pseudoResult: Boolean = {result == "Pseudo-Winner" || result == "Pseudo-Loser"}
+  
+  def noResult: Boolean = {result == "Nothing"}
+  
+  def resultString: String = 
+    if (noResult) player + " did not achieve a result"
+    else player + " was the " + result
+  
+}
 
 object MatchResult {
   
   // ===== ResultSet Parsers =====
   
   val simple = {
-    get[Long]   ("matchResult.matchId") ~
-    get[String] ("matchResult.player") ~
-    get[String] ("matchResult.result") ~
-    get[Int]    ("matchResult.rank") ~
-    get[Int]    ("matchResult.score") map {
+    get[Long]   ("match_result.match_id") ~
+    get[String] ("match_result.player") ~
+    get[String] ("match_result.result") ~
+    get[Int]    ("match_result.rank") ~
+    get[Int]    ("match_result.score") map {
       case matchId ~ player ~ result ~ rank ~ score => MatchResult(matchId, player, result, rank, score)
     }
   }
@@ -33,6 +45,13 @@ object MatchResult {
   def all(): Seq[MatchResult] = DB.withConnection { implicit connection =>
     SQL("select * from match_result").as(MatchResult.simple *)
   }
+  
+  def findByMatch(matchId: Long): Seq[MatchResult] = DB.withConnection { implicit connection =>
+    SQL("select * from match_result where match_id = {matchId}").on(
+        'matchId -> matchId
+      ).as(MatchResult.simple *)
+  }
+  
   
   // ===== Persistance Operations =====
 

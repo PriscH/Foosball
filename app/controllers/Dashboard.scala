@@ -5,10 +5,12 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.json.Json
+
+import domain._
 import models._
 import views._
+import services._
 import util.security._
-import services.MatchService
 
 object Dashboard extends Controller with Secured {
   
@@ -21,7 +23,10 @@ object Dashboard extends Controller with Secured {
   
   def show = SecuredAction { implicit request => {
     val users = User.all
-    Ok(html.dashboard.index(users))
+    val unconfirmedMatches = Match.findUnconfirmedFor(request.session.get("username").get)
+    val matchesWithResults = unconfirmedMatches.map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))
+    
+    Ok(html.dashboard.index(users, matchesWithResults))
   }}
   
   def captureMatch = SecuredAction { implicit request => {
