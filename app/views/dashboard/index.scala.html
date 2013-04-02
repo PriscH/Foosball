@@ -6,6 +6,24 @@
   <script type="text/javascript">
     var selectedPlayers = [];
 
+    // Decides whether to display the submit button or not
+    // http://stackoverflow.com/questions/2435751/jquery-fade-element-does-not-show-elements-styled-visibility-hidden
+    function updateResultSubmitDisplay() {
+      var $resultSubmit = $("#resultSubmit");
+    
+      if ($(".linkButton:not(.deselected)").length === 3 && selectedPlayers.length === 4) {
+        if ($resultSubmit.css("visibility") === "hidden") {          
+          $resultSubmit.css("visibility", "visible").hide().fadeIn("slow");
+        }
+      } else {
+        if ($resultSubmit.css("visibility") === "visible") {
+          $resultSubmit.fadeOut("slow", function() {
+            $resultSubmit.css("visibility", "hidden").css("display", "");
+          });
+        } 
+      }
+    }
+
     // Determines the result of the match (who won, lost and pseudos)
     function determineResult() {
       // If all the Players haven't been selected, or all the results haven't been provided, exit early
@@ -70,27 +88,24 @@
       var loserName = $("#player" + (loser + 1)).val();
       
       // In order to win outright, a player always requires exactly 6 wins, else someone lost
-      if (winCount === 6) {
-        $resultSubmit.removeClass("resultLoser").addClass("resultWinner").removeAttr("disabled");
-        
+      if (winCount === 6) {        
         // If the winner and the loser is the same, there is no pseudo, else there is
         if (winner === loser) {
-          $resultSubmit.html("Capture a win for " + winnerName);
+          $resultSubmit.html("Submit a win for " + winnerName);
         } else if (loseCount > sameWinCount) {
-          $resultSubmit.html("Capture a win for " + winnerName + " (and a pseudo-win for " + loserName +")");
+          $resultSubmit.html("Submit a win for " + winnerName + " (and a pseudo-win for " + loserName +")");
         } else {
-          $resultSubmit.html("Capture a win for " + winnerName + " (and a pseudo-loss for " + loserName +")");
+          $resultSubmit.html("Submit a win for " + winnerName + " (and a pseudo-loss for " + loserName +")");
         }
       } else {
-        $resultSubmit.removeClass("resultWinner").addClass("resultLoser").removeAttr("disabled")
         
         // If the loser and the winner is the same, there is no pseudo, else there is
         if (loser === winner) {
-          $resultSubmit.html("Capture a loss for " + loserName);
+          $resultSubmit.html("Submit a loss for " + loserName);
         } else if (winCount > sameWinCount) {
-          $resultSubmit.html("Capture a loss for " + loserName + " (and a pseudo-win for " + winnerName +")");
+          $resultSubmit.html("Submit a loss for " + loserName + " (and a pseudo-win for " + winnerName +")");
         } else {
-          $resultSubmit.html("Capture a loss for " + loserName + " (and a pseudo-loss for " + winnerName +")");
+          $resultSubmit.html("Submit a loss for " + loserName + " (and a pseudo-loss for " + winnerName +")");
         }
       }
 	  }
@@ -103,8 +118,9 @@
           $this.siblings(".linkButton").addClass("deselected");
           $this.removeClass("deselected");
         }
-        
+                
         determineResult();
+        updateResultSubmitDisplay();
       });
       
       // User hovers over a Player
@@ -117,7 +133,7 @@
       // User selects a Player to add to the match result
       $(".player").click(function(event) {
         var $this = $(this);
-        
+                
         if ($this.hasClass("selected")) {
           var selectedPlayer = $this.attr("player");
           
@@ -128,12 +144,10 @@
           $("#player" + selectedPlayer).val("");
           
           $(".matchPlayer[player=" + selectedPlayer + "]").html(
-            '<div class="selectPlayer">Select Player ' + selectedPlayer + '</div>'
+            '<div class="selectPlayer">Player ' + selectedPlayer + '</div>'
           ).removeClass("expose");
           
           $this.removeClass("expose").removeClass("selected");
-          
-          $("#resultSubmit").removeClass("resultWinner").removeClass("resultLoser").attr("disabled", "true").html("Capture match results");
         } else {
 	        var selectedPlayer = 1;
 	        while ($.inArray(selectedPlayer, selectedPlayers) !== -1) {
@@ -141,7 +155,10 @@
 	        }
 	        
 	        if (selectedPlayer === 5) {
-	          return; // All 4 players have been selected
+	          return; // Not allowed to select 5 players
+	        }
+	        if (selectedPlayer === 4) { // Fade in the result buttons (if they aren't there already)
+            $(".linkButton").css("visibility", "visible").hide().fadeIn("slow")
 	        }
 	        
 	        $("#player" + selectedPlayer).val($this.attr("name"));
@@ -157,6 +174,8 @@
 	        
 	        determineResult();
 	      }
+	      
+	      updateResultSubmitDisplay();
       });
       
       // Users clicks the "Capture match result" button
@@ -214,7 +233,7 @@
           data: "{action: 'confirm'}"
         });
 	    
-		    $(this).closest(".warning").fadeOut();
+		    $(this).closest(".warning").fadeOut("slow");
 	    });
 	  
 	    // Adjust the standings height to match the results heigh
@@ -236,7 +255,7 @@
 		        Can you confirm that @foosMatch.resultString?
 		      </div>
 		      <div class="tableCell">
-            <button type="button" class="confirmButton" matchId="@foosMatch.matchId">Confirm</button>
+            <button type="button" class="submitButton confirmButton" matchId="@foosMatch.matchId">Confirm</button>
 		      </div>
 		    </div>
       }
@@ -246,23 +265,6 @@
   <div class="bigLeft">
     <div id="matchResults" class="widget">
       <h1 class="centered">Capture match results:</h1>
-      @tags.matchResults(1)
-      @tags.matchResults(2)
-      @tags.matchResults(3)
-     
-      @helper.form(routes.Dashboard.captureMatch) {
-	    <input type="hidden" id="player1" name="player1" />
-	    <input type="hidden" id="player2" name="player2" />
-	    <input type="hidden" id="player3" name="player3" />
-	    <input type="hidden" id="player4" name="player4" />
-
-        <input type="hidden" id="results" name="results" />
-        
-	    <div class="centered">
-          <button id="resultSubmit" type="submit" disabled="true" style="cursor: pointer;">Capture match results</button>
-        </div>
-      }
-
 
       <div class="players">
         @for(user <- users) {
@@ -272,6 +274,25 @@
           </div>
         }
       </div>
+
+      <hr class="divider" />
+
+      @tags.matchResults(1)
+      @tags.matchResults(2)
+      @tags.matchResults(3)
+     
+      @helper.form(routes.Dashboard.captureMatch) {
+	      <input type="hidden" id="player1" name="player1" />
+	      <input type="hidden" id="player2" name="player2" />
+	      <input type="hidden" id="player3" name="player3" />
+	      <input type="hidden" id="player4" name="player4" />
+
+        <input type="hidden" id="results" name="results" />
+        
+	      <div class="centered">
+          <button id="resultSubmit" class="submitButton" style="visibility: hidden;" type="submit">Capture match results</button>
+        </div>
+      }
     </div>
   </div>
   <div class="smallRight">
