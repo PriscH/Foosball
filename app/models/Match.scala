@@ -40,6 +40,10 @@ object Match {
     SQL("select * from match").as(Match.simple *)
   }
   
+  def findById(matchId: Long): Match = DB.withConnection { implicit connection =>
+    SQL("select * from match where match.id = {matchId}").on('matchId -> {matchId}).single(Match.simple)
+  }
+  
   def findUnconfirmedFor(player: String): Seq[Match] = DB.withConnection { implicit connection =>
     SQL("""
         select match.* from match 
@@ -63,5 +67,22 @@ object Match {
   } match {
     case Some(key) => Match(key, foosMatch)
     case None      => throw new RuntimeException("Could not create a match.")
+  }
+  
+  def update(foosMatch: Match) = DB.withConnection { implicit connection => 
+    SQL("""
+        update match 
+          set captured_date = {capturedDate},
+              captured_by = {capturedBy}, 
+              confirmed_by = {confirmedBy}, 
+              format = {format}
+          where id = {matchId}
+        """).on(
+        'capturedDate -> foosMatch.capturedDate.toDate(),
+        'capturedBy   -> foosMatch.capturedBy,
+        'confirmedBy  -> foosMatch.confirmedBy,
+        'format       -> foosMatch.format,
+        'matchId      -> foosMatch.id
+      ).executeUpdate() 
   }
 }

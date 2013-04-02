@@ -7,6 +7,8 @@ import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 
+import anorm.NotAssigned
+
 import domain._
 import models._
 import views._
@@ -44,12 +46,16 @@ object Dashboard extends Controller with Secured {
       
       val result = (((results \ "games")(index)) \ "result").as[String]
           
-      Game(winner1, winner2, loser1, loser2, result)
+      Game(NotAssigned, 0, winner1, winner2, loser1, loser2, result)
     } 
     
     MatchService.captureMatch(games, request.session.get("username").get)
            
     Redirect(routes.Dashboard.show).flashing("success" -> Messages("match.capture.success"))
   }}
-
+  
+  def confirmMatch(matchId: Long) = SecuredAction { implicit request => {
+    MatchService.confirmMatch(matchId, request.session.get("username").get)
+    Ok("Success")
+  }}
 }

@@ -203,13 +203,21 @@
         $("#results").val(JSON.stringify(request));    
       });
       
-	  // User clicks on one of the confirmation messages
-	  $(".confirmButton").click(function(event) {
-		// TODO: Submit to server
-		$(this).closest(".warning").fadeOut();
-	  });
+	    // User clicks on one of the confirmation messages
+	    $(".confirmButton").click(function(event) {
+	      var $this = $(this);
+	    
+	      // TODO: going to need jsRouting for play routes to work here
+	      $.ajax({
+          url: "/match/" + $this.attr('matchId'),
+          type: "post",
+          data: "{action: 'confirm'}"
+        });
+	    
+		    $(this).closest(".warning").fadeOut();
+	    });
 	  
-	  // Adjust the standings height to match the results heigh
+	    // Adjust the standings height to match the results heigh
       $("#standings").height($("#matchResults").height());   
     });
   </script>
@@ -223,14 +231,14 @@
   @if(!unconfirmedMatches.isEmpty) {
     <div class="warning table">
       @unconfirmedMatches.map { foosMatch =>
-		<div class="tableRow">
-		  <div class="tableCell">
-		    Can you confirm that @foosMatch.resultString?
-		  </div>
-		  <div class="tableCell">
-            <button type="button" class="confirmButton">Confirm</button>
-		  </div>
-		</div>
+		    <div class="tableRow">
+		      <div class="tableCell">
+		        Can you confirm that @foosMatch.resultString?
+		      </div>
+		      <div class="tableCell">
+            <button type="button" class="confirmButton" matchId="@foosMatch.matchId">Confirm</button>
+		      </div>
+		    </div>
       }
     </div>
   }

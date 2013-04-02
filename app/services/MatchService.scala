@@ -11,7 +11,7 @@ object MatchService {
   // TODO: I don't want to pass the user through, but I have no idea how to retrieve it from the Session at this stage
   def captureMatch(games: Seq[Game], username: String) {
     val foosMatch = Match.create(Match(NotAssigned, new DateTime(), username, None, "Two-on-Two"))
-    games.map(game => Game.create(Game(foosMatch.id.get, game)))
+    games.map(game => Game.create(game.copy(matchId = foosMatch.id.get)))
     
     val players = List(games(0).winner1, games(0).winner2, games(0).loser1, games(0).loser2)
     val playerScores = players.map(player => (player, playerScore(player, games))).toMap  
@@ -20,6 +20,17 @@ object MatchService {
     
     val matchResults = players.map(player => MatchResult(foosMatch.id.get, player, playerResults(player), playerRanks(player), playerScores(player)))
     matchResults.map(matchResult => MatchResult.create(matchResult))
+  }
+  
+  // TODO: I don't want to pass the user through, but I have no idea how to retrieve it from the Session at this stage
+  def confirmMatch(matchId: Long, username: String) {
+    val foosMatch = Match.findById(matchId)
+    if (username == foosMatch.capturedBy) {
+      throw new RuntimeException("Player isn't allowed to confirm a match they captured.")
+    }   
+    Match.update(foosMatch.copy(confirmedBy = Some(username)))
+    
+    // TODO: Calculate Elo Changes
   }
   
   // ===== Helpers =====
