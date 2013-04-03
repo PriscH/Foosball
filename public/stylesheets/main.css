@@ -50,8 +50,7 @@ button {
   font-size: 220%;
   font-weight: bold;
 
-  background: #EEE;
-  border: 1px solid #BBB;
+  border: 1px solid;
   border-radius: 3px;
   -moz-border-radius: 3px;
 
@@ -61,6 +60,14 @@ button {
 
   cursor: pointer;
   display: inline-block;
+}
+
+.disabledButton {
+  color: darkGray;
+  background: #EEE;
+  border-color: darkGray;
+  opacity: 0.3;
+  cursor: default;
 }
 
 .submitButton {

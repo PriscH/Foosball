@@ -12,14 +12,15 @@
       var $resultSubmit = $("#resultSubmit");
     
       if ($(".linkButton:not(.deselected)").length === 3 && selectedPlayers.length === 4) {
-        if ($resultSubmit.css("visibility") === "hidden") {          
-          $resultSubmit.css("visibility", "visible").hide().fadeIn("slow");
+        if ($resultSubmit.hasClass("disabledButton")) {          
+          $resultSubmit.removeClass("disabledButton").addClass("submitButton");
+          $resultSubmit.removeAttr("disabled");
         }
       } else {
-        if ($resultSubmit.css("visibility") === "visible") {
-          $resultSubmit.fadeOut("slow", function() {
-            $resultSubmit.css("visibility", "hidden").css("display", "");
-          });
+        if (!$resultSubmit.hasClass("disabledButton")) {
+          $resultSubmit.removeClass("submitButton").addClass("disabledButton");
+          $resultSubmit.attr("disabled", "true");
+          $resultSubmit.text("Capture match results");
         } 
       }
     }
@@ -114,6 +115,10 @@
       // User clicks on one of the match result buttons (for example 2-1)
       $(".linkButton").click(function(event) {
         var $this = $(this);
+        if ($this.hasClass("disabledButton")) {
+        	return;
+        }
+        
         if ($this.hasClass("deselected")) {
           $this.siblings(".linkButton").addClass("deselected");
           $this.removeClass("deselected");
@@ -157,8 +162,8 @@
 	        if (selectedPlayer === 5) {
 	          return; // Not allowed to select 5 players
 	        }
-	        if (selectedPlayer === 4) { // Fade in the result buttons (if they aren't there already)
-            $(".linkButton").css("visibility", "visible").hide().fadeIn("slow")
+	        if (selectedPlayer === 4) { // Activate the result buttons (if they aren't active yet)
+              $(".linkButton").removeClass("disabledButton").addClass("resultButton");
 	        }
 	        
 	        $("#player" + selectedPlayer).val($this.attr("name"));
@@ -180,6 +185,10 @@
       
       // Users clicks the "Capture match result" button
       $("#resultSubmit").click(function(event) {
+    	if ($(this).hasClass("disabledButton")) {
+    		return;
+    	}
+    	  
         var players = ["1", "2", "3", "4"];
       
         var request = {};
@@ -222,19 +231,19 @@
         $("#results").val(JSON.stringify(request));    
       });
       
-	    // User clicks on one of the confirmation messages
-	    $(".confirmButton").click(function(event) {
-	      var $this = $(this);
-	    
-	      // TODO: going to need jsRouting for play routes to work here
-	      $.ajax({
+	  // User clicks on one of the confirmation messages
+	  $(".confirmButton").click(function(event) {
+	    var $this = $(this);
+	  
+	    // TODO: going to need jsRouting for play routes to work here
+	    $.ajax({
           url: "/match/" + $this.attr('matchId'),
           type: "post",
           data: "{action: 'confirm'}"
         });
 	    
-		    $(this).closest(".warning").fadeOut("slow");
-	    });
+        $(this).closest(".warning").fadeOut("slow");
+	  });
 	  
 	    // Adjust the standings height to match the results heigh
       $("#standings").height($("#matchResults").height());   
@@ -290,7 +299,7 @@
         <input type="hidden" id="results" name="results" />
         
 	      <div class="centered">
-          <button id="resultSubmit" class="submitButton" style="visibility: hidden;" type="submit">Capture match results</button>
+          <button id="resultSubmit" class="disabledButton" type="submit" disabled="true">Capture match results</button>
         </div>
       }
     </div>
