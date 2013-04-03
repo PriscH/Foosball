@@ -35,6 +35,16 @@ object PlayerElo {
     SQL("select * from player_elo").as(PlayerElo.simple *)
   }
   
+  def findLatestElos(): Seq[PlayerElo] = DB.withConnection { implicit connection =>
+    SQL("""
+          select player_elo.* from player_elo
+            inner join (
+              select player, max(captured_date) from player_elo group by player) as latest_value
+            on player_elo.player = latest_value.player
+            and player_elo.captured_date = latest_value.captured_date
+        """).as(PlayerElo.simple *)
+  }
+  
   // ===== Persistance Operations =====
 
   def create(playerElo: PlayerElo): PlayerElo = DB.withConnection { implicit connection =>
