@@ -23,17 +23,12 @@ object EloService {
       case None      => StartingElo
     }))
     
+    val totalMatchScore = matchResults.map(_.score).sum
     val updatedElos = playerElos.map(eloTuple => 
       (eloTuple._1, {
         val opponentElo = playerElos.filter(_._1 != eloTuple._1).map(_._2).sum / 3
         val expectedScore = 1.0 / (1 + math.pow(10.0, (opponentElo - eloTuple._2) / 50))
-        val actualScore = matchResults.find(_.player == eloTuple._1).get.result match {
-          case "Winner"        => 1.0
-          case "Pseudo-Winner" => 0.75
-          case "Nothing"       => 0.5
-          case "Pseudo-Loser"  => 0.25
-          case "Loser"         => 0.0
-        }
+        val actualScore = matchResults.find(_.player == eloTuple._1).get.score.toDouble / totalMatchScore * 2
       
         math.round(eloTuple._2 + KValue * (actualScore - expectedScore)).toInt
       })
