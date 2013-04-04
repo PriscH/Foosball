@@ -39,9 +39,9 @@ object PlayerElo {
     SQL("""
           select player_elo.* from player_elo
             inner join (
-              select player, max(captured_date) from player_elo group by player) as latest_value
+              select player, max(captured_date) as max_date from player_elo group by player) as latest_value
             on player_elo.player = latest_value.player
-            and player_elo.captured_date = latest_value.captured_date
+            and player_elo.captured_date = latest_value.max_date
         """).as(PlayerElo.simple *)
   }
   
@@ -50,7 +50,7 @@ object PlayerElo {
   def create(playerElo: PlayerElo): PlayerElo = DB.withConnection { implicit connection =>
     SQL("insert into player_elo (player, captured_date, match_id, change, elo) values ({player}, {capturedDate}, {matchId}, {change}, {elo})").on(
       'player       -> playerElo.player,
-      'capturedDate -> playerElo.capturedDate,
+      'capturedDate -> playerElo.capturedDate.toDate(),
       'matchId      -> playerElo.matchId,
       'change       -> playerElo.change,
       'elo          -> playerElo.elo

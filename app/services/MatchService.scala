@@ -30,7 +30,8 @@ object MatchService {
     }   
     Match.update(foosMatch.copy(confirmedBy = Some(username)))
     
-    // TODO: Calculate Elo Changes
+    val matchResults = MatchResult.findByMatch(foosMatch.id.get)
+    EloService.updateElo(matchResults)
   }
   
   // ===== Helpers =====

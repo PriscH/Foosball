@@ -29,6 +29,11 @@ object Dashboard extends Controller with Secured {
     val unconfirmedMatches = Match.findUnconfirmedFor(request.session.get("username").get)
     val matchesWithResults = unconfirmedMatches.map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))
     
+    
+    val currentElos = PlayerElo.findLatestElos
+    println(currentElos)
+    
+    
     Ok(html.dashboard.index(users, matchesWithResults))
   }}
   
