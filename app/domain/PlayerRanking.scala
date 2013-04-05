@@ -1,3 +1,3 @@
 package domain
 
-case class PlayerRanking(name: String, played: Int, won: Int, pseudoWon: Int, pseuoLost: Int, lost: Int, elo: Int)
+case class PlayerRanking(player: String, rank: Int, played: Int, won: Int, pseudoWon: Int, pseudoLost: Int, lost: Int, elo: Int)

@@ -1,4 +1,4 @@
-@(users: Seq[models.User], unconfirmedMatches: Seq[domain.MatchWithResults])(implicit flash: Flash)
+@(users: Seq[models.User], unconfirmedMatches: Seq[domain.MatchWithResults], playerRankings: Seq[domain.PlayerRanking])(implicit flash: Flash)
 
 @main{
   <title>Foosball - Dashboard</title>
@@ -307,6 +307,35 @@
   <div class="smallRight">
     <div id="standings" class="widget">
       <h1 class="centered">Current standings:</h1>
+
+      <table class="center rankingTable">
+        <thead>
+          <tr>
+            <th class="rankingCell bold"></th>
+            <th class="rankingCell bold">Player</th>
+            <th class="rankingCell bold">#</th>
+            <th class="rankingCell bold">Won</th>
+            <th class="rankingCell bold">P-Won</th>
+            <th class="rankingCell bold">P-Lost</th>
+            <th class="rankingCell bold">Lost</th>
+            <th class="rankingCell bold">Elo</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(playerRanking <- playerRankings) {
+            <tr>
+              <td class="rankingCell">@(playerRanking.rank + ".")</td>
+              <td class="rankingCell bold">@playerRanking.player</td>
+              <td class="rankingCell">@playerRanking.played</td>
+              <td class="rankingCell">@playerRanking.won</td>
+              <td class="rankingCell">@playerRanking.pseudoWon</td>
+              <td class="rankingCell">@playerRanking.pseudoLost</td>
+              <td class="rankingCell">@playerRanking.lost</td>
+              <td class="rankingCell bold">@playerRanking.elo</td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 }

@@ -22,6 +22,15 @@ button {
   -moz-border-radius: 10px;
 }
 
+.bold {
+  font-weight: bold;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .centered {
   text-align:center;
 }
@@ -428,6 +437,19 @@ html {
   font-weight: bold;  
   margin: 2px;
   padding: 5px 5px;
+}
+
+.rankingTable {
+  margin-top: 15px;
+  background: gold;
+  border: 2px solid;
+}
+
+.rankingCell {
+  padding: 8px 6px;
+  border: 3px solid;
+  border-color: #FEFDF8;
+  text-align: center;
 }
 
 /* JQUERY-UI */

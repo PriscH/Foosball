@@ -26,10 +26,13 @@ object Dashboard extends Controller with Secured {
   
   def show = SecuredAction { implicit request => {
     val users = User.all
-    val unconfirmedMatches = Match.findUnconfirmedFor(request.session.get("username").get)
-    val matchesWithResults = unconfirmedMatches.map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))    
     
-    Ok(html.dashboard.index(users, matchesWithResults))
+    val unconfirmedMatches = Match.findUnconfirmedFor(request.session.get("username").get)
+    val matchesWithResults = unconfirmedMatches.map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))
+    
+    val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
+    
+    Ok(html.dashboard.index(users, matchesWithResults, playerRankings))
   }}
   
   def captureMatch = SecuredAction { implicit request => {

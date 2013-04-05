@@ -10,8 +10,10 @@ import models._
 
 object EloService {
   
-  private val StartingElo = 100
-  private val KValue = 12
+  val StartingElo = 100
+  
+  private val RatingAdvantage = 80
+  private val KValue = 18
   
   // ===== Interface =====
   
@@ -27,7 +29,7 @@ object EloService {
     val updatedElos = playerElos.map(eloTuple => 
       (eloTuple._1, {
         val opponentElo = playerElos.filter(_._1 != eloTuple._1).map(_._2).sum / 3
-        val expectedScore = 1.0 / (1 + math.pow(10.0, (opponentElo - eloTuple._2) / 50))
+        val expectedScore = 1.0 / (1 + math.pow(10.0, (opponentElo - eloTuple._2) / RatingAdvantage))
         val actualScore = matchResults.find(_.player == eloTuple._1).get.score.toDouble / totalMatchScore * 2
       
         math.round(eloTuple._2 + KValue * (actualScore - expectedScore)).toInt
