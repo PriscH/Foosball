@@ -234,15 +234,22 @@
 	  // User clicks on one of the confirmation messages
 	  $(".confirmButton").click(function(event) {
 	    var $this = $(this);
+	    var $confirmations = $("#matchConfirmations");	  
 	  
 	    // TODO: going to need jsRouting for play routes to work here
 	    $.ajax({
-          url: "/match/" + $this.attr('matchId'),
-          type: "post",
-          data: "{action: 'confirm'}"
-        });
+        url: "/match/" + $this.attr('matchId'),
+        type: "post",
+        data: "{action: 'confirm'}"
+      });
 	    
-        $(this).closest(".warning").fadeOut("slow");
+	    if ($confirmations.children(".tableRow").length > 1) {
+	      $this.closest(".tableRow").fadeOut("slow", function() {
+	        $this.closest(".tableRow").remove();
+	      });
+	    } else {
+        $confirmations.fadeOut("slow");
+      }
 	  });
 	  
 	    // Adjust the standings height to match the results heigh
@@ -257,7 +264,7 @@
   }
 
   @if(!unconfirmedMatches.isEmpty) {
-    <div class="warning table">
+    <div id="matchConfirmations" class="warning table">
       @unconfirmedMatches.map { foosMatch =>
 		    <div class="tableRow">
 		      <div class="tableCell">
