@@ -441,15 +441,40 @@ html {
 
 .rankingTable {
   margin-top: 15px;
-  background: gold;
-  border: 2px solid;
+  width: 385px;
+  table-layout: fixed;
 }
 
-.rankingCell {
-  padding: 8px 6px;
+.rankingTable > thead {
+  background: gold;
+}
+
+.rankingTable * th {
+  padding: 8px 8px;
+  border: 3px solid;  
+  border-color: #FEFDF8;
+  text-align: center;
+}
+
+.rankingTable > tbody {
+  background: lemonChiffon;
+}
+
+.rankingTable * td {
+  padding: 8px 8px;
   border: 3px solid;
   border-color: #FEFDF8;
   text-align: center;
+}
+
+.rankColumn {
+  width: 15px;
+  text-align: left !important;
+}
+
+.nameColumn {
+  width: 80px;
+  text-align: left !important;
 }
 
 /* JQUERY-UI */
