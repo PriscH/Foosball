@@ -25,9 +25,9 @@ object MatchService {
   // TODO: I don't want to pass the user through, but I have no idea how to retrieve it from the Session at this stage
   def confirmMatch(matchId: Long, username: String) {
     val foosMatch = Match.findById(matchId)
-    if (username == foosMatch.capturedBy) {
-      throw new RuntimeException("Player isn't allowed to confirm a match they captured.")
-    }   
+    require(foosMatch.confirmedBy.isEmpty)
+    require(username != foosMatch.capturedBy)
+    
     Match.update(foosMatch.copy(confirmedBy = Some(username)))
     
     val matchResults = MatchResult.findByMatch(foosMatch.id.get)

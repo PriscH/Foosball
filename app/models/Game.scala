@@ -8,7 +8,13 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-case class Game(id: Pk[Long], matchId: Long, winner1: String, winner2: String, loser1: String, loser2: String, result: String)
+case class Game(id: Pk[Long], matchId: Long, winner1: String, winner2: String, loser1: String, loser2: String, result: String) {
+  require(!winner1.isEmpty() && !winner2.isEmpty() && !loser1.isEmpty() && !loser2.isEmpty() && !result.isEmpty())
+  require(winner1 != winner2 && winner1 != loser1 && winner1 != loser2)
+  require(winner2 != loser1 && winner2 != loser2)
+  require(loser1 != loser2)
+  require(List("2-0", "2-1").contains(result))
+}
 
 object Game {
       
