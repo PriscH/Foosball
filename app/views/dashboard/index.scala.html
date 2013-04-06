@@ -231,26 +231,37 @@
         $("#results").val(JSON.stringify(request));    
       });
       
-	  // User clicks on one of the confirmation messages
-	  $(".confirmButton").click(function(event) {
-	    var $this = $(this);
-	    var $confirmations = $("#matchConfirmations");	  
+	    // User clicks on one of the confirmation messages
+	    $(".confirmButton").click(function(event) {
+	      var $this = $(this);
+	      var $confirmations = $("#matchConfirmations");	  
 	  
-	    // TODO: going to need jsRouting for play routes to work here
-	    $.ajax({
-        url: "/match/" + $this.attr('matchId'),
-        type: "post",
-        data: "{action: 'confirm'}"
-      });
+	      // TODO: going to need jsRouting for play routes to work here
+	      $.ajax({
+          url: "/match/" + $this.attr('matchId'),
+          type: "post",
+          data: "{action: 'confirm'}"
+        });
 	    
-	    if ($confirmations.children(".tableRow").length > 1) {
-	      $this.closest(".tableRow").fadeOut("slow", function() {
-	        $this.closest(".tableRow").remove();
-	      });
-	    } else {
-        $confirmations.fadeOut("slow");
-      }
-	  });
+	      if ($confirmations.children(".tableRow").length > 1) {
+	        $this.closest(".tableRow").fadeOut("slow", function() {
+	          $this.closest(".tableRow").remove();
+	        });
+	      } else {
+          $confirmations.fadeOut("slow");
+        }
+	    });
+	  
+	    // Register the AJAX Spinners
+	    $.ajaxSetup({
+        beforeSend: function() {
+          $('.inlineLoader').show();
+        },
+        complete: function(){
+          $('.inlineLoader').hide();
+        },
+        success: function() {}
+      });
 	  
 	    // Adjust the standings height to match the results heigh
       $("#standings").height($("#matchResults").height());   
@@ -313,7 +324,11 @@
   </div>
   <div class="smallRight">
     <div id="standings" class="widget">
-      <h1 class="centered">Current standings:</h1>
+      <div class="centered">
+        <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
+        <h1 class="inline">Current standings:</h1>
+        <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
+      </div>
 
       <table class="center rankingTable">
         <thead>

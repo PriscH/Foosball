@@ -43,6 +43,15 @@ button {
   visibility: hidden;
 }
 
+.inline {
+  display: inline;
+}
+
+.inlineLoader {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
 .singleColumn > div {
   margin: 5px 0px;
 }
