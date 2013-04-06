@@ -240,15 +240,18 @@
 	      $.ajax({
           url: "/match/" + $this.attr('matchId'),
           type: "post",
-          data: "{action: 'confirm'}"
+          data: "{action: 'confirm'}",
+          success: function(data) {
+            $(".rankingTable").replaceWith(data);
+          }
         });
 	    
 	      if ($confirmations.children(".tableRow").length > 1) {
-	        $this.closest(".tableRow").fadeOut("slow", function() {
+	        $this.closest(".tableRow").fadeOut("fast", function() {
 	          $this.closest(".tableRow").remove();
 	        });
 	      } else {
-          $confirmations.fadeOut("slow");
+          $confirmations.fadeOut("fast");
         }
 	    });
 	  
@@ -330,34 +333,8 @@
         <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
       </div>
 
-      <table class="center rankingTable">
-        <thead>
-          <tr>
-            <th class="rankColumn"></th>
-            <th class="nameColumn">Player</th>
-            <th>#</th>
-            <th>W</th>
-            <th>PW</th>
-            <th>PL</th>
-            <th>L</th>
-            <th>Elo</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for(playerRanking <- playerRankings) {
-            <tr>
-              <td class="rankColumn">@(playerRanking.rank + ".")</td>
-              <td class="nameColumn bold">@playerRanking.player</td>
-              <td>@playerRanking.played</td>
-              <td>@playerRanking.won</td>
-              <td>@playerRanking.pseudoWon</td>
-              <td>@playerRanking.pseudoLost</td>
-              <td>@playerRanking.lost</td>
-              <td class="bold">@playerRanking.elo</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      @tags.rankingTable(playerRankings)
+
     </div>
   </div>
 }

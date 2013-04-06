@@ -59,6 +59,7 @@ object Dashboard extends Controller with Secured {
   
   def confirmMatch(matchId: Long) = SecuredAction { implicit request => {
     MatchService.confirmMatch(matchId, request.session.get("username").get)
-    Ok("Success")
+    val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
+    Ok(html.tags.rankingTable(playerRankings))
   }}
 }
