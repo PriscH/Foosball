@@ -405,6 +405,8 @@ html {
 
 .playerName {
   font-size: x-large;
+  float: left;
+  margin-left: 2px;
 }
 
 .matchResults {
