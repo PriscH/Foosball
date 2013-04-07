@@ -525,21 +525,13 @@ html {
   padding: 0 10px;
 }
 
-.signupMultiInput {
-  float: left;
-}
-
 .signupAvatar {
   border: 1px solid;
   display: block;
   width: 128px;
   height: 128px;
   background-color: white;
-}
-
-.avatarSelect {
-  margin: 5px 0 0 7px;
-  padding: 3px 3px;
+  cursor: pointer;
 }
 
 .avatarOptions {
@@ -581,7 +573,6 @@ html {
   height: 50px;
   font-size: x-large;
   font-weight: bold;
-  margin: 20px 0 0 0;
 }
 
 /* JQUERY-UI */
