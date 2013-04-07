@@ -21,10 +21,14 @@ object Application extends Controller {
 
   // ===== Authentication Actions =====
   
-  def login = Action { implicit request => {
+  def login = Action { implicit request =>
     val users = User.all
     Ok(html.application.login(users))
-  }}
+  }
+  
+  def logout = Action { implicit request =>
+    Redirect(routes.Application.login).withNewSession 
+  }
   
   
   def authenticate = Action { implicit request =>
