@@ -1,0 +1,42 @@
+@()(implicit request: RequestHeader, flash: Flash)
+
+@main {
+  <title>Foosball - Signup</title>
+  
+  <script type="text/javascript">
+    $(document).ready(function() {
+    });
+  </script>
+}{
+  <div class="signup widget">
+    <h1 class="centered">Create your player:</h1>
+
+    <div class="signupRow">
+      <label class="signupLabel">Name:</label>
+      <input class="signupInput" name="name" id="name" maxlength="10" autocapitalize="on" type="text">
+    </div>
+
+    <div class="signupRow">
+      <label class="signupLabel">Email:</label>
+      <input class="signupInput" name="email" id="email" type="email">
+    </div>
+
+    <div class="signupRow">
+      <label class="signupLabel">Password:</label>
+      <input class="signupInput" name="password" id="password" type="password">
+    </div>
+
+    <div class="signupRow">
+      <label class="signupLabel">Avatar:</label>
+      <div class="signupMultiInput">
+        <img class="signupAvatar" src="@routes.Assets.at("images/avatars/default.png")" alt="Avatar" />
+        <button class="selectButton avatarSelect" type="button">Select Avatar</button>
+      </div>
+    </div>
+
+    <div class="centered">
+      <button id="playerSubmit" class="disabledButton" type="submit" disabled="true">Submit your player</button>
+    </div>
+
+  </div>
+}

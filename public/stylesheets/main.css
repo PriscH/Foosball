@@ -92,6 +92,14 @@ button {
   border: solid 2px darkBlue;
 }
 
+.selectButton {
+  color: sienna;
+  background: #F2E1A9;
+  border-color: darkGoldenrod;
+  box-shadow: 2px 2px 3px sienna;
+  cursor: pointer;
+}
+
 .submitButton {
   color: #9F6000;
   background: #F7D14A;
@@ -473,6 +481,57 @@ html {
 .nameColumn {
   width: 80px;
   text-align: left !important;
+}
+
+/* SIGNUP */
+
+.signup {
+  width: 555px;
+  margin: 10px auto;
+  padding: 20px 40px;
+  overflow: auto;
+}
+
+.signupRow {
+  margin: 20px 0;
+}
+
+.signupLabel {
+  font-size: x-large;
+  width: 150px;
+  line-height: 40px;
+  float: left;
+}
+
+.signupInput {
+  font-size: xx-large;
+  width: 380px;
+  height: 40px;
+  padding: 0 10px;
+}
+
+.signupMultiInput {
+  float: left;
+}
+
+.signupAvatar {
+  border: 1px solid;
+  display: block;
+  width: 128px;
+  height: 128px;
+}
+
+.avatarSelect {
+  margin: 5px 0 0 7px;
+  padding: 3px 3px;
+}
+
+#playerSubmit {
+  width: 500px;
+  height: 50px;
+  font-size: x-large;
+  font-weight: bold;
+  margin: 20px 0 0 0;
 }
 
 /* JQUERY-UI */

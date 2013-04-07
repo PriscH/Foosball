@@ -9,6 +9,9 @@ GET     /                           controllers.Application.login
 POST    /login                      controllers.Application.authenticate
 GET     /logout                     controllers.Application.logout
 
+# Signup
+GET     /signup/:token              controllers.Signup.show(token: String)
+
 # Dashboard
 GET     /dashboard                  controllers.Dashboard.show
 POST    /match                      controllers.Dashboard.captureMatch

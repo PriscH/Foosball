@@ -9,7 +9,7 @@ import play.api.libs.Codecs
 import anorm._
 import anorm.SqlParser._
 
-case class User(name: String, password: String, avatar: String)
+case class User(name: String, email: String, password: String, avatar: String)
 
 object User {
   
@@ -17,9 +17,10 @@ object User {
   
   val simple = {
   	get[String] ("user.name") ~
+  	get[String] ("user.email") ~
   	get[String] ("user.password") ~
   	get[String] ("user.avatar") map {
-  	  case name ~ password ~ avatar => User(name, password, avatar)
+  	  case name ~ email ~ password ~ avatar => User(name, email, password, avatar)
   	}
   }
   
@@ -32,8 +33,9 @@ object User {
   // ===== Persistance Operations =====
 
   def create(user: User): User = DB.withConnection { implicit connection =>
-    SQL("insert into user values ({name}, {password}, {avatar})").on(
+    SQL("insert into user values ({name}, {email}, {password}, {avatar})").on(
       'name     -> user.name,
+      'email    -> user.email,
       'password -> user.password,
       'avatar   -> user.avatar
     ).executeUpdate()

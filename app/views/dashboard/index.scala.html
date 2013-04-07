@@ -169,7 +169,7 @@
 	        $("#player" + selectedPlayer).val($this.attr("name"));
 	        
 	        $(".matchPlayer[player=" + selectedPlayer + "]").html(
-	          '<img class="smallAvatar" src="/assets/images/avatars/default.jpg" alt="Avatar" />' +
+	          '<img class="smallAvatar" src="' + $this.children("img").attr("src") + '" alt="Avatar" />' +
 	          '<div class="matchPlayerName">' + $this.attr("name") + '</div>'
 	        ).addClass("expose");
 	        
@@ -299,7 +299,7 @@
       <div class="players">
         @for(user <- users) {
           <div class="player" name="@user.name">
-            <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + user.avatar + ".jpg")" alt="Avatar" />
+            <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + user.avatar + ".png")" alt="Avatar" />
             <div class="playerName">@user.name</div>
           </div>
         }
