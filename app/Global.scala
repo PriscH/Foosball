@@ -25,12 +25,12 @@ object InitialData {
       
       /*
       Seq(
-        User("Ronaldo", "ronaldo@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "brazil"),
-        User("Maradona", "maradona@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "mexico"),
-        User("Zidane", "zidane@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "france"),
-        User("Beckham", "beckham@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "england"),
-        User("Pele", "pele@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "spain"),
-        User("Messi", "messi@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "argentina")
+        User("Ronaldo", "ronaldo@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "Bowser"),
+        User("Maradona", "maradona@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "CaptainFalcon"),
+        User("Zidane", "zidane@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "Kratos"),
+        User("Beckham", "beckham@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "Mario"),
+        User("Pele", "pele@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "SolidSnake"),
+        User("Messi", "messi@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "Villian")
       ).foreach(User.create)
       */
     }   
