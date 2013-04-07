@@ -88,6 +88,10 @@ button {
   cursor: default;
 }
 
+.squareBordered {
+  border: solid 2px darkBlue;
+}
+
 .submitButton {
   color: #9F6000;
   background: #F7D14A;
@@ -203,20 +207,7 @@ html {
 .navigation ul {
   overflow: hidden;
   list-style: none;
-
-  background-image: linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
-  background-image: -o-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
-  background-image: -moz-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
-  background-image: -webkit-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
-  background-image: -ms-linear-gradient(bottom, rgb(249,247,237) 25%, rgb(139,170,227) 75%);
-
-  background-image: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0.75, rgb(139,170,227)),
-    color-stop(0.25, rgb(249,247,237))
-  );
+  background-color: #FEFDF8;
 }
 
 .navigation li {
@@ -233,8 +224,8 @@ html {
 }
 
 .navigation li:hover a {
-  color: #FFFBDD;
-  text-shadow: 2px 2px 2px #BBB;
+  color: gold;
+  text-shadow: 2px 2px 3px saddleBrown;
 }
 
 .leftMenu {

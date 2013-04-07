@@ -1,4 +1,4 @@
-@(users: Seq[models.User], unconfirmedMatches: Seq[domain.MatchWithResults], playerRankings: Seq[domain.PlayerRanking])(implicit flash: Flash)
+@(users: Seq[models.User], unconfirmedMatches: Seq[domain.MatchWithResults], playerRankings: Seq[domain.PlayerRanking])(implicit request: RequestHeader, flash: Flash)
 
 @main{
   <title>Foosball - Dashboard</title>

@@ -1,4 +1,4 @@
-@(header: => Html)(content: => Html)
+@(header: => Html)(content: => Html)(implicit request: RequestHeader)
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -21,6 +21,19 @@
   <body>
     <div class="container">
       <div class="header bordered">
+        @if(!request.session.isEmpty) {
+          <div class="navigation">
+            <ul class="squareBordered">
+              <div class="leftMenu">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">New Player</a></li>
+              </div>
+              <div class="rightMenu">
+                <li><a href="#">Log Out</a></li>
+              </div>
+            </ul>
+          </div>
+        }
       </div>
       <div class="content bordered">
         @content

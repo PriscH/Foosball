@@ -1,4 +1,4 @@
-@(users: Seq[models.User])(implicit flash: Flash)
+@(users: Seq[models.User])(implicit request: RequestHeader, flash: Flash)
 
 @main {
   <title>Foosball - Login</title>
