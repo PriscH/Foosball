@@ -5,6 +5,18 @@
   
   <script type="text/javascript">
     $(document).ready(function() {
+      // Click on Select Avatar
+      $("#avatarSelectButton").click(function(event) {
+        $("#overlay").css('visibility', 'visible');
+      });
+      
+      // Click on one of the Avatar options
+      $(".avatarOption").click(function(event) {
+        var avatar = $(this).attr("avatar");
+        $("#avatar").val(avatar);
+        $("#selectedAvatar").attr("src", "/assets/images/avatars/" + avatar + ".png");
+        $("#overlay").css('visibility', 'hidden');
+      });
     });
   </script>
 }{
@@ -29,14 +41,28 @@
     <div class="signupRow">
       <label class="signupLabel">Avatar:</label>
       <div class="signupMultiInput">
-        <img class="signupAvatar" src="@routes.Assets.at("images/avatars/default.png")" alt="Avatar" />
-        <button class="selectButton avatarSelect" type="button">Select Avatar</button>
+        <img id="selectedAvatar" class="signupAvatar" src="@routes.Assets.at("images/avatars/default.png")" alt="Avatar" />
+        <button id="avatarSelectButton" class="selectButton avatarSelect" type="button">Select Avatar</button>
       </div>
     </div>
+
+    <input id="avatar" name="avatar" type="hidden" />
 
     <div class="centered">
       <button id="playerSubmit" class="disabledButton" type="submit" disabled="true">Submit your player</button>
     </div>
+  </div>
 
+  <div id="overlay">
+    <div class="avatarOptions">
+      <h1>Select your avatar:</h1>
+      @defining(List("angola", "argentina", "brazil", "croatia", "england", "france", "italy", "mexico", "netherlands", "paraguay", "portugal", "spain")) { avatars =>
+        <div class="avatars">
+          @for(avatar <- avatars) {
+            <img class="avatarOption" src='@routes.Assets.at("images/avatars/" + avatar + ".png")' alt=@avatar avatar=@avatar />
+          }
+        </div>
+      }
+    </div>
   </div>
 }
