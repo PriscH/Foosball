@@ -27,7 +27,9 @@ object InitialData {
         User("Beckham", "beckham@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "england"),
         User("Pele", "pele@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "spain"),
         User("Messi", "messi@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "argentina")
-      ).foreach(User.create)      
+      ).foreach(User.create)
+      
+      Token.create(Token("123", "Signup", new org.joda.time.DateTime()))
     }   
   }
   

@@ -1,9 +1,20 @@
-@()(implicit request: RequestHeader, flash: Flash)
+@(usedAvatars: Seq[String], token: String)(implicit request: RequestHeader, flash: Flash)
 
 @main {
   <title>Foosball - Signup</title>
   
   <script type="text/javascript">
+    function updatePlayerSubmitDisplay() {
+      var $playerSubmit = $("#playerSubmit");
+      
+      if ($playerSubmit.hasClass("disabledButton")) {
+        if ($("#name").val() != '' && $("#email").val() != '' && $("#password").val() != '' && $("#avatar").val() != '') {
+          $playerSubmit.removeClass("disabledButton").addClass("submitButton");
+          $playerSubmit.removeAttr("disabled");
+        }
+      }
+    }
+
     $(document).ready(function() {
       // Click on Select Avatar
       $("#selectedAvatar").click(function(event) {
@@ -16,38 +27,55 @@
         $("#avatar").val(avatar);
         $("#selectedAvatar").attr("src", "/assets/images/avatars/" + avatar + ".png");
         $("#overlay").css('visibility', 'hidden');
+        
+        updatePlayerSubmitDisplay();
       });
+      
+      // Try to activate the button when any of the inputs change
+      $(".signupInput").bind('input', function() { 
+        updatePlayerSubmitDisplay();
+      });
+      
     });
   </script>
 }{
+  @flash.get("error").map { message =>
+    <div class="error">
+      @message
+    </div>
+  }
+
   <div class="signup widget">
     <h1 class="centered">Create your player:</h1>
 
-    <div class="signupRow">
-      <label class="signupLabel">Name:</label>
-      <input class="signupInput" name="name" id="name" maxlength="10" autocapitalize="on" type="text">
-    </div>
+    @helper.form(routes.Signup.createPlayer) {
+      <div class="signupRow">
+        <label class="signupLabel">Name:</label>
+        <input class="signupInput" name="name" id="name" maxlength="10" autocapitalize="on" type="text" />
+      </div>
 
-    <div class="signupRow">
-      <label class="signupLabel">Email:</label>
-      <input class="signupInput" name="email" id="email" type="email">
-    </div>
+      <div class="signupRow">
+        <label class="signupLabel">Email:</label>
+        <input class="signupInput" name="email" id="email" type="email" />
+      </div>
 
-    <div class="signupRow">
-      <label class="signupLabel">Password:</label>
-      <input class="signupInput" name="password" id="password" type="password">
-    </div>
+      <div class="signupRow">
+        <label class="signupLabel">Password:</label>
+        <input class="signupInput" name="password" id="password" type="password" />
+      </div>
 
-    <div class="signupRow">
-      <label class="signupLabel">Avatar:</label>
+      <div class="signupRow">
+        <label class="signupLabel">Avatar:</label>
         <img id="selectedAvatar" class="signupAvatar" src="@routes.Assets.at("images/avatars/default.png")" alt="Avatar" />
-    </div>
+      </div>
 
-    <input id="avatar" name="avatar" type="hidden" />
+      <input id="avatar" name="avatar" type="hidden" />
+      <input id="token" name="token" type="hidden" value=@token />
 
-    <div class="centered">
-      <button id="playerSubmit" class="disabledButton" type="submit" disabled="true">Submit your player</button>
-    </div>
+      <div class="centered">
+        <button id="playerSubmit" class="disabledButton" type="submit" disabled="true">Submit your player</button>
+      </div>
+    }
   </div>
 
   <div id="overlay">
@@ -55,8 +83,12 @@
       <h1>Select your avatar:</h1>
       @defining(List("angola", "argentina", "brazil", "croatia", "england", "france", "italy", "mexico", "netherlands", "paraguay", "portugal", "spain")) { avatars =>
         <div class="avatars">
-          @for(avatar <- avatars) {
-            <img class="avatarOption" src='@routes.Assets.at("images/avatars/" + avatar + ".png")' alt=@avatar avatar=@avatar />
+          @for(avatar <- avatars) {        
+            @if(usedAvatars.contains(avatar)) {
+              <img class="avatarOption fade" src='@routes.Assets.at("images/avatars/" + avatar + ".png")' alt=@avatar avatar=@avatar available="false" />
+            } else {
+              <img class="avatarOption clickable" src='@routes.Assets.at("images/avatars/" + avatar + ".png")' alt=@avatar avatar=@avatar available="true" />
+            }
           }
         </div>
       }

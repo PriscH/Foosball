@@ -11,6 +11,7 @@ GET     /logout                     controllers.Application.logout
 
 # Signup
 GET     /signup/:token              controllers.Signup.show(token: String)
+POST    /player                     controllers.Signup.createPlayer
 
 # Dashboard
 GET     /dashboard                  controllers.Dashboard.show

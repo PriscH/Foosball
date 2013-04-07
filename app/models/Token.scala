@@ -49,8 +49,8 @@ object Token {
     return token
   }
   
-  def delete(token: Token) = DB.withConnection { implicit connection =>
-    SQL("delete from token where value = {value}").on('value -> token.value).executeUpdate()
+  def delete(token: String) = DB.withConnection { implicit connection =>
+    SQL("delete from token where value = {value}").on('value -> token).executeUpdate()
   }
   
 }

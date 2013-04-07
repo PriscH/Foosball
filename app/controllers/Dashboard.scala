@@ -20,8 +20,9 @@ object Dashboard extends Controller with Secured {
   // ===== Forms =====
   
   val captureMatchForm = Form(
-    "results" -> text
-  )  
+    "results" -> nonEmptyText
+  ) 
+
   // ===== Actions =====
   
   def show = SecuredAction { implicit request => {

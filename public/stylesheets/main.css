@@ -35,6 +35,14 @@ button {
   text-align:center;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  box-shadow: 0 0 15px saddleBrown;
+}
+
 .glow {
   box-shadow: 0 0 15px saddleBrown;
 }
@@ -307,7 +315,7 @@ html {
 
 .fade {
   background-color: #DDD;
-  opacity: 0.4;
+  opacity: 0.3;
 }
 
 .header {
@@ -556,12 +564,6 @@ html {
   
   border: 1px solid;
   margin: 5px 5px;
-  
-  cursor: pointer;
-}
-
-.avatarOption:hover {
-  box-shadow: 0 0 15px saddleBrown;
 }
 
 .avatars {

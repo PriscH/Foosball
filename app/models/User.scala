@@ -30,6 +30,14 @@ object User {
     SQL("select * from user").as(User.simple *)
   }
   
+  def findByName(name: String): Option[User] = DB.withConnection { implicit connection =>
+    SQL("select * from user where name = {name}").on('name -> name).as(User.simple.singleOpt)
+  }
+  
+  def findWithAvatar(avatar: String): Option[User] = DB.withConnection { implicit connection =>
+    SQL("select * from user where avatar = {avatar}").on('avatar -> avatar).as(User.simple.singleOpt)
+  }
+  
   // ===== Persistance Operations =====
 
   def create(user: User): User = DB.withConnection { implicit connection =>
