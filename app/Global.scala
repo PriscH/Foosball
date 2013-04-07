@@ -1,5 +1,7 @@
 import play.api._
 
+import org.joda.time.DateTime
+
 import models._
 import anorm._
 
@@ -18,8 +20,10 @@ object Global extends GlobalSettings {
 object InitialData {
     
   def insert() = {   
-    if(User.all.isEmpty) {
+    if(User.all.isEmpty) {    
+      Token.create(Token("initial", "Signup", new DateTime()))
       
+      /*
       Seq(
         User("Ronaldo", "ronaldo@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "brazil"),
         User("Maradona", "maradona@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "mexico"),
@@ -28,8 +32,7 @@ object InitialData {
         User("Pele", "pele@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "spain"),
         User("Messi", "messi@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "argentina")
       ).foreach(User.create)
-      
-      Token.create(Token("123", "Signup", new org.joda.time.DateTime()))
+      */
     }   
   }
   

@@ -23,7 +23,9 @@ object Application extends Controller {
   
   def login = Action { implicit request =>
     val users = User.all
-    Ok(html.application.login(users))
+    
+    if (users.isEmpty) Redirect(routes.Signup.show("initial"))
+    else Ok(html.application.login(users))
   }
   
   def logout = Action { implicit request =>
