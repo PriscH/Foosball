@@ -35,7 +35,7 @@ CREATE TABLE game (
   FOREIGN KEY (winner1)  REFERENCES user (name),
   FOREIGN KEY (winner2)  REFERENCES user (name),
   FOREIGN KEY (loser1)   REFERENCES user (name),
-  FOREIGN KEY (loser2)   REFERENCES user (name),
+  FOREIGN KEY (loser2)   REFERENCES user (name)
 );
 
 CREATE TABLE player_elo (
