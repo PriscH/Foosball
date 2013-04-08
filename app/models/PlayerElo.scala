@@ -23,7 +23,7 @@ object PlayerElo {
     get[String]   ("player_elo.player") ~
     get[DateTime] ("player_elo.captured_date") ~
     get[Long]     ("player_elo.match_id") ~
-    get[Int]      ("player_elo.change") ~
+    get[Int]      ("player_elo.elo_change") ~
     get[Int]      ("player_elo.elo") map {
       case id ~ player ~ capturedDate ~ matchId ~ change ~ elo => PlayerElo(id, player, capturedDate, matchId, change, elo)
     }
@@ -48,7 +48,7 @@ object PlayerElo {
   // ===== Persistance Operations =====
 
   def create(playerElo: PlayerElo): PlayerElo = DB.withConnection { implicit connection =>
-    SQL("insert into player_elo (player, captured_date, match_id, change, elo) values ({player}, {capturedDate}, {matchId}, {change}, {elo})").on(
+    SQL("insert into player_elo (player, captured_date, match_id, elo_change, elo) values ({player}, {capturedDate}, {matchId}, {change}, {elo})").on(
       'player       -> playerElo.player,
       'capturedDate -> playerElo.capturedDate.toDate(),
       'matchId      -> playerElo.matchId,

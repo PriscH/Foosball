@@ -43,7 +43,7 @@ CREATE TABLE player_elo (
   player        VARCHAR(255) NOT NULL,
   captured_date DATETIME     NOT NULL,
   match_id      BIGINT(20)   NOT NULL,
-  change        MEDIUMINT    NOT NULL,
+  elo_change    MEDIUMINT    NOT NULL,
   elo           MEDIUMINT    NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (player)   REFERENCES user (name),
