@@ -54,8 +54,8 @@ object MatchResult {
   
   def findConfirmed(): Seq[MatchResult] = DB.withConnection { implicit connection =>
     SQL("""
-        select * from match_result inner join match on (match_result.match_id = match.id)
-        where match.confirmed_by is not null
+        select * from match_result inner join match_detail on (match_result.match_id = match_detail.id)
+        where match_detail.confirmed_by is not null
         """).as(MatchResult.simple *)
   }
   
