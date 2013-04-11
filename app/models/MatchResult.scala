@@ -12,13 +12,19 @@ import anorm.SqlParser._
 
 import util.db.AnormExtension.rowToDateTime
 
-case class MatchResult(matchId: Long, player: String, result: String, rank: Int, score: Int) {
+/**
+ * Stores the outcome of a match per player including the actual result, rank and score.
+ */
+case class MatchResult(matchId: Long, player: String, result: MatchResult.Result.Value, rank: Int, score: Int) {
   
-  def outrightResult: Boolean = {result == "Winner" || result == "Loser"}
+  // Did this player win or lose outright
+  def outrightResult: Boolean = { result == MatchResult.Result.Winner || result == MatchResult.Result.Loser }
   
-  def pseudoResult: Boolean = {result == "Pseudo-Winner" || result == "Pseudo-Loser"}
+  // Did this player achieve a pseudo win or loss
+  def pseudoResult: Boolean = { result == MatchResult.Result.PseudoWinner || result == MatchResult.Result.PseudoLoser }
   
-  def noResult: Boolean = {result == "Nothing"}
+  // Was this player on par with another player, i.e. no result
+  def noResult: Boolean = {result == MatchResult.Result.NoResult }
   
   def resultString: String = 
     if (noResult) player + " did not achieve a result"
@@ -28,6 +34,14 @@ case class MatchResult(matchId: Long, player: String, result: String, rank: Int,
 
 object MatchResult {
   
+  object Result extends Enumeration {
+    val Winner       = Value("Winner")
+    val PseudoWinner = Value("Pseudo-Winner")
+    val PseudoLoser  = Value("Pseudo-Loser")
+    val Loser        = Value("Loser")
+    val NoResult     = Value("Nothing")
+  }
+  
   // ===== ResultSet Parsers =====
   
   val simple = {
@@ -36,7 +50,7 @@ object MatchResult {
     get[String] ("match_result.result") ~
     get[Int]    ("match_result.rank") ~
     get[Int]    ("match_result.score") map {
-      case matchId ~ player ~ result ~ rank ~ score => MatchResult(matchId, player, result, rank, score)
+      case matchId ~ player ~ result ~ rank ~ score => MatchResult(matchId, player, Result.withName(result), rank, score)
     }
   }
   
@@ -66,11 +80,11 @@ object MatchResult {
     SQL("insert into match_result values ({matchId}, {player}, {result}, {rank}, {score})").on(
       'matchId   -> matchResult.matchId,
       'player    -> matchResult.player,
-      'result    -> matchResult.result,
+      'result    -> matchResult.result.toString,
       'rank      -> matchResult.rank,
       'score     -> matchResult.score
-    ).executeUpdate()
+    ).executeInsert()
     
-    return matchResult
+    return matchResult;
   }
 }

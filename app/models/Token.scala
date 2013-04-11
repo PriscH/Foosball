@@ -12,10 +12,18 @@ import anorm.SqlParser._
 
 import util.db.AnormExtension.rowToDateTime
 
-
-case class Token(value: String, scope: String, capturedDate: DateTime)
+/**
+ * A security token which can be used to allow access to portions of the site, such as the signup page.
+ */
+case class Token(value: String, scope: Token.Scope.Value, capturedDate: DateTime)
 
 object Token {
+  
+  object Scope extends Enumeration {
+    val Signup = Value("Signup")
+  }
+  
+  val InitialToken = "initial"
 
   // ===== ResultSet Parsers =====
   
@@ -23,7 +31,7 @@ object Token {
     get[String]   ("token.value") ~
     get[String]   ("token.scope") ~
     get[DateTime] ("token.captured_date") map {
-      case value ~ scope ~ capturedDate => Token(value, scope, capturedDate)
+      case value ~ scope ~ capturedDate => Token(value, Scope.withName(scope), capturedDate)
     }
   }
   
@@ -42,8 +50,8 @@ object Token {
   def create(token: Token): Token = DB.withConnection { implicit connection =>
     SQL("insert into token (value, scope, captured_date) values ({value}, {scope}, {capturedDate})").on(
       'value        -> token.value,
-      'scope        -> token.scope,
-      'capturedDate -> token.capturedDate.toDate()
+      'scope        -> token.scope.toString,
+      'capturedDate -> token.capturedDate.toDate
     ).executeInsert()
     
     return token

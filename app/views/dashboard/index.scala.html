@@ -218,9 +218,9 @@
             
             // Reverse the results if the right side won (i.e. 1-2 becomes 2-1)
             if ($this.text().charAt(2) === '2') {
-              game.result = $this.text().split("").reverse().join(""); // $.reverse() doesn't exist for some reason
+              game.score = $this.text().split("").reverse().join(""); // $.reverse() doesn't exist for some reason
             } else {
-              game.result = $this.text();
+              game.score = $this.text();
             }
           });
           

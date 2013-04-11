@@ -12,16 +12,19 @@ import anorm.SqlParser._
 
 import util.db.AnormExtension.rowToDateTime
 
-case class Match(id: Pk[Long], capturedDate: DateTime, capturedBy: String, confirmedBy: Option[String], format: String)
+/**
+ * A Foosball Match, which is in a certain format and has someone that captures it and someone that confirms it
+ */
+case class Match(id: Pk[Long], capturedDate: DateTime, capturedBy: String, confirmedBy: Option[String], format: Match.Format.Value) {
+  if (confirmedBy.isDefined) require(capturedBy != confirmedBy.get)
+}
 
 object Match {
   
-  // ===== Overloaded Apply =====
-  
-  def apply(id: Long, prototype: Match): Match = {
-    Match(Id(id), prototype.capturedDate, prototype.capturedBy, prototype.confirmedBy, prototype.format)
+  object Format extends Enumeration {
+    val TwoOnTwo = Value("Two-on-Two")
   }
-  
+    
   // ===== ResultSet Parsers =====
   
   val simple = {
@@ -30,7 +33,7 @@ object Match {
     get[String]         ("match_detail.captured_by") ~
     get[Option[String]] ("match_detail.confirmed_by") ~
     get[String]         ("match_detail.format") map {
-      case id ~ capturedDate ~ capturedBy ~ confirmedBy ~ format => Match(id, capturedDate, capturedBy, confirmedBy, format)
+      case id ~ capturedDate ~ capturedBy ~ confirmedBy ~ format => Match(id, capturedDate, capturedBy, confirmedBy, Format.withName(format))
     }
   }
   
@@ -51,9 +54,7 @@ object Match {
           where match_detail.confirmed_by is null
             and match_detail.captured_by <> {player}
             and match_result.player = {player}
-        """).on(
-        'player -> player
-      ).as(Match.simple *)
+        """).on('player -> player).as(Match.simple *)
   }
   
   // ===== Persistance Operations =====
@@ -62,11 +63,8 @@ object Match {
     SQL("insert into match_detail (captured_date, captured_by, format) values ({capturedDate}, {capturedBy}, {format})").on(
       'capturedDate -> foosMatch.capturedDate.toDate(),
       'capturedBy   -> foosMatch.capturedBy,
-      'format       -> foosMatch.format
-    ).executeInsert() 
-  } match {
-    case Some(key) => Match(key, foosMatch)
-    case None      => throw new RuntimeException("Could not create a match.")
+      'format       -> foosMatch.format.toString
+    ).executeInsert().map(newId => foosMatch.copy(id = Id(newId))).get
   }
   
   def update(foosMatch: Match) = DB.withConnection { implicit connection => 
@@ -81,7 +79,7 @@ object Match {
         'capturedDate -> foosMatch.capturedDate.toDate(),
         'capturedBy   -> foosMatch.capturedBy,
         'confirmedBy  -> foosMatch.confirmedBy,
-        'format       -> foosMatch.format,
+        'format       -> foosMatch.format.toString,
         'matchId      -> foosMatch.id
       ).executeUpdate() 
   }

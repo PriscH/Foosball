@@ -1,6 +1,7 @@
 package util.security
 
 import controllers._
+import models._
 import play.api.mvc._
 
 trait Secured {
@@ -8,8 +9,12 @@ trait Secured {
       
   // ===== Secured Actions =====
   
-  def SecuredAction(action: => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) {
-    user => Action(request => action(request))
+  def SecuredAction(action: => User => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { username =>
+    Action(request => {
+      User.findByName(username).map { 
+        user => action(user)(request)
+      }.getOrElse(onUnauthorized(request))
+    })
   }
   
   // ===== Security Helpers =====

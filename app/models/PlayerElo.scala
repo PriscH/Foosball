@@ -12,6 +12,9 @@ import anorm.SqlParser._
 
 import util.db.AnormExtension.rowToDateTime
 
+/**
+ * Tracks the history of changes to a player's elo, with the latest capturedDate representing the current elo
+ */
 case class PlayerElo(id: Pk[Long], player: String, capturedDate: DateTime, matchId: Long, change: Int, elo: Int)
 
 object PlayerElo {
@@ -54,9 +57,6 @@ object PlayerElo {
       'matchId      -> playerElo.matchId,
       'change       -> playerElo.change,
       'elo          -> playerElo.elo
-    ).executeInsert()
-    
-    return playerElo
-  }
-  
+    ).executeInsert().map(newId => playerElo.copy(id = Id(newId))).get
+  } 
 }

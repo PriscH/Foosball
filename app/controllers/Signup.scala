@@ -29,7 +29,7 @@ object Signup extends Controller with Secured {
   // ===== Actions =====
   
   def show(token: String) = Action { implicit request => 
-    val usedAvatars = User.all().map(_.avatar)
+    val usedAvatars = User.all.map(_.avatar)
     
     Token.findByValue(token) match {
       case Some(dbToken) => Ok(html.signup.player(usedAvatars, token))
