@@ -23,11 +23,11 @@
       
       // Click on one of the Avatar options
       $(".avatarOption").click(function(event) {
-	    if ($(this).hasClass("fade")) {
-		  return;
-		}
+	    if ($(this).hasClass("deselected")) {
+		    return;
+		  }
 	  
-        var avatar = $(this).attr("avatar");
+      var avatar = $(this).attr("avatar");
         $("#avatar").val(avatar);
         $("#selectedAvatar").attr("src", "/assets/images/avatars/" + avatar + ".png");
         $("#overlay").css('visibility', 'hidden');

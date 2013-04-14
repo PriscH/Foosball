@@ -70,7 +70,7 @@
       var loseCount = 6;
       var loser = -1;
       
-      // Then determine how many wins the winner and losers got (might be the same if 3 other players had the same number of wins)
+      // Then determine how many wins the winner and losers got (might be the same if 3 players had the same number of wins)
       for (var index = 0; index < cleanedWins.length; ++index) {
         if (cleanedWins[index] !== -1) {
           if (cleanedWins[index] >= winCount) {
@@ -178,9 +178,9 @@
       
       // Users clicks the "Capture match result" button
       $("#resultSubmit").click(function(event) {
-    	if ($(this).hasClass("disabledButton")) {
-    		return;
-    	}
+    	  if ($(this).hasClass("disabledButton")) {
+    		  return;
+    	  }
     	  
         var players = ["1", "2", "3", "4"];
       

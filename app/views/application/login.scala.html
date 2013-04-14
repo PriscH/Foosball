@@ -8,8 +8,7 @@
       $(document).click(function(event) {
         var $allAccounts = $(".account")
 
-        $allAccounts.removeClass("deselected");
-        $allAccounts.removeClass("selected");
+        $allAccounts.removeClass("deselected").removeClass("selected");
         $allAccounts.off("keypress");
 
         $("input[type='password']").hide();
@@ -26,12 +25,10 @@
 
         if ($account.length > 0) {
           $(".account").addClass("deselected");
-          $account.removeClass("deselected");
-          $account.addClass("selected");
+          $account.addClass("selected").removeClass("deselected");
 
           var passwordField = $account.find("input[type='password']");
-          passwordField.show();
-          passwordField.focus();
+          passwordField.show().focus();
 
           $account.keypress(function(event) {
             if(event.which == 13){ // Enter
