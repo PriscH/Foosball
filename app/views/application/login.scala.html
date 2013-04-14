@@ -4,21 +4,15 @@
   <title>Foosball - Login</title>
   
   <script type="text/javascript">
-    $(document).ready(function() {
-      $(".account").hover(function() {
-        $(this).addClass("glow");
-      }, function() {
-        $(this).removeClass("glow");
-      });
-    
+    $(document).ready(function() {    
       $(document).click(function(event) {
         var $allAccounts = $(".account")
 
-        $allAccounts.removeClass("fade");
+        $allAccounts.removeClass("deselected");
         $allAccounts.removeClass("selected");
         $allAccounts.off("keypress");
 
-        $("input[type='password']").addClass("hidden");
+        $("input[type='password']").hide();
         $("#password").val();
 
         var $target = $(event.target);
@@ -31,12 +25,12 @@
         }
 
         if ($account.length > 0) {
-          $(".account").addClass("fade");
-          $account.removeClass("fade");
+          $(".account").addClass("deselected");
+          $account.removeClass("deselected");
           $account.addClass("selected");
 
           var passwordField = $account.find("input[type='password']");
-          passwordField.removeClass("hidden");
+          passwordField.show();
           passwordField.focus();
 
           $account.keypress(function(event) {
@@ -73,11 +67,11 @@
   <div class="accounts">
     @helper.form(routes.Application.authenticate) {
 	    @for(user <- users) {
-	      <div class="account" name="@user.name">
+	      <div class="account selectable" name="@user.name">
           <img class="avatar" src="@routes.Assets.at("images/avatars/" + user.avatar + ".png")" alt="Avatar" />
           <div class="userDetails">
             <div class="userName">@user.name</div>
-            <input class="password hidden" type="password" />
+            <input class="password" style="display: none" type="password" />
           </div>
         </div>
 	    }

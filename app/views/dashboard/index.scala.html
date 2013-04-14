@@ -11,7 +11,7 @@
     function updateResultSubmitDisplay() {
       var $resultSubmit = $("#resultSubmit");
     
-      if ($(".linkButton:not(.deselected)").length === 3 && selectedPlayers.length === 4) {
+      if ($(".scoreButton:not(.deselected)").length === 3 && selectedPlayers.length === 4) {
         if ($resultSubmit.hasClass("disabledButton")) {          
           $resultSubmit.removeClass("disabledButton").addClass("submitButton");
           $resultSubmit.removeAttr("disabled");
@@ -28,12 +28,12 @@
     // Determines the result of the match (who won, lost and pseudos)
     function determineResult() {
       // If all the Players haven't been selected, or all the results haven't been provided, exit early
-      if (selectedPlayers.length !== 4 || $(".linkButton:not(.deselected)").length !== 3) {
+      if (selectedPlayers.length !== 4 || $(".scoreButton:not(.deselected)").length !== 3) {
         return;
       }
       
       var playerWins = [0, 0, 0, 0];
-      $(".linkButton:not(.deselected)").each(function() {
+      $(".scoreButton:not(.deselected)").each(function() {
         var winners = $(this).attr("winners").split(",");
         
         for (var index = 0; index < playerWins.length; index++) {
@@ -113,28 +113,21 @@
 
     $(document).ready(function() {
       // User clicks on one of the match result buttons (for example 2-1)
-      $(".linkButton").click(function(event) {
+      $(".scoreButton").click(function(event) {
         var $this = $(this);
         if ($this.hasClass("disabledButton")) {
         	return;
         }
         
         if ($this.hasClass("deselected")) {
-          $this.siblings(".linkButton").addClass("deselected");
-          $this.removeClass("deselected");
+          $this.siblings(".scoreButton").addClass("deselected").removeClass("selected");
+          $this.removeClass("deselected").addClass("selected");
         }
                 
         determineResult();
         updateResultSubmitDisplay();
       });
-      
-      // User hovers over a Player
-      $(".player").hover(function() {
-        $(this).addClass("glow");
-      }, function() {
-        $(this).removeClass("glow");
-      });
-      
+            
       // User selects a Player to add to the match result
       $(".player").click(function(event) {
         var $this = $(this);
@@ -163,7 +156,7 @@
 	          return; // Not allowed to select 5 players
 	        }
 	        if (selectedPlayer === 4) { // Activate the result buttons (if they aren't active yet)
-              $(".linkButton").removeClass("disabledButton").addClass("resultButton");
+              $(".scoreButton").removeClass("disabledButton").addClass("selectable");
 	        }
 	        
 	        $("#player" + selectedPlayer).val($this.attr("name"));
@@ -200,7 +193,7 @@
           game.winners = [];
           game.losers = [];
           
-          $(".matchResults[game=" + (index + 1) + "] .linkButton:not(.deselected)").each(function() {
+          $(".matchResults[game=" + (index + 1) + "] .scoreButton:not(.deselected)").each(function() {
             var $this = $(this);
             
             var winners = $this.attr("winners").split(",");
@@ -298,7 +291,7 @@
 
       <div class="players">
         @for(user <- users) {
-          <div class="player" name="@user.name">
+          <div class="player selectable" name="@user.name">
             <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + user.avatar + ".png")" alt="Avatar" />
             <div class="playerName">@user.name</div>
           </div>
@@ -329,7 +322,7 @@
     <div id="standings" class="widget">
       <div class="centered">
         <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
-        <h1 class="inline">Current standings:</h1>
+        <h1>Current standings:</h1>
         <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
       </div>
 

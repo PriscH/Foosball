@@ -1,6 +1,6 @@
 @(playerRankings: Seq[domain.PlayerRanking])
 
-<table class="center rankingTable">
+<table class="centered rankingTable">
   <thead>
     <tr>
       <th class="rankColumn"></th>
@@ -17,13 +17,13 @@
     @for(playerRanking <- playerRankings) {
       <tr>
         <td class="rankColumn">@(playerRanking.rank + ".")</td>
-        <td class="nameColumn bold">@playerRanking.player</td>
+        <td class="nameColumn importantCell">@playerRanking.player</td>
         <td>@playerRanking.played</td>
         <td>@playerRanking.won</td>
         <td>@playerRanking.pseudoWon</td>
         <td>@playerRanking.pseudoLost</td>
         <td>@playerRanking.lost</td>
-        <td class="bold">@playerRanking.elo</td>
+        <td class="eloColumn importantCell">@playerRanking.elo</td>
       </tr>
     }
   </tbody>

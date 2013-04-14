@@ -89,9 +89,9 @@
         <div class="avatars">
           @for(avatar <- avatars) {        
             @if(usedAvatars.contains(avatar)) {
-              <img class="avatarOption fade" src='@routes.Assets.at("images/avatars/" + avatar + ".png")' alt=@avatar avatar=@avatar available="false" />
+              <img class="avatarOption deselected" src='@routes.Assets.at("images/avatars/" + avatar + ".png")' alt=@avatar avatar=@avatar available="false" />
             } else {
-              <img class="avatarOption clickable" src='@routes.Assets.at("images/avatars/" + avatar + ".png")' alt=@avatar avatar=@avatar available="true" />
+              <img class="avatarOption selectable" src='@routes.Assets.at("images/avatars/" + avatar + ".png")' alt=@avatar avatar=@avatar available="true" />
             }
           }
         </div>

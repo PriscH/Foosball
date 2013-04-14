@@ -20,7 +20,7 @@
 
   <body>
     <div class="container">
-      <div class="header bordered">
+      <div class="header">
         @if(false/*!request.session.isEmpty*/) {
           <div class="navigation">
             <ul class="squareBordered">
@@ -34,7 +34,7 @@
           </div>
         }
       </div>
-      <div class="content bordered">
+      <div class="content">
         @content
       </div>
     </div>
