@@ -228,17 +228,14 @@
 	    $(".confirmButton").click(function(event) {
 	      var $this = $(this);
 	      var $confirmations = $("#matchConfirmations");	  
-	  
-	      // TODO: going to need jsRouting for play routes to work here
-	      $.ajax({
-          url: "/match/" + $this.attr('matchId'),
-          type: "post",
-          data: "{action: 'confirm'}",
+
+        var matchId = $this.attr('matchId')
+        jsRoutes.controllers.Dashboard.confirmMatch(matchId).ajax({
           success: function(data) {
             $(".rankingTable").replaceWith(data);
           }
         });
-	    
+	  	    
 	      if ($confirmations.children(".tableRow").length > 1) {
 	        $this.closest(".tableRow").fadeOut("fast", function() {
 	          $this.closest(".tableRow").remove();

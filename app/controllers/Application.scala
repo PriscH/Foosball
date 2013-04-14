@@ -5,6 +5,7 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.i18n.Messages
+import routes.javascript._
 import models._
 import views._
 
@@ -41,6 +42,25 @@ object Application extends Controller {
       case Some(user)  => Redirect(routes.Dashboard.show).withSession("username" -> user.name) 
       case None        => Redirect(routes.Application.login).flashing("error" -> Messages("password.error"))
     }
+  }
+  
+  // ===== Javascript Routing =====
+  
+  def javascriptRoutes = Action { implicit request =>
+    Ok(
+      Routes.javascriptRouter("jsRoutes")(
+        routes.javascript.Application.login,
+        routes.javascript.Application.logout,
+        routes.javascript.Application.authenticate,
+        
+        routes.javascript.Dashboard.show,
+        routes.javascript.Dashboard.captureMatch,
+        routes.javascript.Dashboard.confirmMatch,
+        
+        routes.javascript.Signup.show,
+        routes.javascript.Signup.createPlayer
+      )
+    ).as("text/javascript") 
   }
   
 }
