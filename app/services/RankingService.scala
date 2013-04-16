@@ -6,24 +6,25 @@ import models._
 object RankingService {
 
   // ===== Interface =====
-  
-  def loadCurrentRankings(): Seq[PlayerRanking] = {    
+
+  def loadCurrentRankings(): Seq[PlayerRanking] = {
     val players = User.all()
-    val matchResults = MatchResult.findConfirmed() 
-    val playerElos = EloService.findCurrentElos(players.map(_.name))
-    
+    val matchResults = MatchResult.findConfirmed()
+    val playerElos = EloService.findCurrentElosWithChanges(players.map(_.name))
+
     players.map(player => {
-      val playerElo = playerElos(player.name)      
+      val playerElo = playerElos(player.name)
       val playerResults = matchResults.filter(_.player == player.name)
-      
+
       PlayerRanking(player.name,
-                    playerElos.count(_._2 > playerElo) + 1,
+                    playerElos.count(_._2._1 > playerElo._1) + 1,
                     playerResults.size,
                     playerResults.count(_.result == MatchResult.Result.Winner),
                     playerResults.count(_.result == MatchResult.Result.PseudoWinner),
                     playerResults.count(_.result == MatchResult.Result.PseudoLoser),
                     playerResults.count(_.result == MatchResult.Result.Loser),
-                    playerElo)  
+                    playerElo._1,
+                    playerElo._2)
     })
   }
 }

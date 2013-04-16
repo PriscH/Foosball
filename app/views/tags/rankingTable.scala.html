@@ -10,7 +10,7 @@
       <th>PW</th>
       <th>PL</th>
       <th>L</th>
-      <th>Elo</th>
+      <th colspan="2">Elo</th>
     </tr>
   </thead>
   <tbody>
@@ -24,6 +24,17 @@
         <td>@playerRanking.pseudoLost</td>
         <td>@playerRanking.lost</td>
         <td class="eloColumn importantCell">@playerRanking.elo</td>
+        @playerRanking.lastChange match {
+          case x if x < 0 => {
+            <td class="changeColumn negEloChange">@playerRanking.lastChange</td>
+          }
+          case x if x == 0 => {
+              <td class="changeColumn noEloChange">-</td>
+          }
+          case _ => {
+              <td class="changeColumn posEloChange">+@playerRanking.lastChange</td>
+          }
+        }
       </tr>
     }
   </tbody>
