@@ -7,7 +7,7 @@ import anorm.NotAssigned
 import org.joda.time.DateTime
 
 import models._
-import domain.EloChange
+import domain.EloWithChange
 
 object EloService {
 
@@ -22,7 +22,7 @@ object EloService {
     findCurrentElo(players, (elo: PlayerElo) => elo.elo, StartingElo)
   }
 
-  def findCurrentElosWithChanges(players: Seq[String]): Map[String, EloChange] = {
+  def findCurrentElosWithChanges(players: Seq[String]): Map[String, EloWithChange] = {
     findCurrentElo(players, (elo: PlayerElo) => (elo.elo, elo.change), (StartingElo, StartingChange))
   }
 
