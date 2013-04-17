@@ -23,7 +23,7 @@
         <td>@playerRanking.pseudoWon</td>
         <td>@playerRanking.pseudoLost</td>
         <td>@playerRanking.lost</td>
-        <td class="eloColumn importantCell">@playerRanking.elo</td>
+        <td class="importantCell">@playerRanking.elo</td>
         @playerRanking.lastChange match {
           case x if x < 0 => { <td class="changeColumn negEloChange">@playerRanking.lastChange</td> }
           case x if x == 0 => { <td class="changeColumn noEloChange">-</td> }
