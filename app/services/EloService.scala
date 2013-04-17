@@ -7,30 +7,31 @@ import anorm.NotAssigned
 import org.joda.time.DateTime
 
 import models._
+import domain.EloWithChange
 
 object EloService {
-  
+
   private val StartingElo = 1200
+  private val StartingChange = 0
   private val EloWeight = 400
   private val KValue = 32
-  
+
   // ===== Interface =====
-  
+
   def findCurrentElos(players: Seq[String]): Map[String, Int] = {
-    val currentElos = PlayerElo.findLatestElos()
-    players.map(player => player -> {
-      currentElos.find(_.player == player) match {
-        case Some(elo) => elo.elo
-        case None      => StartingElo
-      }
-    }).toMap
+    findCurrentElo(players, (elo: PlayerElo) => elo.elo, StartingElo)
   }
-  
+
+  def findCurrentElosWithChanges(players: Seq[String]): Map[String, EloWithChange] = {
+    findCurrentElo(players, (elo: PlayerElo) => (elo.elo, elo.change), (StartingElo, StartingChange))
+  }
+
+
   // Elo calculation based on http://sradack.blogspot.com/2008/06/elo-rating-system-multiple-players.html
   def updateElo(matchResults: Seq[MatchResult]) = {
     val players = matchResults.map(_.player)
     val currentElos = findCurrentElos(players)
-    
+
     val totalMatchScore = matchResults.map(_.score).sum
     val updatedElos = currentElos.map(eloTuple => eloTuple._1 -> {
         val expectedScore = currentElos.filter(_._1 != eloTuple._1).values.map(opponentElo => estimateScoreVersus(eloTuple._2, opponentElo)).sum / 6.0
@@ -40,19 +41,29 @@ object EloService {
         math.round(eloTuple._2 + 2 * KValue * (actualScore - expectedScore)).toInt
       }
     )
-    
+
     val currentDate = new DateTime()
     matchResults.map(result => {
       val previousElo = currentElos.find(_._1 == result.player).get._2
       val updatedElo = updatedElos.find(_._1 == result.player).get._2
-      
+
       PlayerElo.create(PlayerElo(NotAssigned, result.player, currentDate, result.matchId, (updatedElo - previousElo), updatedElo))
     })
   }
-  
+
   // ===== Helper Methods =====
 
+  private def findCurrentElo[V](players: Seq[String], valueMapping: (PlayerElo => V), default: V): Map[String, V] = {
+    val currentElos = PlayerElo.findLatestElos()
+    players.map(player => player -> {
+      currentElos.find(_.player == player) match {
+        case Some(elo) => valueMapping(elo)
+        case None      => default
+      }
+    }).toMap
+  }
+
   // Visible for testing
-  private[services] def estimateScoreVersus(playerElo: Int, opponentElo: Int): Double = 1.0 / (1.0 + math.pow(10, ((opponentElo - playerElo) / EloWeight.toDouble))) 
+  private[services] def estimateScoreVersus(playerElo: Int, opponentElo: Int): Double = 1.0 / (1.0 + math.pow(10, ((opponentElo - playerElo) / EloWeight.toDouble)))
 
 }
