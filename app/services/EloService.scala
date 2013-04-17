@@ -7,6 +7,7 @@ import anorm.NotAssigned
 import org.joda.time.DateTime
 
 import models._
+import domain.EloChange
 
 object EloService {
 
@@ -17,21 +18,11 @@ object EloService {
 
   // ===== Interface =====
 
-  def findCurrentElo[B](players: Seq[String], valueMapping: (PlayerElo => B), default: B): Map[String, B] = {
-    val currentElos = PlayerElo.findLatestElos()
-    players.map(player => player -> {
-      currentElos.find(_.player == player) match {
-        case Some(elo) => valueMapping(elo)
-        case None      => default
-      }
-    }).toMap
-  }
-
   def findCurrentElos(players: Seq[String]): Map[String, Int] = {
     findCurrentElo(players, (elo: PlayerElo) => elo.elo, StartingElo)
   }
 
-  def findCurrentElosWithChanges(players: Seq[String]): Map[String, (Int, Int)] = {
+  def findCurrentElosWithChanges(players: Seq[String]): Map[String, EloChange] = {
     findCurrentElo(players, (elo: PlayerElo) => (elo.elo, elo.change), (StartingElo, StartingChange))
   }
 
@@ -61,6 +52,16 @@ object EloService {
   }
 
   // ===== Helper Methods =====
+
+  private def findCurrentElo[V](players: Seq[String], valueMapping: (PlayerElo => V), default: V): Map[String, V] = {
+    val currentElos = PlayerElo.findLatestElos()
+    players.map(player => player -> {
+      currentElos.find(_.player == player) match {
+        case Some(elo) => valueMapping(elo)
+        case None      => default
+      }
+    }).toMap
+  }
 
   // Visible for testing
   private[services] def estimateScoreVersus(playerElo: Int, opponentElo: Int): Double = 1.0 / (1.0 + math.pow(10, ((opponentElo - playerElo) / EloWeight.toDouble)))
