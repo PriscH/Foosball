@@ -10,8 +10,6 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-import util.db.AnormExtension.rowToDateTime
-
 /**
  * Stores the outcome of a match per player including the actual result, rank and score.
  */

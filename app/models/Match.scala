@@ -10,7 +10,7 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-import util.db.AnormExtension.rowToDateTime
+import util.db.AnormExtension._
 
 /**
  * A Foosball Match, which is in a certain format and has someone that captures it and someone that confirms it
@@ -76,7 +76,7 @@ object Match {
               format = {format}
           where id = {matchId}
         """).on(
-        'capturedDate -> foosMatch.capturedDate.toDate(),
+        'capturedDate -> foosMatch.capturedDate,
         'capturedBy   -> foosMatch.capturedBy,
         'confirmedBy  -> foosMatch.confirmedBy,
         'format       -> foosMatch.format.toString,

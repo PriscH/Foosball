@@ -1,7 +1,9 @@
 package domain
 
-case class EloWithChange(elo: Int, change: Int)
+import scala.language.implicitConversions
+
+case class EloWithChange(elo: Double, change: Double)
 
 object EloWithChange {
-  implicit def fromTuple(t: (Int, Int)) = EloWithChange(t._1, t._2)
+  implicit def fromTuple(t: (Double, Double)) = EloWithChange(t._1, t._2)
 }

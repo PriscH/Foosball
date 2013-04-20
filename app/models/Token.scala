@@ -10,7 +10,7 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 
-import util.db.AnormExtension.rowToDateTime
+import util.db.AnormExtension._
 
 /**
  * A security token which can be used to allow access to portions of the site, such as the signup page.
@@ -51,7 +51,7 @@ object Token {
     SQL("insert into token (value, scope, captured_date) values ({value}, {scope}, {capturedDate})").on(
       'value        -> token.value,
       'scope        -> token.scope.toString,
-      'capturedDate -> token.capturedDate.toDate
+      'capturedDate -> token.capturedDate
     ).executeInsert()
     
     return token

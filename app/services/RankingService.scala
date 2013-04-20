@@ -23,8 +23,8 @@ object RankingService {
                     playerResults.count(_.result == MatchResult.Result.PseudoWinner),
                     playerResults.count(_.result == MatchResult.Result.PseudoLoser),
                     playerResults.count(_.result == MatchResult.Result.Loser),
-                    playerElo.elo,
-                    playerElo.change)
+                    Math.round(playerElo.elo).toInt,
+                    Math.round(playerElo.change).toInt)
     })
   }
 }

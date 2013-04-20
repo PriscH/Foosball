@@ -1,21 +1,18 @@
 package models
 
 import scala.language.postfixOps
-
 import org.joda.time.DateTime
-
 import play.api.db._
 import play.api.Play.current
-
 import anorm._
 import anorm.SqlParser._
-
-import util.db.AnormExtension.rowToDateTime
+import util.db.AnormExtension._
+import java.math.BigDecimal
 
 /**
  * Tracks the history of changes to a player's elo, with the latest capturedDate representing the current elo
  */
-case class PlayerElo(id: Pk[Long], player: String, capturedDate: DateTime, matchId: Long, change: Int, elo: Int)
+case class PlayerElo(id: Pk[Long], player: String, capturedDate: DateTime, matchId: Long, change: Double, elo: Double)
 
 object PlayerElo {
 
@@ -26,8 +23,8 @@ object PlayerElo {
     get[String]   ("player_elo.player") ~
     get[DateTime] ("player_elo.captured_date") ~
     get[Long]     ("player_elo.match_id") ~
-    get[Int]      ("player_elo.elo_change") ~
-    get[Int]      ("player_elo.elo") map {
+    get[Double]   ("player_elo.elo_change") ~
+    get[Double]   ("player_elo.elo") map {
       case id ~ player ~ capturedDate ~ matchId ~ change ~ elo => PlayerElo(id, player, capturedDate, matchId, change, elo)
     }
   }
@@ -53,7 +50,7 @@ object PlayerElo {
   def create(playerElo: PlayerElo): PlayerElo = DB.withConnection { implicit connection =>
     SQL("insert into player_elo (player, captured_date, match_id, elo_change, elo) values ({player}, {capturedDate}, {matchId}, {change}, {elo})").on(
       'player       -> playerElo.player,
-      'capturedDate -> playerElo.capturedDate.toDate(),
+      'capturedDate -> playerElo.capturedDate,
       'matchId      -> playerElo.matchId,
       'change       -> playerElo.change,
       'elo          -> playerElo.elo

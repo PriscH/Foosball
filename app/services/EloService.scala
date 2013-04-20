@@ -11,19 +11,19 @@ import domain.EloWithChange
 
 object EloService {
 
-  private val StartingElo = 1200
-  private val StartingChange = 0
-  private val EloWeight = 400
-  private val KValue = 32
+  private val StartingElo = 1200.0
+  private val StartingChange = 0.0
+  private val EloWeight = 400.0
+  private val KValue = 32.0
 
   // ===== Interface =====
 
-  def findCurrentElos(players: Seq[String]): Map[String, Int] = {
-    findCurrentElo(players, (elo: PlayerElo) => elo.elo, StartingElo)
+  def findCurrentElos(players: Seq[String]): Map[String, Double] = {
+    findCurrentElos(players, (elo: PlayerElo) => elo.elo, StartingElo)
   }
 
   def findCurrentElosWithChanges(players: Seq[String]): Map[String, EloWithChange] = {
-    findCurrentElo(players, (elo: PlayerElo) => (elo.elo, elo.change), (StartingElo, StartingChange))
+    findCurrentElos(players, (elo: PlayerElo) => (elo.elo, elo.change), (StartingElo, StartingChange))
   }
 
 
@@ -38,7 +38,7 @@ object EloService {
         val actualScore = matchResults.find(_.player == eloTuple._1).get.score.toDouble / totalMatchScore
 
         // As a win is only 0.5, we multiply the KValue by 2 in order to match the jumps expected from a game where a win is 1.0
-        math.round(eloTuple._2 + 2 * KValue * (actualScore - expectedScore)).toInt
+        eloTuple._2 + 2 * KValue * (actualScore - expectedScore)
       }
     )
 
@@ -53,7 +53,7 @@ object EloService {
 
   // ===== Helper Methods =====
 
-  private def findCurrentElo[V](players: Seq[String], valueMapping: (PlayerElo => V), default: V): Map[String, V] = {
+  private def findCurrentElos[V](players: Seq[String], valueMapping: (PlayerElo => V), default: V): Map[String, V] = {
     val currentElos = PlayerElo.findLatestElos()
     players.map(player => player -> {
       currentElos.find(_.player == player) match {
@@ -64,6 +64,6 @@ object EloService {
   }
 
   // Visible for testing
-  private[services] def estimateScoreVersus(playerElo: Int, opponentElo: Int): Double = 1.0 / (1.0 + math.pow(10, ((opponentElo - playerElo) / EloWeight.toDouble)))
+  private[services] def estimateScoreVersus(playerElo: Double, opponentElo: Double): Double = 1.0 / (1.0 + math.pow(10, ((opponentElo - playerElo) / EloWeight)))
 
 }
