@@ -55,5 +55,9 @@ object PlayerElo {
       'change       -> playerElo.change,
       'elo          -> playerElo.elo
     ).executeInsert().map(newId => playerElo.copy(id = Id(newId))).get
-  } 
+  }
+  
+  def clear() = DB.withConnection { implicit connection =>
+    SQL("delete from player_elo").executeUpdate
+  }
 }
