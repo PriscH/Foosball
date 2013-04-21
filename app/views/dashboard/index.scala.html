@@ -1,4 +1,4 @@
-@(users: Seq[models.User], playerRankings: Seq[domain.PlayerRanking])(implicit request: RequestHeader, flash: Flash)
+@(users: Seq[models.User], recentMatches: Seq[domain.MatchWithResults], playerRankings: Seq[domain.PlayerRanking])(implicit request: RequestHeader, flash: Flash)
 
 @main{
   <title>Foosball - Dashboard</title>
@@ -232,6 +232,19 @@
   @flash.get("success").map { message =>
     <div class="success">
       @message
+    </div>
+  }
+  
+  @if(!recentMatches.isEmpty) {
+    <div class="across">
+      <div id="recentMatches" class="widget">
+        <h1 class="centered">Your recent matches:</h1>
+        <ul class="infoList">
+          @for(recentMatch <- recentMatches) {
+            <li>@recentMatch.resultString</li>
+          }
+        </ul>
+      </div>
     </div>
   }
   

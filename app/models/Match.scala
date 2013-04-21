@@ -44,6 +44,19 @@ object Match {
     SQL("select * from match_detail where id = {matchId}").on('matchId -> {matchId}).single(Match.simple)
   }
   
+  def findRecentForPlayer(player: String, recentCount: Int): Seq[Match] = DB.withConnection { implicit connection =>
+    SQL("""
+        select match_detail.* from match_detail 
+          left join match_result on (match_detail.id = match_result.match_id)
+          where match_result.player = {player}
+          order by match_detail.captured_date desc
+          limit {recentCount}
+        """).on(
+          'player      -> player,
+          'recentCount -> recentCount
+    ).as(Match.simple *)  
+  }
+  
   // ===== Persistance Operations =====
 
   def create(foosMatch: Match): Match = DB.withConnection { implicit connection =>

@@ -24,10 +24,13 @@ case class MatchResult(matchId: Long, player: String, result: MatchResult.Result
   // Was this player on par with another player, i.e. no result
   def noResult: Boolean = {result == MatchResult.Result.NoResult }
   
-  def resultString: String = 
-    if (noResult) player + " did not achieve a result"
-    else player + " was the " + result
-  
+  def resultString: String = result match {
+    case MatchResult.Result.Winner       => player + " won"
+    case MatchResult.Result.Loser        => player + " lost"
+    case MatchResult.Result.PseudoWinner => player + " was the pseudo-winner"
+    case MatchResult.Result.PseudoLoser  => player + " was the pseudo-loser"
+    case _                               => player + " did nothing special"
+  }
 }
 
 object MatchResult {
@@ -62,15 +65,7 @@ object MatchResult {
     SQL("select * from match_result where match_id = {matchId}").on(
         'matchId -> matchId
       ).as(MatchResult.simple *)
-  }
-  
-  def findConfirmed(): Seq[MatchResult] = DB.withConnection { implicit connection =>
-    SQL("""
-        select * from match_result inner join match_detail on (match_result.match_id = match_detail.id)
-        where match_detail.confirmed_by is not null
-        """).as(MatchResult.simple *)
-  }
-  
+  }  
   
   // ===== Persistance Operations =====
 

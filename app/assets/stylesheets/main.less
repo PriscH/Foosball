@@ -1,5 +1,6 @@
 /* CONSTANTS */
 @backgroundColor: #FEFDF8;
+@readingTextColor: #555555;
 
 /* COMMON */
 
@@ -188,6 +189,10 @@ html {
   .FrameBorder
 }
 
+.across {
+  width: 100%;
+}
+
 .bigLeft {
   width: 740px;
   float: left;
@@ -201,6 +206,7 @@ html {
 /* WIDGETS */
 
 .widget {
+  margin: 5px 0;
   padding: 5px;
 
   border: 3px solid;
@@ -390,10 +396,16 @@ html {
   margin: 0 4px 0 2px;
 }
 
-.confirmButton {
+.infoList {
   font-weight: bold;
-  margin: 2px;
-  padding: 5px 5px;
+  font-size: larger;
+  color: @readingTextColor;
+  text-align: center;
+  margin: 5px;
+}
+
+.infoList > li {
+  line-height: 25px
 }
 
 /* RANKING TABLE */

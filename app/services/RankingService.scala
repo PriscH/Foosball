@@ -9,7 +9,7 @@ object RankingService {
 
   def loadCurrentRankings(): Seq[PlayerRanking] = {
     val players = User.all()
-    val matchResults = MatchResult.findConfirmed()
+    val matchResults = MatchResult.all
     val playerElos = EloService.findCurrentElosWithChanges(players.map(_.name))
 
     players.map(player => {

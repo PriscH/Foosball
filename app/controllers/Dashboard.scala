@@ -18,6 +18,8 @@ import util.security._
 
 object Dashboard extends Controller with Secured {
   
+  val RecentMatchCount = 3
+  
   // ===== Forms =====
   
   val captureMatchForm = Form(
@@ -27,8 +29,9 @@ object Dashboard extends Controller with Secured {
   // ===== Actions =====
   
   def show = SecuredAction { user => implicit request => {     
+    val recentMatches = Match.findRecentForPlayer(user.name, RecentMatchCount).map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))  
     val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
-    Ok(html.dashboard.index(User.all, playerRankings))
+    Ok(html.dashboard.index(User.all, recentMatches, playerRankings))
   }}
   
   def captureMatch = SecuredAction { implicit user => implicit request => {
