@@ -17,6 +17,9 @@ POST    /player                     controllers.Signup.createPlayer
 GET     /dashboard                  controllers.Dashboard.show
 POST    /match                      controllers.Dashboard.captureMatch
 
+# Migrations
+GET     /migrations/recalculateElo  controllers.Migrations.recalculateElo
+
 # Javascript routing
 GET     /assets/javascripts/routes  controllers.Application.javascriptRoutes
 
