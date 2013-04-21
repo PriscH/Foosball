@@ -55,7 +55,6 @@ object Application extends Controller {
         
         routes.javascript.Dashboard.show,
         routes.javascript.Dashboard.captureMatch,
-        routes.javascript.Dashboard.confirmMatch,
         
         routes.javascript.Signup.show,
         routes.javascript.Signup.createPlayer

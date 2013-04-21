@@ -1,5 +1,7 @@
 package services
 
+import collection.breakOut
+
 import anorm.NotAssigned
 import org.joda.time.DateTime
 import models._
@@ -9,28 +11,20 @@ object MatchService {
   // ===== Interface =====
   
   def captureMatch(games: Seq[Game])(implicit user: User) {
-    val foosMatch = Match.create(Match(NotAssigned, new DateTime(), user.name, None, Match.Format.TwoOnTwo))
+    val foosMatch = Match.create(Match(NotAssigned, new DateTime(), user.name, Match.Format.TwoOnTwo))
     games.map(game => Game.create(game.copy(matchId = foosMatch.id.get))) // This is ugly :(
 
     // All the games are supposed to have the same players, so we might as well use the first game
     val playerScores = games.head.players.map(player => player -> games.map(_.playerScore(player)).sum).toMap 
-    val matchResults = playerScores.map(playerWithScore => {
+    val matchResults: List[MatchResult] = playerScores.map(playerWithScore => {
       val playerRank   = calculateRank(playerWithScore._2, playerScores.values)
       val playerResult = calculateResult(playerWithScore._2, playerScores.values)
       
       MatchResult(foosMatch.id.get, playerWithScore._1, playerResult, playerRank, playerWithScore._2)
-    })
+    })(breakOut)
 
     matchResults.map(matchResult => MatchResult.create(matchResult))
-  }
-  
-  def confirmMatch(matchId: Long)(implicit user: User) {
-    val foosMatch = Match.findById(matchId)
-    require(foosMatch.confirmedBy.isEmpty)
-    require(user.name != foosMatch.capturedBy)
-    
-    Match.update(foosMatch.copy(confirmedBy = Some(user.name)))
-    EloService.updateElo(MatchResult.findByMatch(foosMatch.id.get))
+    EloService.updateElo(matchResults)
   }
   
   // ===== Helpers =====

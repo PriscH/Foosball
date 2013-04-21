@@ -2,7 +2,7 @@
 password.error=The password you provided is incorrect.
 
 # Dashboard Page
-match.capture.success=Match successfully captured. The standings will be updated once another player confirms the result.
+match.capture.success=Match successfully captured.
 
 # Create Player Page
 name.length.error=The name should be between 2 and 10 characters long.

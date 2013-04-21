@@ -1,4 +1,4 @@
-@(users: Seq[models.User], unconfirmedMatches: Seq[domain.MatchWithResults], playerRankings: Seq[domain.PlayerRanking])(implicit request: RequestHeader, flash: Flash)
+@(users: Seq[models.User], playerRankings: Seq[domain.PlayerRanking])(implicit request: RequestHeader, flash: Flash)
 
 @main{
   <title>Foosball - Dashboard</title>
@@ -223,38 +223,6 @@
         // Stores the JSON data in a form field
         $("#results").val(JSON.stringify(request));    
       });
-      
-	    // User clicks on one of the confirmation messages
-	    $(".confirmButton").click(function(event) {
-	      var $this = $(this);
-	      var $confirmations = $("#matchConfirmations");	  
-
-        var matchId = $this.attr('matchId')
-        jsRoutes.controllers.Dashboard.confirmMatch(matchId).ajax({
-          success: function(data) {
-            $(".rankingTable").replaceWith(data);
-          }
-        });
-	  	    
-	      if ($confirmations.children(".tableRow").length > 1) {
-	        $this.closest(".tableRow").fadeOut("fast", function() {
-	          $this.closest(".tableRow").remove();
-	        });
-	      } else {
-          $confirmations.fadeOut("fast");
-        }
-	    });
-	  
-	    // Register the AJAX Spinners
-	    $.ajaxSetup({
-        beforeSend: function() {
-          $('.inlineLoader').show();
-        },
-        complete: function(){
-          $('.inlineLoader').hide();
-        },
-        success: function() {}
-      });
 	  
 	    // Adjust the standings height to match the results heigh
       $("#standings").height($("#matchResults").height());   
@@ -264,21 +232,6 @@
   @flash.get("success").map { message =>
     <div class="success">
       @message
-    </div>
-  }
-
-  @if(!unconfirmedMatches.isEmpty) {
-    <div id="matchConfirmations" class="warning table">
-      @unconfirmedMatches.map { foosMatch =>
-		    <div class="tableRow">
-		      <div class="tableCell">
-		        Can you confirm that @foosMatch.resultString?
-		      </div>
-		      <div class="tableCell">
-            <button type="button" class="submitButton confirmButton" matchId="@foosMatch.matchId">Confirm</button>
-		      </div>
-		    </div>
-      }
     </div>
   }
   
@@ -318,9 +271,7 @@
   <div class="smallRight">
     <div id="standings" class="widget">
       <div class="centered">
-        <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
         <h1>Current standings:</h1>
-        <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
       </div>
 
       @tags.rankingTable(playerRankings)

@@ -26,12 +26,9 @@ object Dashboard extends Controller with Secured {
 
   // ===== Actions =====
   
-  def show = SecuredAction { user => implicit request => {    
-    val unconfirmedMatches = Match.findUnconfirmedFor(user.name)
-    val matchesWithResults = unconfirmedMatches.map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))    
+  def show = SecuredAction { user => implicit request => {     
     val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
-    
-    Ok(html.dashboard.index(User.all, matchesWithResults, playerRankings))
+    Ok(html.dashboard.index(User.all, playerRankings))
   }}
   
   def captureMatch = SecuredAction { implicit user => implicit request => {
@@ -41,13 +38,6 @@ object Dashboard extends Controller with Secured {
     
     MatchService.captureMatch(games)           
     Redirect(routes.Dashboard.show).flashing("success" -> Messages("match.capture.success"))
-  }}
-  
-  def confirmMatch(matchId: Long) = SecuredAction { implicit user => implicit request => {
-    MatchService.confirmMatch(matchId)
-    val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
-    
-    Ok(html.tags.rankingTable(playerRankings))
   }}
   
   // ===== Helpers =====
