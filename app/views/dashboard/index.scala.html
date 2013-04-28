@@ -110,6 +110,22 @@
         }
       }
 	  }
+	  
+    // Refreshes the Standings and Recent Matches through AJAX calls to the server
+    function refreshWidgets() {
+      jsRoutes.controllers.Dashboard.refresh().ajax({
+        success: function(data) {
+          $("#rankingTable").replaceWith(data.rankings);
+          $("#recentMatches").replaceWith(data.recentMatches);
+        },
+        beforeSend: function() {
+          $('.inlineLoader').show();
+        },
+        complete: function() {
+          $('.inlineLoader').hide();
+        }
+      });
+    }
 
     $(document).ready(function() {
       // User clicks on one of the match result buttons (for example 2-1)
@@ -225,7 +241,10 @@
       });
 	  
 	    // Adjust the standings height to match the results heigh
-      $("#standings").height($("#matchResults").height());   
+      $("#standings").height($("#matchResults").height());
+      
+      // Refresh the widgets every 30 seconds
+      setInterval(refreshWidgets, 30000);
     });
   </script>
 }{
@@ -237,8 +256,13 @@
   
   @if(!recentMatches.isEmpty) {
     <div class="across">
-      <div id="recentMatches" class="widget">
-        <h1 class="centered">Your recent matches:</h1>
+      <div id="history" class="widget">
+        <div class="centered">
+          <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
+          <h1>Your recent matches:</h1>
+          <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
+        </div>
+
         @tags.recentMatches(recentMatches)
       </div>
     </div>
@@ -280,7 +304,9 @@
   <div class="smallRight">
     <div id="standings" class="widget">
       <div class="centered">
+        <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
         <h1>Current standings:</h1>
+        <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
       </div>
 
       @tags.rankingTable(playerRankings)

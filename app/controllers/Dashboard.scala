@@ -15,6 +15,7 @@ import models._
 import views._
 import services._
 import util.security._
+import util.html.HtmlExtension._
 
 object Dashboard extends Controller with Secured {
   
@@ -32,6 +33,16 @@ object Dashboard extends Controller with Secured {
     val recentMatches = Match.findRecentForPlayer(user.name, RecentMatchCount).map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))  
     val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
     Ok(html.dashboard.index(User.all, recentMatches, playerRankings))
+  }}
+  
+  def refresh = SecuredAction { user => implicit request => {
+    val recentMatches = Match.findRecentForPlayer(user.name, RecentMatchCount).map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))  
+    val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
+    
+    Ok(Json.obj(
+      "rankings"      -> html.tags.rankingTable(playerRankings),
+      "recentMatches" -> html.tags.recentMatches(recentMatches)
+    ))
   }}
   
   def captureMatch = SecuredAction { implicit user => implicit request => {

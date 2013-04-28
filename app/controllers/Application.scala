@@ -54,6 +54,7 @@ object Application extends Controller {
         routes.javascript.Application.authenticate,
         
         routes.javascript.Dashboard.show,
+        routes.javascript.Dashboard.refresh,
         routes.javascript.Dashboard.captureMatch,
         
         routes.javascript.Signup.show,
