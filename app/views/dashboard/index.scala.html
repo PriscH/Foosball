@@ -239,11 +239,7 @@
     <div class="across">
       <div id="recentMatches" class="widget">
         <h1 class="centered">Your recent matches:</h1>
-        <ul class="infoList">
-          @for(recentMatch <- recentMatches) {
-            <li>@recentMatch.resultString</li>
-          }
-        </ul>
+        @tags.recentMatches(recentMatches)
       </div>
     </div>
   }

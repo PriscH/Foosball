@@ -1,0 +1,7 @@
+@(recentMatches: Seq[domain.MatchWithResults])
+
+<ul class="infoList">
+  @for(recentMatch <- recentMatches) {
+    <li>@recentMatch.resultString</li>
+  }
+</ul>
