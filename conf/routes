@@ -16,7 +16,7 @@ POST    /player                     controllers.Signup.createPlayer
 # Dashboard
 GET     /dashboard                  controllers.Dashboard.show
 GET     /dashboard/refresh          controllers.Dashboard.refresh
-POST    /match                      controllers.Dashboard.captureMatch
+POST    /match                      controllers.Dashboard.captureMatch(force: Boolean = false)
 
 # Migrations
 GET     /migrations/recalculateElo  controllers.Migrations.recalculateElo

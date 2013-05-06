@@ -4,11 +4,36 @@ import collection.breakOut
 
 import anorm.NotAssigned
 import org.joda.time.DateTime
+import domain._
 import models._
 
 object MatchService {
+  
+  val ConflictWindowInMinutes = 60;
 
   // ===== Interface =====
+  
+  def findMatchWithGames(matchId: Long): Option[MatchWithGames] = {
+    Match.findById(matchId) map { foosMatch => MatchWithGames(foosMatch, Game.findByMatch(foosMatch.id.get)) }
+  }
+  
+  /**
+   * Searches for a Match with the exact same Game results (ignoring order) within the last 60 minutes.
+   * If more than one Match is found the most recent one will be returned.
+   */
+  // TODO: Unit test this (probably need to understand the cake pattern first in order to mock the Object calls)
+  def findRecentConflictingMatch(games: Seq[Game]): Option[Match] = {    
+    val matches = Match.findCapturedSince(new DateTime().minusMinutes(ConflictWindowInMinutes))
+    val gamesByMatch = Game.findByMatches(matches.map(_.id.get))
+    
+    matches.sortWith { 
+      case (alpha, beta) => alpha.capturedDate.isAfter(beta.capturedDate)
+    } find { foosMatch => 
+      gamesByMatch(foosMatch.id.get).forall{ matchGame =>
+        games.exists { paramGame => matchGame equalsResults paramGame }
+      }
+    }
+  }
   
   def captureMatch(games: Seq[Game])(implicit user: User) {
     val foosMatch = Match.create(Match(NotAssigned, new DateTime(), user.name, Match.Format.TwoOnTwo))
@@ -27,8 +52,8 @@ object MatchService {
     EloService.updateElo(matchResults)
   }
   
-  // ===== Helpers =====
-    
+  // ===== Helpers =====    
+  
   private def calculateRank(playerScore: Int, scores: Iterable[Int]): Int = {
     // Rank falls by 1 for every player with a higher score (same score == same rank) 
     scores.count(_ > playerScore) + 1

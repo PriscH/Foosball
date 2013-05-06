@@ -1,12 +1,11 @@
 package models
 
 import scala.language.postfixOps
-
 import play.api.db._
 import play.api.Play.current
-
 import anorm._
 import anorm.SqlParser._
+import scala.collection.mutable.MultiMap
 
 /**
  * A Match consists of multiple Games, with a Game having two Winners and two Losers
@@ -17,14 +16,24 @@ case class Game(id: Pk[Long], matchId: Long, winner1: String, winner2: String, l
   require(winner2 != loser1 && winner2 != loser2)
   require(loser1 != loser2)
   
-  def players: Seq[String] = {
-    List(winner1, winner2, loser1, loser2)
-  }
+  val winners = List(winner1, winner2)
+  val losers  = List(loser1, loser2)
+  val players = winners ++ losers
   
   def playerScore(player: String): Int =
     if (winner1 == player || winner2 == player) 2 // Won 2-0 or 2-1
     else if (score == Game.Score.Two_One) 1       // Lost 2-1
     else 0                                        // Lost 2-0
+    
+  /**
+   * Compares the results of this Game with another.
+   * The Winners are compared with each other, the Losers with each other and the Scores.
+   * The Id and Match Id are ignored.
+   */
+  def equalsResults(other: Game): Boolean =
+    winners.toSet == other.winners.toSet &&
+    losers.toSet == other.losers.toSet &&
+    score == other.score
 }
 
 object Game {
@@ -61,6 +70,19 @@ object Game {
   def all(): Seq[Game] = DB.withConnection { implicit connection =>
     SQL("select * from game").as(Game.simple *)
   }
+  
+  def findByMatch(matchId: Long): Seq[Game] = DB.withConnection { implicit connection =>
+    SQL("select * from game where match_id = {matchId}").on('matchId -> matchId).as(Game.simple *)
+  }
+  
+  // TODO: Be careful, this will be vulnerable to SQL injection if the parameterised type is String instead of Long
+  //       Probably need to do something complex like http://nineofclouds.blogspot.com/2013/04/in-clause-with-anorm.html
+  def findByMatches(matchIds: Iterable[Long]): Map[Long, List[Game]] = 
+    if (matchIds.isEmpty) Map()
+    else { DB.withConnection { implicit connection =>
+      val games = SQL("select * from game where match_id in (%s)" format matchIds.mkString(",")).as(Game.simple *)
+      games.groupBy(_.matchId)
+    }}
   
   // ===== Persistance Operations =====
 

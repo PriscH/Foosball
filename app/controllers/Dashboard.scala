@@ -20,6 +20,8 @@ import util.html.HtmlExtension._
 object Dashboard extends Controller with Secured {
   
   val RecentMatchCount = 3
+  val FlashSuccess = "success"
+  val FlashConflictingMatch = "conflictingMatchId"
   
   // ===== Forms =====
   
@@ -29,13 +31,19 @@ object Dashboard extends Controller with Secured {
 
   // ===== Actions =====
   
-  def show = SecuredAction { user => implicit request => {     
+  def show = SecuredAction { implicit user => implicit request => {     
     val recentMatches = Match.findRecentForPlayer(user.name, RecentMatchCount).map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))  
     val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
-    Ok(html.dashboard.index(User.all, recentMatches, playerRankings))
+    
+    if (flash.get(FlashConflictingMatch).isDefined) {
+      val conflictingMatch = MatchService.findMatchWithGames(flash.get(FlashConflictingMatch).get.toLong)
+      Ok(html.dashboard.index(User.all, recentMatches, playerRankings, conflictingMatch))
+    } else {    
+      Ok(html.dashboard.index(User.all, recentMatches, playerRankings))
+    }
   }}
   
-  def refresh = SecuredAction { user => implicit request => {
+  def refresh = SecuredAction { implicit user => implicit request => {
     val recentMatches = Match.findRecentForPlayer(user.name, RecentMatchCount).map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))  
     val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
     
@@ -45,14 +53,22 @@ object Dashboard extends Controller with Secured {
     ))
   }}
   
-  def captureMatch = SecuredAction { implicit user => implicit request => {
+  /**
+   * With force == true will capture the Match even if an identical Match has been captured recently
+   */
+  def captureMatch(force: Boolean) = SecuredAction { implicit user => implicit request => {
     val resultsJson = captureMatchForm.bindFromRequest.get
     val results = Json.parse(resultsJson)
     val games = parseGames(results)
     
-    MatchService.captureMatch(games)           
-    Redirect(routes.Dashboard.show).flashing("success" -> Messages("match.capture.success"))
-  }}
+    val conflictingMatch = MatchService.findRecentConflictingMatch(games)
+    if (force || conflictingMatch.isEmpty) {
+      MatchService.captureMatch(games)           
+      Redirect(routes.Dashboard.show).flashing(FlashSuccess -> Messages("match.capture.success"))
+    } else {
+      Redirect(routes.Dashboard.show).flashing(FlashConflictingMatch -> conflictingMatch.get.id.get.toString)
+    }
+  }}  
   
   // ===== Helpers =====
   

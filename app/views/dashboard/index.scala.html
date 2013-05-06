@@ -1,4 +1,4 @@
-@(users: Seq[models.User], recentMatches: Seq[domain.MatchWithResults], playerRankings: Seq[domain.PlayerRanking])(implicit request: RequestHeader, flash: Flash)
+@(users: Seq[models.User], recentMatches: Seq[domain.MatchWithResults], playerRankings: Seq[domain.PlayerRanking], conflictingMatch: Option[domain.MatchWithGames] = None)(implicit request: RequestHeader, flash: Flash)
 
 @main{
   <title>Foosball - Dashboard</title>
@@ -239,18 +239,35 @@
         // Stores the JSON data in a form field
         $("#results").val(JSON.stringify(request));    
       });
+      
+      // User clicks the "Discard" conflict resolution button
+      $("#discardButton").click(function(event) {
+        $("#matchConflict").fadeOut("fast")
+      })
 	  
 	    // Adjust the standings height to match the results heigh
       $("#standings").height($("#matchResults").height());
       
-      // Refresh the widgets every 30 seconds
-      setInterval(refreshWidgets, 30000);
+      // Refresh the widgets every 10 seconds
+      setInterval(refreshWidgets, 10000);
     });
   </script>
 }{
   @flash.get("success").map { message =>
     <div class="success">
       @message
+    </div>
+  }
+  
+  @if(conflictingMatch.isDefined) {
+    <div id="matchConflict" class="warning">
+      <span class="conflictMessage">
+        @conflictingMatch.get.capturedBy recently captured the exact same result. Are you sure you are not capturing a duplicate result?
+      </span>
+      <div class="conflictActions">
+        <button id="proceedButton" type="button" class="submitButton conflictAction">Proceed</button>
+        <button id="discardButton" type="button" class="submitButton conflictAction">Discard</button>
+      </div>
     </div>
   }
   

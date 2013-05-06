@@ -40,8 +40,8 @@ object Match {
     SQL("select * from match_detail").as(Match.simple *)
   }
   
-  def findById(matchId: Long): Match = DB.withConnection { implicit connection =>
-    SQL("select * from match_detail where id = {matchId}").on('matchId -> {matchId}).single(Match.simple)
+  def findById(matchId: Long): Option[Match] = DB.withConnection { implicit connection =>
+    SQL("select * from match_detail where id = {matchId}").on('matchId -> matchId).as(Match.simple.singleOpt)
   }
   
   def findRecentForPlayer(player: String, recentCount: Int): Seq[Match] = DB.withConnection { implicit connection =>
@@ -55,6 +55,10 @@ object Match {
           'player      -> player,
           'recentCount -> recentCount
     ).as(Match.simple *)  
+  }
+  
+  def findCapturedSince(date: DateTime) : Seq[Match] = DB.withConnection { implicit connection =>
+    SQL("select * from match_detail where captured_date > {date}").on('date -> date).as(Match.simple *)
   }
   
   // ===== Persistance Operations =====
