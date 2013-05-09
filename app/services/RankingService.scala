@@ -17,14 +17,14 @@ object RankingService {
       val playerResults = matchResults.filter(_.player == player.name)
 
       PlayerRanking(player.name,
-                    playerElos.count(_._2.elo > playerElo.elo) + 1,
+                    playerElos.count(_._2.displayElo > playerElo.displayElo) + 1,
                     playerResults.size,
                     playerResults.count(_.result == MatchResult.Result.Winner),
                     playerResults.count(_.result == MatchResult.Result.PseudoWinner),
                     playerResults.count(_.result == MatchResult.Result.PseudoLoser),
                     playerResults.count(_.result == MatchResult.Result.Loser),
-                    Math.round(playerElo.elo).toInt,
-                    Math.round(playerElo.change).toInt)
+                    playerElo.displayElo,
+                    playerElo.displayChange)
     })
   }
 }
