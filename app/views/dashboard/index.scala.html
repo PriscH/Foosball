@@ -1,9 +1,13 @@
-@(users: Seq[models.User], recentMatches: Seq[domain.MatchWithResults], playerRankings: Seq[domain.PlayerRanking], conflictingMatch: Option[domain.MatchWithGames] = None)(implicit request: RequestHeader, flash: Flash)
+@(users: Seq[models.User], recentMatches: Seq[domain.MatchWithResults], playerRankings: Seq[domain.PlayerRanking], conflictingMatch: Option[domain.MatchWithGames] = None, conflictingMatchJson: Option[play.api.libs.json.JsValue] = None)(implicit request: RequestHeader, flash: Flash)
 
 @main{
   <title>Foosball - Dashboard</title>
 
   <script type="text/javascript">
+    @if(conflictingMatchJson.isDefined) {
+      var conflictingGames = @Html(conflictingMatchJson.get.toString);
+    }
+
     var selectedPlayers = [];
 
     // Decides whether to display the submit button or not
@@ -240,11 +244,18 @@
         $("#results").val(JSON.stringify(request));    
       });
       
+      // User clicks the "Capture" conflict resolution button
+      $("#captureButton").click(function(event) {
+        $("#results").val(JSON.stringify(conflictingGames));
+        $("#force").val("true");
+        $("#matchForm").submit();
+      })
+      
       // User clicks the "Discard" conflict resolution button
       $("#discardButton").click(function(event) {
         $("#matchConflict").fadeOut("fast")
       })
-	  
+      	  
 	    // Adjust the standings height to match the results heigh
       $("#standings").height($("#matchResults").height());
       
@@ -265,7 +276,7 @@
         @conflictingMatch.get.capturedBy recently captured the exact same result. Are you sure you are not capturing a duplicate result?
       </span>
       <div class="conflictActions">
-        <button id="proceedButton" type="button" class="submitButton conflictAction">Proceed</button>
+        <button id="captureButton" type="button" class="submitButton conflictAction">Capture</button>
         <button id="discardButton" type="button" class="submitButton conflictAction">Discard</button>
       </div>
     </div>
@@ -304,13 +315,14 @@
       @tags.matchResults(2)
       @tags.matchResults(3)
      
-      @helper.form(routes.Dashboard.captureMatch) {
+      @helper.form(routes.Dashboard.captureMatch, 'id -> "matchForm") {
 	      <input type="hidden" id="player1" name="player1" />
 	      <input type="hidden" id="player2" name="player2" />
 	      <input type="hidden" id="player3" name="player3" />
 	      <input type="hidden" id="player4" name="player4" />
 
         <input type="hidden" id="results" name="results" />
+        <input type="hidden" id="force" name="force" value="false" />
         
 	      <div class="centered">
           <button id="resultSubmit" class="disabledButton" type="submit" disabled="true">Capture match results</button>

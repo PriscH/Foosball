@@ -7,9 +7,8 @@ import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.libs.json.JsValue
-
+import play.api.libs.json.JsObject
 import anorm.NotAssigned
-
 import domain._
 import models._
 import views._
@@ -26,7 +25,10 @@ object Dashboard extends Controller with Secured {
   // ===== Forms =====
   
   val captureMatchForm = Form(
-    "results" -> nonEmptyText
+    tuple(
+      "results" -> nonEmptyText,
+      "force"   -> boolean
+    )
   ) 
 
   // ===== Actions =====
@@ -37,7 +39,8 @@ object Dashboard extends Controller with Secured {
     
     if (flash.get(FlashConflictingMatch).isDefined) {
       val conflictingMatch = MatchService.findMatchWithGames(flash.get(FlashConflictingMatch).get.toLong)
-      Ok(html.dashboard.index(User.all, recentMatches, playerRankings, conflictingMatch))
+      val conflictingMatchJson = conflictingMatch map(foosMatch => toJson(foosMatch.games))
+      Ok(html.dashboard.index(User.all, recentMatches, playerRankings, conflictingMatch, conflictingMatchJson))
     } else {    
       Ok(html.dashboard.index(User.all, recentMatches, playerRankings))
     }
@@ -53,14 +56,12 @@ object Dashboard extends Controller with Secured {
     ))
   }}
   
-  /**
-   * With force == true will capture the Match even if an identical Match has been captured recently
-   */
-  def captureMatch(force: Boolean) = SecuredAction { implicit user => implicit request => {
-    val resultsJson = captureMatchForm.bindFromRequest.get
+  def captureMatch() = SecuredAction { implicit user => implicit request => {    
+    val (resultsJson, force) = captureMatchForm.bindFromRequest.get
     val results = Json.parse(resultsJson)
     val games = parseGames(results)
     
+    // With force == true will capture the Match even if an identical Match has been captured recently
     val conflictingMatch = MatchService.findRecentConflictingMatch(games)
     if (force || conflictingMatch.isEmpty) {
       MatchService.captureMatch(games)           
@@ -83,5 +84,16 @@ object Dashboard extends Controller with Secured {
     val score = (((results \ "games")(index)) \ "score").as[String]
         
     Game(NotAssigned, 0, winner1, winner2, loser1, loser2, Game.Score.withName(score))
-  } 
+  }
+  
+  // TODO: This is just the inverse of parseGames
+  private def toJson(games: Seq[Game]): JsValue = Json.toJson( Map(
+    "games" -> (games map { game =>
+      Json.toJson( Map (
+        "winners" -> Json.toJson(game.winners),
+        "losers"  -> Json.toJson(game.losers),
+        "score"   -> Json.toJson(game.score.toString)
+      ))
+    }    
+  )))
 }
