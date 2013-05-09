@@ -23,10 +23,14 @@ object Application extends Controller {
   // ===== Authentication Actions =====
   
   def login = Action { implicit request =>
-    val users = User.all
+    if (request.session.get("username").isDefined) {
+      Redirect(routes.Dashboard.show)
+    } else {
+      val users = User.all
     
-    if (users.isEmpty) Redirect(routes.Signup.show("initial"))
-    else Ok(html.application.login(users))
+      if (users.isEmpty) Redirect(routes.Signup.show("initial"))
+      else Ok(html.application.login(users)) 
+    }
   }
   
   def logout = Action { implicit request =>
