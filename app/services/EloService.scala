@@ -11,9 +11,9 @@ import domain.EloWithChange
 
 object EloService {
 
-  private val StartingElo = 1200.0
+  private val StartingElo = 1000.0
   private val StartingChange = 0.0
-  private val EloWeight = 400.0
+  private val EloWeight = 800.0
   private val KValue = 48.0
 
   // ===== Interface =====
