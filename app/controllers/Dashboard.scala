@@ -18,7 +18,6 @@ import util.html.HtmlExtension._
 
 object Dashboard extends Controller with Secured {
   
-  val RecentMatchCount = 3
   val FlashSuccess = "success"
   val FlashConflictingMatch = "conflictingMatchId"
   
@@ -34,7 +33,7 @@ object Dashboard extends Controller with Secured {
   // ===== Actions =====
   
   def show = SecuredAction { implicit user => implicit request => {     
-    val recentMatches = Match.findRecentForPlayer(user.name, RecentMatchCount).map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))  
+    val recentMatches = MatchService.findRecentMatchesForPlayer(user.name)
     val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
     
     if (flash.get(FlashConflictingMatch).isDefined) {
@@ -47,7 +46,7 @@ object Dashboard extends Controller with Secured {
   }}
   
   def refresh = SecuredAction { implicit user => implicit request => {
-    val recentMatches = Match.findRecentForPlayer(user.name, RecentMatchCount).map(foosMatch => MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get)))  
+    val recentMatches = MatchService.findRecentMatchesForPlayer(user.name)  
     val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
     
     Ok(Json.obj(

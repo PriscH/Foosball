@@ -11,6 +11,8 @@ case class MatchWithResults(foosMatch: Match, matchResults: Seq[MatchResult]) {
     
   def matchId: Long = foosMatch.id.get
   
+  def players: Seq[String] = matchResults.map(_.player)
+  
   def resultString(): String = {
     // Has to be exactly one outright result
     val outrightResult = " " + matchResults.find(_.outrightResult).get.resultString + " "

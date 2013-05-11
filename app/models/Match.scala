@@ -44,6 +44,10 @@ object Match {
     SQL("select * from match_detail where id = {matchId}").on('matchId -> matchId).as(Match.simple.singleOpt)
   }
   
+  def findRecent(recentCount: Int): Seq[Match] = DB.withConnection { implicit connection =>
+    SQL("select * from match_detail order by match_detail.captured_date desc limit {recentCount}").on('recentCount -> recentCount).as(Match.simple *)  
+  }
+  
   def findRecentForPlayer(player: String, recentCount: Int): Seq[Match] = DB.withConnection { implicit connection =>
     SQL("""
         select match_detail.* from match_detail 

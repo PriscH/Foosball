@@ -9,12 +9,23 @@ import models._
 
 object MatchService {
   
+  val RecentMatchCount = 3
   val ConflictWindowInMinutes = 60;
 
   // ===== Interface =====
   
   def findMatchWithGames(matchId: Long): Option[MatchWithGames] = {
     Match.findById(matchId) map { foosMatch => MatchWithGames(foosMatch, Game.findByMatch(foosMatch.id.get)) }
+  }
+  
+  /**
+   * Returns the most recent matches captured in the system, and will always include at least the latest match for the player.
+   */
+  def findRecentMatchesForPlayer(player: String): Seq[MatchWithResults] = {
+    val recentMatches = Match.findRecent(RecentMatchCount).map(toMatchWithResults)
+
+    if (recentMatches.exists(_.players contains player)) recentMatches
+    else recentMatches.take(RecentMatchCount - 1) ++ Match.findRecentForPlayer(player, 1).map(toMatchWithResults)
   }
   
   /**
@@ -53,6 +64,8 @@ object MatchService {
   }
   
   // ===== Helpers =====    
+  
+  private def toMatchWithResults(foosMatch: Match): MatchWithResults = MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get))
   
   private def calculateRank(playerScore: Int, scores: Iterable[Int]): Int = {
     // Rank falls by 1 for every player with a higher score (same score == same rank) 

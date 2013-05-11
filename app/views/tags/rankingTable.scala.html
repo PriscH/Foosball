@@ -17,13 +17,13 @@
     @for(playerRanking <- playerRankings) {
       <tr>
         <td class="rankColumn">@(playerRanking.rank + ".")</td>
-        <td class="nameColumn importantCell">@playerRanking.player</td>
+        <td class="nameColumn important">@playerRanking.player</td>
         <td>@playerRanking.played</td>
         <td>@playerRanking.won</td>
         <td>@playerRanking.pseudoWon</td>
         <td>@playerRanking.pseudoLost</td>
         <td>@playerRanking.lost</td>
-        <td class="importantCell">@playerRanking.elo</td>
+        <td class="important">@playerRanking.elo</td>
         @playerRanking.lastChange match {
           case x if x < 0  => { <td class="changeColumn negEloChange">@playerRanking.lastChange</td> }
           case x if x == 0 => { <td class="changeColumn noEloChange">-</td> }
