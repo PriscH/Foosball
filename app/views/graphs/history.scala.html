@@ -1,0 +1,42 @@
+@(user: String, players: Seq[models.User], graphData: play.api.libs.json.JsValue, graphConfig: play.api.libs.json.JsValue)(implicit request: RequestHeader, flash: Flash)
+
+@main {
+  <title>Foosball - ELO History</title>
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.flot.min.js")"></script>
+  
+  <script type="text/javascript">
+    var user = @Html("'" + user + "'");
+    var players = @Html(players.map(_.name).mkString("['", "','", "']"));
+    var data = @Html(graphData.toString);
+
+    var graphData = [];
+    for (var i = 0; i < players.length; i++) {
+      var playerData = data[players[i]];
+      graphData.push(playerData);
+    }
+    
+    var graphOptions = @Html(graphConfig.toString);
+
+    $(document).ready(function() {
+      $.plot($("#mainGraph"), graphData, graphOptions);
+      
+      for (var i = 0; i < players.length; ++i) {
+        $.plot($("#" + players[i]), [data[players[i]]]);
+      }
+    })
+  </script>
+}{
+  <div id="mainGraph" class="centered" style="width: 1124px; height: 400px;"></div>
+  
+  <div class="centered">
+    @for(player <- players) {
+      <div style="display: inline-block; margin: 10px 0;">
+	      <div id=@player.name style="width: 560px; height: 200px;"></div>
+        <div class="player">
+          <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + player.avatar + ".png")" alt="Avatar" />
+          <div class="playerName">@player.name</div>
+        </div>
+      </div>
+    }
+  </div>
+}

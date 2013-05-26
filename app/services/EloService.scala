@@ -7,7 +7,7 @@ import anorm.NotAssigned
 import org.joda.time.DateTime
 
 import models._
-import domain.EloWithChange
+import domain._
 
 object EloService {
 
@@ -47,6 +47,22 @@ object EloService {
 
       PlayerElo.create(PlayerElo(NotAssigned, result.player, date, result.matchId, (updatedElo - previousElo), updatedElo))
     })
+  }
+  
+  // Loads all the explicit elos and generates an implicit starting elo for each player
+  def loadCompleteElos(): Seq[PlayerElo] = {
+    val players = User.all.map(_.name)
+    val explicitElos = PlayerElo.all
+    
+    val implicitElos = for {
+      player <- players
+      firstDate = explicitElos.filter(_.player == player).sortBy(_.capturedDate.getMillis).headOption match {
+        case Some(elo) => elo.capturedDate.minusDays(1) // Use day before first match
+        case None      => new DateTime()
+      }
+    } yield PlayerElo(NotAssigned, player, firstDate, 0, StartingChange, StartingElo)
+    
+    implicitElos ++ explicitElos
   }
   
   /**
