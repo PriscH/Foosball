@@ -8,6 +8,8 @@ import models._
 import services._
 import views._
 import util.security.Secured
+import views.html.graphs.history
+import akka.actor.FSM.->
 
 object Graphs extends Controller with Secured {
   
@@ -17,7 +19,7 @@ object Graphs extends Controller with Secured {
   
   def showHistory = SecuredAction { implicit user => implicit request =>
     val historyGraph = GraphService.loadHistoryGraph    
-    Ok(html.graphs.history(user.name, User.all, toJson(historyGraph), toConfigJson(historyGraph)))
+    Ok(html.graphs.history(user.name, User.all, toJson(historyGraph), toConfigJson(historyGraph), toPlayerConfigJson(historyGraph)))
   }
   
   // ===== Helpers =====
@@ -25,9 +27,12 @@ object Graphs extends Controller with Secured {
   // TODO: JSon ... properly ...
   private def toJson(historyGraph: Map[String, Seq[(Int, Double)]]): JsValue = Json.toJson(
     historyGraph.map { case (player, history) =>
-      player -> history.map { case (index, elo) =>
-        Seq(index, elo)
-      }
+      player -> Json.toJson(Map(
+        "label" -> Json.toJson(player),
+        "data"  -> Json.toJson(history.map { case (index, elo) =>
+          Seq(index, elo)
+        })
+      ))
     }
   )
   
@@ -44,6 +49,34 @@ object Graphs extends Controller with Secured {
       "max"          -> (historyGraph.values.flatten.maxBy(_._2)._2.toInt + EloBuffer),
       "minTickSize"  -> 1,
       "tickDecimals" -> 0
+    )),
+    "legend" -> Json.toJson(Map(
+      "show"         -> Json.toJson(true),
+      "position"     -> Json.toJson("nw"),
+      "margin"       -> Json.toJson(10)
     ))
   ))
+
+  // TODO: JSon ... properly ...
+  private def toPlayerConfigJson(historyGraph: Map[String, Seq[(Int, Double)]]): JsValue = Json.toJson(
+    historyGraph.map { case (player, history) =>
+      player -> Json.toJson(Map(
+        "xaxis" -> Json.toJson(Map(
+          "min"          -> (history.map(_._1).min),
+          "max"          -> (history.map(_._1).max),
+          "minTickSize"  -> 1,
+          "tickDecimals" -> 0
+        )),
+        "yaxis" -> Json.toJson(Map(
+          "min"          -> (history.map(_._2).min.toInt - EloBuffer),
+          "max"          -> (history.map(_._2).max.toInt + EloBuffer),
+          "minTickSize"  -> 1,
+          "tickDecimals" -> 0
+        )),
+        "legend" -> Json.toJson(Map(
+          "show"         -> Json.toJson(false)
+        ))
+      ))
+    }
+  )
 }

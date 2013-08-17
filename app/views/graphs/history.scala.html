@@ -1,4 +1,4 @@
-@(user: String, players: Seq[models.User], graphData: play.api.libs.json.JsValue, graphConfig: play.api.libs.json.JsValue)(implicit request: RequestHeader, flash: Flash)
+@(user: String, players: Seq[models.User], graphData: play.api.libs.json.JsValue, graphConfig: play.api.libs.json.JsValue, playerConfig: play.api.libs.json.JsValue)(implicit request: RequestHeader, flash: Flash)
 
 @main {
   <title>Foosball - ELO History</title>
@@ -16,12 +16,13 @@
     }
     
     var graphOptions = @Html(graphConfig.toString);
+    var playerOptions = @Html(playerConfig.toString());
 
     $(document).ready(function() {
       $.plot($("#mainGraph"), graphData, graphOptions);
       
       for (var i = 0; i < players.length; ++i) {
-        $.plot($("#" + players[i]), [data[players[i]]]);
+        $.plot($("#" + players[i]), [data[players[i]]], playerOptions[players[i]]);
       }
     })
   </script>
@@ -31,11 +32,11 @@
   <div class="centered">
     @for(player <- players) {
       <div style="display: inline-block; margin: 10px 0;">
+          <div class="player">
+              <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + player.avatar + ".png")" alt="Avatar" />
+              <div class="playerName">@player.name</div>
+          </div>
 	      <div id=@player.name style="width: 560px; height: 200px;"></div>
-        <div class="player">
-          <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + player.avatar + ".png")" alt="Avatar" />
-          <div class="playerName">@player.name</div>
-        </div>
       </div>
     }
   </div>
