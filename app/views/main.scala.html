@@ -22,11 +22,12 @@
   <body>
     <div class="container">
       <div class="header">
-        @if(false/*!request.session.isEmpty*/) {
+        @if(!request.session.isEmpty) {
           <div class="navigation">
             <ul class="squareBordered">
               <div class="leftMenu">
-                <li><a href="@routes.Dashboard.show">Home</a></li>
+                <li><a href="@routes.Dashboard.show">Dashboard</a></li>
+                <li><a href="@routes.Graphs.showHistory">Graphs</a></li>
               </div>
               <div class="rightMenu">
                 <li><a href="@routes.Application.logout">Log Out</a></li>
