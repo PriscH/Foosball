@@ -1,42 +1,81 @@
-@(user: String, players: Seq[models.User], graphData: play.api.libs.json.JsValue, graphConfig: play.api.libs.json.JsValue, playerConfig: play.api.libs.json.JsValue)(implicit request: RequestHeader, flash: Flash)
+@(players: Seq[models.User], recentPlayers: Seq[String], graphData: play.api.libs.json.JsValue, graphConfig: play.api.libs.json.JsValue, playerConfig: play.api.libs.json.JsValue)(implicit request: RequestHeader, flash: Flash)
 
 @main {
   <title>Foosball - ELO History</title>
   <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.flot.min.js")"></script>
   
   <script type="text/javascript">
-    var user = @Html("'" + user + "'");
-    var players = @Html(players.map(_.name).mkString("['", "','", "']"));
+    var players = @Html(players.map(player => {
+      "{name: '" + player.name + "', avatar: '" + player.avatar + "'}"
+    }).mkString("[", ",", "]"));
+    var selectedPlayers = @Html(recentPlayers.mkString("['", "','", "']"));
+
     var data = @Html(graphData.toString);
 
     var graphData = [];
     for (var i = 0; i < players.length; i++) {
-      var playerData = data[players[i]];
+      var playerData = data[players[i].name];
       graphData.push(playerData);
     }
     
     var graphOptions = @Html(graphConfig.toString);
     var playerOptions = @Html(playerConfig.toString());
 
+    function mainGraphLegendFormatter(label, series) {
+      if ($.inArray(label, selectedPlayers) == -1) {
+        return null;
+      }
+
+      return '<span class="graphLegend">' + label + '</span>';
+    }
+
+    function playerGraphLegendFormatter(label, series) {
+      var avatar = null;
+      for (var i = 0; i < players.length; i++) {
+        if (players[i].name == label) {
+          avatar = players[i].avatar
+        }
+      }
+
+      var avatarPath = jsRoutes.controllers.Assets.at("images/avatars/" + avatar + ".png").url;
+      return '<img class="miniAvatar" src="' + avatarPath + '" alt="Avatar" />'
+             + '<div class="playerName">' + label + '</div>';
+    }
+
     $(document).ready(function() {
+      graphOptions.legend.labelFormatter = mainGraphLegendFormatter;
+
+      for (var i = 0; i < graphData.length; i++) {
+        var playerData = graphData[i];
+
+        if ($.inArray(playerData.label, selectedPlayers) == -1) {
+          playerData.lines.show = false;
+        }
+      }
       $.plot($("#mainGraph"), graphData, graphOptions);
+      for (var i = 0; i < graphData.length; i++) {
+        var playerData = graphData[i];
+        playerData.lines.show = true;
+      }
       
       for (var i = 0; i < players.length; ++i) {
-        $.plot($("#" + players[i]), [data[players[i]]], playerOptions[players[i]]);
+        var playerGraphOptions = playerOptions[players[i].name];
+        playerGraphOptions.legend.labelFormatter = playerGraphLegendFormatter;
+
+        var $playerGraph = $("#" + players[i].name + "Graph")
+        $.plot($playerGraph, [data[players[i].name]], playerGraphOptions);
+
+        $playerGraph.find(".legendColorBox").hide();
       }
     })
   </script>
 }{
-  <div id="mainGraph" class="centered" style="width: 1124px; height: 400px;"></div>
+  <div id="mainGraph" class="centered" style="width: 1124px; height: 500px;"></div>
   
   <div class="centered">
     @for(player <- players) {
       <div style="display: inline-block; margin: 10px 0;">
-          <div class="player">
-              <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + player.avatar + ".png")" alt="Avatar" />
-              <div class="playerName">@player.name</div>
-          </div>
-	      <div id=@player.name style="width: 560px; height: 200px;"></div>
+	      <div id=@(player.name + "Graph") style="width: 560px; height: 200px;"></div>
       </div>
     }
   </div>

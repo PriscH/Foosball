@@ -53,6 +53,8 @@ object Application extends Controller {
   def javascriptRoutes = Action { implicit request =>
     Ok(
       Routes.javascriptRouter("jsRoutes")(
+        routes.javascript.Assets.at,
+
         routes.javascript.Application.login,
         routes.javascript.Application.logout,
         routes.javascript.Application.authenticate,

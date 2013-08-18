@@ -18,8 +18,9 @@ object Graphs extends Controller with Secured {
   // ===== Actions =====
   
   def showHistory = SecuredAction { implicit user => implicit request =>
-    val historyGraph = GraphService.loadHistoryGraph    
-    Ok(html.graphs.history(user.name, User.all, toJson(historyGraph), toConfigJson(historyGraph), toPlayerConfigJson(historyGraph)))
+    val historyGraph = GraphService.loadHistoryGraph
+    val recentPlayers = PlayerService.findMostRecentOpponents
+    Ok(html.graphs.history(User.all, recentPlayers, toJson(historyGraph), toConfigJson(historyGraph), toPlayerConfigJson(historyGraph)))
   }
   
   // ===== Helpers =====
@@ -31,7 +32,10 @@ object Graphs extends Controller with Secured {
         "label" -> Json.toJson(player),
         "data"  -> Json.toJson(history.map { case (index, elo) =>
           Seq(index, elo)
-        })
+        }),
+        "lines" -> Json.toJson(Map(
+          "show" -> true
+        ))
       ))
     }
   )
@@ -74,7 +78,9 @@ object Graphs extends Controller with Secured {
           "tickDecimals" -> 0
         )),
         "legend" -> Json.toJson(Map(
-          "show"         -> Json.toJson(false)
+          "show"         -> Json.toJson(true),
+          "position"     -> Json.toJson("nw"),
+          "margin"       -> Json.toJson(5)
         ))
       ))
     }
