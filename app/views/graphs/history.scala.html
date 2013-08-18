@@ -50,8 +50,8 @@
     }
 
     function setDisplayOfUnselectedPlayerData(display) {
-      for (var i = 0; i < playerDataMap.length; i++) {
-        var playerData = playerDataMap[i];
+      for (var i = 0; i < flatData.length; i++) {
+        var playerData = flatData[i];
 
         if ($.inArray(playerData.label, selectedPlayers) == -1) {
           playerData.lines.show = display;
