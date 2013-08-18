@@ -1,25 +1,18 @@
-@(players: Seq[models.User], recentPlayers: Seq[String], graphData: play.api.libs.json.JsValue, graphConfig: play.api.libs.json.JsValue, playerConfig: play.api.libs.json.JsValue)(implicit request: RequestHeader, flash: Flash)
+@(players: Seq[models.User], defaultPlayers: Seq[String], graphData: play.api.libs.json.JsValue)(implicit request: RequestHeader, flash: Flash)
 
 @main {
   <title>Foosball - ELO History</title>
   <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery.flot.min.js")"></script>
   
   <script type="text/javascript">
-    var players = @Html(players.map(player => {
-      "{name: '" + player.name + "', avatar: '" + player.avatar + "'}"
-    }).mkString("[", ",", "]"));
-    var selectedPlayers = @Html(recentPlayers.mkString("['", "','", "']"));
+    var players = @Html(players.map(player => s"'${player.name}'").mkString("[", ",", "]"));
+    var playerAvatars = @Html(players.map(player => s"'${player.name}':'${player.avatar}'").mkString("{", ",", "}"));
+    var selectedPlayers = @Html(defaultPlayers.mkString("['", "','", "']"));
+    var playerDataMap = @Html(graphData.toString);
 
-    var data = @Html(graphData.toString);
-
-    var graphData = [];
-    for (var i = 0; i < players.length; i++) {
-      var playerData = data[players[i].name];
-      graphData.push(playerData);
-    }
-    
-    var graphOptions = @Html(graphConfig.toString);
-    var playerOptions = @Html(playerConfig.toString());
+    var flatData = $.map(playerDataMap, function(playerData) {
+      return playerData;
+    });
 
     function mainGraphLegendFormatter(label, series) {
       if ($.inArray(label, selectedPlayers) == -1) {
@@ -30,40 +23,50 @@
     }
 
     function playerGraphLegendFormatter(label, series) {
-      var avatar = null;
-      for (var i = 0; i < players.length; i++) {
-        if (players[i].name == label) {
-          avatar = players[i].avatar
-        }
-      }
+      var avatarPath = jsRoutes.controllers.Assets.at("images/avatars/" + playerAvatars[label] + ".png").url;
 
-      var avatarPath = jsRoutes.controllers.Assets.at("images/avatars/" + avatar + ".png").url;
       return '<img class="miniAvatar" src="' + avatarPath + '" alt="Avatar" />'
              + '<div class="playerName">' + label + '</div>';
     }
 
-    $(document).ready(function() {
-      graphOptions.legend.labelFormatter = mainGraphLegendFormatter;
+    function buildGraphOptions(legendFormatter) {
+      var options = {};
 
-      for (var i = 0; i < graphData.length; i++) {
-        var playerData = graphData[i];
+      options.xaxis = {};
+      options.xaxis.minTickSize = 1;
+      options.xaxis.tickDecimals = 0;
+
+      options.yaxis = {};
+      options.yaxis.minTickSize = 1;
+      options.yaxis.tickDecimals = 0;
+
+      options.legend = {};
+      options.legend.show = true;
+      options.legend.position = "nw";
+
+      options.legend.labelFormatter = legendFormatter;
+
+      return options;
+    }
+
+    function setDisplayOfUnselectedPlayerData(display) {
+      for (var i = 0; i < playerDataMap.length; i++) {
+        var playerData = playerDataMap[i];
 
         if ($.inArray(playerData.label, selectedPlayers) == -1) {
-          playerData.lines.show = false;
+          playerData.lines.show = display;
         }
       }
-      $.plot($("#mainGraph"), graphData, graphOptions);
-      for (var i = 0; i < graphData.length; i++) {
-        var playerData = graphData[i];
-        playerData.lines.show = true;
-      }
+    }
+
+    $(document).ready(function() {
+      setDisplayOfUnselectedPlayerData(false);
+      $.plot($("#mainGraph"), flatData, buildGraphOptions(mainGraphLegendFormatter));
+      setDisplayOfUnselectedPlayerData(true);
       
       for (var i = 0; i < players.length; ++i) {
-        var playerGraphOptions = playerOptions[players[i].name];
-        playerGraphOptions.legend.labelFormatter = playerGraphLegendFormatter;
-
-        var $playerGraph = $("#" + players[i].name + "Graph")
-        $.plot($playerGraph, [data[players[i].name]], playerGraphOptions);
+        var $playerGraph = $("#" + players[i] + "Graph");
+        $.plot($playerGraph, [playerDataMap[players[i]]], buildGraphOptions(playerGraphLegendFormatter));
 
         $playerGraph.find(".legendColorBox").hide();
       }
@@ -75,7 +78,7 @@
   <div class="centered">
     @for(player <- players) {
       <div style="display: inline-block; margin: 10px 0;">
-	      <div id=@(player.name + "Graph") style="width: 560px; height: 200px;"></div>
+	      <div id=@(player.name + "Graph") player=@(player.name) style="width: 560px; height: 200px;"></div>
       </div>
     }
   </div>
