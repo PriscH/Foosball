@@ -1,0 +1,10 @@
+@(players: Seq[models.User])
+
+<div class="players">
+  @for(player <- players) {
+    <div class="player selectable" name="@player.name">
+      <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + player.avatar + ".png")" alt="Avatar" />
+      <div class="playerName">@player.name</div>
+    </div>
+  }
+</div>

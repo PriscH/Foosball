@@ -300,14 +300,7 @@
     <div id="matchResults" class="widget">
       <h1 class="centered">Capture match results:</h1>
 
-      <div class="players">
-        @for(user <- users) {
-          <div class="player selectable" name="@user.name">
-            <img class="miniAvatar" src="@routes.Assets.at("images/avatars/" + user.avatar + ".png")" alt="Avatar" />
-            <div class="playerName">@user.name</div>
-          </div>
-        }
-      </div>
+      @tags.playerSelection(users)
 
       <hr class="divider" />
 

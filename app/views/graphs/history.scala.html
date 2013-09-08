@@ -49,37 +49,53 @@
       return options;
     }
 
-    function setDisplayOfUnselectedPlayerData(display) {
+    function plotGraph() {
+      // Determine which Players to display and which not
       for (var i = 0; i < flatData.length; i++) {
         var playerData = flatData[i];
 
         if ($.inArray(playerData.label, selectedPlayers) == -1) {
-          playerData.lines.show = display;
+          playerData.lines.show = false;
+        } else {
+          playerData.lines.show = true;
         }
       }
+
+      $.plot($("#mainGraph"), flatData, buildGraphOptions(mainGraphLegendFormatter));
     }
 
     $(document).ready(function() {
-      setDisplayOfUnselectedPlayerData(false);
-      $.plot($("#mainGraph"), flatData, buildGraphOptions(mainGraphLegendFormatter));
-      setDisplayOfUnselectedPlayerData(true);
-      
-      for (var i = 0; i < players.length; ++i) {
-        var $playerGraph = $("#" + players[i] + "Graph");
-        $.plot($playerGraph, [playerDataMap[players[i]]], buildGraphOptions(playerGraphLegendFormatter));
+      // User selects a Player to add to the graph
+      $(".player").click(function() {
+        var $this = $(this);
+        var selectedPlayer = $this.attr("name");
 
-        $playerGraph.find(".legendColorBox").hide();
+        if ($this.hasClass("selected")) {
+          selectedPlayers = $.grep(selectedPlayers, function(value) {
+            return value != selectedPlayer;
+          });
+
+          $this.removeClass("expose").removeClass("selected");
+        } else {
+          $this.addClass("expose").addClass("selected");
+
+          selectedPlayers.push(selectedPlayer);
+        }
+
+        plotGraph();
+      });
+
+      // Show the initial players as selected
+      for (var i = 0; i < selectedPlayers.length; ++i) {
+        $(".player[name=" + selectedPlayers[i] + "]").addClass("expose").addClass("selected");
       }
+
+      // Plot the initial graph
+      plotGraph();
     })
   </script>
 }{
-  <div id="mainGraph" class="centered" style="width: 1124px; height: 500px;"></div>
-  
-  <div class="centered">
-    @for(player <- players) {
-      <div style="display: inline-block; margin: 10px 0;">
-	      <div id=@(player.name + "Graph") player=@(player.name) style="width: 560px; height: 200px;"></div>
-      </div>
-    }
-  </div>
+  @tags.playerSelection(players)
+
+  <div id="mainGraph" style="margin-left: 13px; width: 1117px; height: 500px;"></div>
 }
