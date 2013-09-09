@@ -8,7 +8,7 @@ class EloServiceSpec extends Specification {
 
   "The expected result" should {
     "be large against an opponent with a smaller elo" in {
-      EloService.estimateScoreVersus(1200.0, 1000.0) must beCloseTo(0.75975, 0.0001)
+      EloService.estimateScoreVersus(1200.0, 1000.0) must beCloseTo(0.64006, 0.0001)
     }
     
     "be 0.5 against an opponent with the exact same elo" in {
@@ -16,7 +16,7 @@ class EloServiceSpec extends Specification {
     }
     
     "be small against an opponent with a larger elo" in {
-      EloService.estimateScoreVersus(1200.0, 1400.0) must beCloseTo(0.24025, 0.0001)  
+      EloService.estimateScoreVersus(1200.0, 1400.0) must beCloseTo(0.35994, 0.0001)
     }
   }
 }
