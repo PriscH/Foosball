@@ -1,4 +1,4 @@
-@(players: Seq[models.User], defaultPlayers: Seq[String], graphData: play.api.libs.json.JsValue)(implicit request: RequestHeader, flash: Flash)
+@(players: Seq[models.User], defaultPlayers: Seq[String], graphData: play.api.libs.json.JsValue, matchCount: Long)(implicit request: RequestHeader, flash: Flash)
 
 @main {
   <title>Foosball - ELO History</title>
@@ -8,11 +8,10 @@
     var players = @Html(players.map(player => s"'${player.name}'").mkString("[", ",", "]"));
     var playerAvatars = @Html(players.map(player => s"'${player.name}':'${player.avatar}'").mkString("{", ",", "}"));
     var selectedPlayers = @Html(defaultPlayers.mkString("['", "','", "']"));
-    var playerDataMap = @Html(graphData.toString);
+    var graphData = @Html(graphData.toString);
 
-    var flatData = $.map(playerDataMap, function(playerData) {
-      return playerData;
-    });
+    var startMatch = 0;
+    var endMatch = @matchCount;
 
     function mainGraphLegendFormatter(label, series) {
       if ($.inArray(label, selectedPlayers) == -1) {
@@ -36,6 +35,9 @@
       options.xaxis.minTickSize = 1;
       options.xaxis.tickDecimals = 0;
 
+      options.xaxis.min = startMatch;
+      options.xaxis.max = endMatch;
+
       options.yaxis = {};
       options.yaxis.minTickSize = 1;
       options.yaxis.tickDecimals = 0;
@@ -51,8 +53,8 @@
 
     function plotGraph() {
       // Determine which Players to display and which not
-      for (var i = 0; i < flatData.length; i++) {
-        var playerData = flatData[i];
+      for (var i = 0; i < graphData.length; i++) {
+        var playerData = graphData[i];
 
         if ($.inArray(playerData.label, selectedPlayers) == -1) {
           playerData.lines.show = false;
@@ -61,7 +63,7 @@
         }
       }
 
-      $.plot($("#mainGraph"), flatData, buildGraphOptions(mainGraphLegendFormatter));
+      $.plot($("#mainGraph"), graphData, buildGraphOptions(mainGraphLegendFormatter));
     }
 
     $(document).ready(function() {
@@ -85,6 +87,20 @@
         plotGraph();
       });
 
+      // Create the range slider
+      $("#rangeSlider").slider({
+        range: true,
+        min: 0,
+        max: @matchCount,
+        values: [0, @matchCount],
+        slide: function(event, ui) {
+          startMatch = ui.values[0];
+          endMatch = ui.values[1];
+
+          plotGraph();
+        }
+      });
+
       // Show the initial players as selected
       for (var i = 0; i < selectedPlayers.length; ++i) {
         $(".player[name=" + selectedPlayers[i] + "]").addClass("expose").addClass("selected");
@@ -97,5 +113,7 @@
 }{
   @tags.playerSelection(players)
 
-  <div id="mainGraph" style="margin-left: 13px; width: 1117px; height: 500px;"></div>
+  <div id="rangeSlider" class="graphSlider centered"></div>
+
+  <div id="mainGraph" class="historyGraph"></div>
 }

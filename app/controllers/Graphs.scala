@@ -16,7 +16,7 @@ object Graphs extends Controller with Secured {
   // ===== Actions =====
   
   def showHistory = SecuredAction { implicit user => implicit request =>
-    Ok(html.graphs.history(User.all, PlayerService.findMostRecentOpponents, loadGraphDataJson))
+    Ok(html.graphs.history(User.all, PlayerService.findMostRecentOpponents, loadGraphDataJson, Match.countAllMatches()))
   }
 
   // ===== Graph Json Builders =====
@@ -24,7 +24,7 @@ object Graphs extends Controller with Secured {
 
   private def loadGraphDataJson(): JsValue = Json.toJson(
   GraphService.loadHistoryGraphData.map { case (player, history) =>
-      player -> Json.toJson(Map(
+      Json.toJson(Map(
         "label" -> Json.toJson(player),
         "data"  -> Json.toJson(history.map { case (index, elo) =>
           Seq(index, elo)

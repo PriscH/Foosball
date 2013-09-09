@@ -61,8 +61,12 @@ object Match {
     ).as(Match.simple *)  
   }
   
-  def findCapturedSince(date: DateTime) : Seq[Match] = DB.withConnection { implicit connection =>
+  def findCapturedSince(date: DateTime): Seq[Match] = DB.withConnection { implicit connection =>
     SQL("select * from match_detail where captured_date > {date}").on('date -> date).as(Match.simple *)
+  }
+
+  def countAllMatches(): Long = DB.withConnection { implicit connection =>
+    SQL("select count(id) from match_detail").as(scalar[Long].single)
   }
   
   // ===== Persistance Operations =====
