@@ -4,7 +4,7 @@ import scala.math
 
 import anorm.NotAssigned
 
-import org.joda.time.DateTime
+import org.joda.time.{DateMidnight, DateTime}
 
 import models._
 import domain._
@@ -53,12 +53,17 @@ object EloService {
   def loadCompleteElos(): Seq[PlayerElo] = {
     val players = User.all.map(_.name)
     val explicitElos = PlayerElo.all
-    
+    val eloDates = explicitElos.map(_.capturedDate)
+
+    // Assign the starting elo date to the last match captured prior to the players first explicit elo
+    // so as to avoid introducing "fake" matches
     val implicitElos = for {
       player <- players
       firstDate = explicitElos.filter(_.player == player).sortBy(_.capturedDate.getMillis).headOption match {
-        case Some(elo) => elo.capturedDate.minusDays(1) // Use day before first match
-        case None      => new DateTime()
+        case Some(elo) => if (eloDates.exists(_.isBefore(elo.capturedDate))) eloDates.filter(_.isBefore(elo.capturedDate)).sortBy(_.getMillis).last
+                          else elo.capturedDate.minusDays(1)
+        case None      => if (eloDates.isEmpty) new DateTime()
+                          else eloDates.sortBy(_.getMillis).last
       }
     } yield PlayerElo(NotAssigned, player, firstDate, 0, StartingChange, StartingElo)
     
