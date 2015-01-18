@@ -4,8 +4,12 @@
 
 /* COMMON */
 
-.Glow {
+.BrownGlow {
   box-shadow: 0 0 15px saddleBrown;
+}
+
+.GreenGlow {
+  box-shadow: 0 0 15px darkGreen;
 }
 
 h1 {
@@ -54,12 +58,12 @@ h2 {
 }
 
 .selectable:hover {
-  .Glow
+  .BrownGlow
 }
 
 .selected {
   border-color: gold !important;
-  .Glow
+  .BrownGlow
 }
 
 .deselected {
@@ -138,11 +142,11 @@ h2 {
 html {
   min-height: 100%;
 
-  background-image: linear-gradient(bottom, rgb(99,186,216) 25%, rgb(18,101,141) 75%);
-  background-image: -o-linear-gradient(bottom, rgb(99,186,216) 25%, rgb(18,101,141) 75%);
-  background-image: -moz-linear-gradient(bottom, rgb(99,186,216) 25%, rgb(18,101,141) 75%);
-  background-image: -webkit-linear-gradient(bottom, rgb(99,186,216) 25%, rgb(18,101,141) 75%);
-  background-image: -ms-linear-gradient(bottom, rgb(99,186,216) 25%, rgb(18,101,141) 75%);
+  background-image: linear-gradient(bottom, rgb(99,186,216) 25%, rgb(40,90,150) 75%);
+  background-image: -o-linear-gradient(bottom, rgb(99,186,216) 25%, rgb(40,90,150) 75%);
+  background-image: -moz-linear-gradient(bottom, rgb(99,186,216) 25%, rgb(40,90,150) 75%);
+  background-image: -webkit-linear-gradient(bottom, rgb(99,186,216) 25%, rgb(40,90,150) 75%);
+  background-image: -ms-linear-gradient(bottom, rgb(99,186,216) 25%, rgb(40,90,150) 75%);
 
   background-image: -webkit-gradient(
     linear,
@@ -170,7 +174,7 @@ html {
 
 .container {
   display: block;
-  width: 1200px;
+  width: 1370px;
   margin: 0 auto;
 }
 
@@ -183,10 +187,10 @@ html {
 }
 
 .header {
-  background-image: url(../images/header.png);
+  background-image: url(../images/header.jpg);
   background-repeat: no-repeat;
 
-  width: 1196px;
+  width: 1366px;
   height: 160px;
   margin: 30px 0 10px 0;
 
@@ -198,12 +202,12 @@ html {
 }
 
 .bigLeft {
-  width: 740px;
+  width: 960px;
   float: left;
 }
 
 .smallRight {
-  width: 415px;
+  width: 365px;
   float: right;
 }
 
@@ -230,7 +234,7 @@ html {
 /* MENU */
 
 .navigation {
-  width: 1000px;
+  width: 1200px;
   margin: 0px auto;
   padding-top: 122px;
 }
@@ -289,7 +293,7 @@ html {
   display: inline-block;
   margin: 5px 5px;
   border: 2px solid;
-  width: 360px;
+  width: 400px;
 }
 
 .avatar {
@@ -312,14 +316,15 @@ html {
 
 .password {
   font-size: 2em;
-  width: 185px;
+  width: 225px;
 }
 
 /* DASHBOARD */
 
 #resultSubmit {
-  width: 700px;
+  width: 900px;
   height: 50px;
+  margin: 10px;
   font-size: x-large;
   font-weight: bold;
 }
@@ -347,7 +352,7 @@ html {
   display: inline-block;
   margin: 2px 0px;
   border: 1px solid;
-  width: 175px;
+  width: 200px;
 
   border-radius: 3px;
   -moz-border-radius: 3px;
@@ -438,7 +443,7 @@ html {
 
 .rankingTable {
   margin-top: 15px;
-  width: 400px;
+  width: 350px;
   table-layout: fixed;
 }
 
@@ -459,12 +464,12 @@ html {
 }
 
 .rankColumn {
-  width: 15px;
+  width: 18px;
   text-align: left !important;
 }
 
 .nameColumn {
-  width: 80px;
+  width: 90px;
   text-align: left !important;
 }
 
@@ -486,14 +491,22 @@ html {
 
 /* MATCH RESULTS */
 
-.scoreButtons {
+.scoreSection {
   display: inline-block;
+  vertical-align: middle;
+  margin: 0 5px;
+}
+
+.scoreSection .scoreButtons:first-of-type {
+  margin-bottom: 5px;
+}
+
+.scoreSection .scoreButtons:last-of-type {
+  margin-top: 5px;
 }
 
 .scoreButton {
   color: black;
-  background: Moccasin;
-  border-color: SaddleBrown;
 
   text-align: center;
   text-decoration: none;
@@ -504,13 +517,37 @@ html {
   border-radius: 3px;
   -moz-border-radius: 3px;
 
-  width: 50px;
-  height: 35px;
+  width: 34px;
+  height: 34px;
   vertical-align: top;
+
+  margin: 0 -2px;
 
   display: inline-block;
 }
 
+.winScore {
+  background: lightGreen;
+  border-color: darkGreen;
+}
+
+.loseScore {
+  background: moccasin;
+  border-color: saddleBrown;
+}
+
+.winSelectable {
+  cursor: pointer;
+}
+
+.winSelectable:hover {
+  .GreenGlow
+}
+
+.winSelected {
+  border-color: darkGreen !important;
+  .GreenGlow
+}
 
 /* SIGNUP */
 
@@ -600,12 +637,12 @@ html {
 }
 
 .graphSlider {
-  width: 1000px;
+  width: 1200px;
 }
 
 .historyGraph {
   margin-top: 20px;
-  margin-left: 15px;
-  width: 1115px;
+  margin-left: 30px;
+  width: 1250px;
   height: 500px;
 }

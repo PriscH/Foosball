@@ -1,33 +1,59 @@
-@(game: Int)
+@(set: Int, players: Vector[Int])
 
-@defining(game % 3 + 2) { opponent1 =>
-  @defining((game + 1) % 3 + 2) { opponent2 =>
-    <div class="matchResults" game="@game">
-      <div class="matchPlayers">
-        <div class="matchPlayer" player="1">
-          <div class="selectPlayer">Player 1</div>
-        </div>
-        <div class="matchPlayer" player="@(game + 1)">
-          <div class="selectPlayer">Player @(game + 1)</div>
-        </div>
-      </div>
+<div class="matchResults" set="@set">
+  <div class="matchPlayers">
+    <div class="matchPlayer" player="@(players(0))">
+      <div class="selectPlayer">Player @(players(0))</div>
+    </div>
+    <div class="matchPlayer" player="@(players(1))">
+      <div class="selectPlayer">Player @(players(1))</div>
+    </div>
+  </div>
 
-      <div class="scoreButtons">
-          <a class="scoreButton disabledButton deselected" winners="1,@(game + 1)" straightWin="true">2-0</a>
-          <a class="scoreButton disabledButton deselected" winners="1,@(game + 1)">2-1</a>
-          <span class="versus">VS</span>
-          <a class="scoreButton disabledButton deselected" winners="@opponent1,@opponent2">1-2</a>
-          <a class="scoreButton disabledButton deselected" winners="@opponent1,@opponent2" straightWin="true">0-2</a>
-      </div>
+  <div class="scoreSection">
+    <div class="scoreButtons" game="1" side="left" players="@(players(0)),@(players(1))">
+      <a class="winScore scoreButton disabledButton deselected" score="5">5</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="4">4</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="3">3</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="2">2</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="1">1</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="0">0</a>
+    </div>
+    <div class="scoreButtons" game="2" side="left" players="@(players(0)),@(players(1))">
+      <a class="winScore scoreButton disabledButton deselected" score="5">5</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="4">4</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="3">3</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="2">2</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="1">1</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="0">0</a>
+    </div>
+  </div>
+  <span class="versus">VS</span>
+  <div class="scoreSection">
+    <div class="scoreButtons" game="1" side="right" players="@(players(2)),@(players(3))">
+      <a class="loseScore scoreButton disabledButton deselected" score="0">0</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="1">1</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="2">2</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="3">3</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="4">4</a>
+      <a class="winScore scoreButton disabledButton deselected" score="5">5</a>
+    </div>
+    <div class="scoreButtons" game="2" side="right" players="@(players(2)),@(players(3))">
+      <a class="loseScore scoreButton disabledButton deselected" score="0">0</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="1">1</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="2">2</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="3">3</a>
+      <a class="loseScore scoreButton disabledButton deselected" score="4">4</a>
+      <a class="winScore scoreButton disabledButton deselected" score="5">5</a>
+    </div>
+  </div>
 
-      <div class="matchPlayers">
-        <div class="matchPlayer" player="@opponent1">
-          <div class="selectPlayer">Player @opponent1</div>
-        </div>
-        <div class="matchPlayer" player="@opponent2">
-          <div class="selectPlayer">Player @opponent2</div>
-        </div>
-      </div>
-    </div> 
-  }
-}
+  <div class="matchPlayers">
+    <div class="matchPlayer" player="@(players(2))">
+      <div class="selectPlayer">Player @(players(2))</div>
+    </div>
+    <div class="matchPlayer" player="@(players(3))">
+      <div class="selectPlayer">Player @(players(3))</div>
+    </div>
+  </div>
+</div>
