@@ -1,17 +1,17 @@
-@(set: Int, players: Vector[Int])
+@(game: Int, players: Vector[Int])
 
-<div class="matchResults" set="@set">
+<div class="matchResults" game="@game">
   <div class="matchPlayers">
-    <div class="matchPlayer" player="@(players(0))">
+    <div class="matchPlayer" side="left" player="@(players(0))">
       <div class="selectPlayer">Player @(players(0))</div>
     </div>
-    <div class="matchPlayer" player="@(players(1))">
+    <div class="matchPlayer" side="left" player="@(players(1))">
       <div class="selectPlayer">Player @(players(1))</div>
     </div>
   </div>
 
   <div class="scoreSection">
-    <div class="scoreButtons" game="1" side="left" players="@(players(0)),@(players(1))">
+    <div class="scoreButtons" round="1" side="left" players="@(players(0)),@(players(1))">
       <a class="winScore scoreButton disabledButton deselected" score="5">5</a>
       <a class="loseScore scoreButton disabledButton deselected" score="4">4</a>
       <a class="loseScore scoreButton disabledButton deselected" score="3">3</a>
@@ -19,7 +19,7 @@
       <a class="loseScore scoreButton disabledButton deselected" score="1">1</a>
       <a class="loseScore scoreButton disabledButton deselected" score="0">0</a>
     </div>
-    <div class="scoreButtons" game="2" side="left" players="@(players(0)),@(players(1))">
+    <div class="scoreButtons" round="2" side="left" players="@(players(0)),@(players(1))">
       <a class="winScore scoreButton disabledButton deselected" score="5">5</a>
       <a class="loseScore scoreButton disabledButton deselected" score="4">4</a>
       <a class="loseScore scoreButton disabledButton deselected" score="3">3</a>
@@ -30,7 +30,7 @@
   </div>
   <span class="versus">VS</span>
   <div class="scoreSection">
-    <div class="scoreButtons" game="1" side="right" players="@(players(2)),@(players(3))">
+    <div class="scoreButtons" round="1" side="right" players="@(players(2)),@(players(3))">
       <a class="loseScore scoreButton disabledButton deselected" score="0">0</a>
       <a class="loseScore scoreButton disabledButton deselected" score="1">1</a>
       <a class="loseScore scoreButton disabledButton deselected" score="2">2</a>
@@ -38,7 +38,7 @@
       <a class="loseScore scoreButton disabledButton deselected" score="4">4</a>
       <a class="winScore scoreButton disabledButton deselected" score="5">5</a>
     </div>
-    <div class="scoreButtons" game="2" side="right" players="@(players(2)),@(players(3))">
+    <div class="scoreButtons" round="2" side="right" players="@(players(2)),@(players(3))">
       <a class="loseScore scoreButton disabledButton deselected" score="0">0</a>
       <a class="loseScore scoreButton disabledButton deselected" score="1">1</a>
       <a class="loseScore scoreButton disabledButton deselected" score="2">2</a>
@@ -49,10 +49,10 @@
   </div>
 
   <div class="matchPlayers">
-    <div class="matchPlayer" player="@(players(2))">
+    <div class="matchPlayer" side="right" player="@(players(2))">
       <div class="selectPlayer">Player @(players(2))</div>
     </div>
-    <div class="matchPlayer" player="@(players(3))">
+    <div class="matchPlayer" side="right" player="@(players(3))">
       <div class="selectPlayer">Player @(players(3))</div>
     </div>
   </div>
