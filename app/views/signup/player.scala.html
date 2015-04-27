@@ -1,4 +1,4 @@
-@(usedAvatars: Seq[String], token: String)(implicit request: RequestHeader, flash: Flash)
+@(usedAvatars: Seq[String], token: Token, allowNameChange: Boolean)(implicit request: RequestHeader, flash: Flash)
 
 @main {
   <title>Foosball - Signup</title>
@@ -55,7 +55,7 @@
     @helper.form(routes.Signup.createPlayer) {
       <div class="signupRow">
         <label class="signupLabel">Name:</label>
-        <input class="signupInput" name="name" id="name" maxlength="10" autocapitalize="on" type="text" />
+        <input class="signupInput" name="name" id="name" type="text" disabled="@(!allowNameChange)" value="@token.player"/>
       </div>
 
       <div class="signupRow">
@@ -74,7 +74,7 @@
       </div>
 
       <input id="avatar" name="avatar" type="hidden" />
-      <input id="token" name="token" type="hidden" value=@token />
+      <input id="token" name="token" type="hidden" value=@token.value />
 
       <div class="centered">
         <button id="playerSubmit" class="disabledButton" type="submit" disabled="true">Submit your player</button>
@@ -85,7 +85,9 @@
   <div id="overlay">
     <div class="avatarOptions">
       <h1>Select your avatar:</h1>
-      @defining(List("Alien", "Bowser", "CaptainFalcon", "Cloud", "DonkeyKong", "Dragonborn", "Kratos", "LaraCroft", "Link", "Mario", "Pacman", "Pikachu", "SolidSnake", "Sonic", "Villian", "Yoshi")) { avatars =>
+      @defining(List("Alien", "Assassin", "Bandit", "Bowser", "CaptainFalcon", "ChunLi", "Cloud", "Crash", "DonkeyKong", "Dragonborn", "Drake", "Droplet",
+                     "ElvenKing", "Fox", "Greek", "Kirby", "Kratos", "LaraCroft", "Link", "Mario", "Megaman", "MetaKnight", "Minecraft", "Pacman", "Paperboy",
+                     "Pikachu", "Plants", "Princess", "Robot", "Samus", "SolidSnake", "Sonic", "Spyro", "Squall", "Villian", "Yoshi")) { avatars =>
         <div class="avatars">
           @for(avatar <- avatars) {        
             @if(usedAvatars.contains(avatar)) {

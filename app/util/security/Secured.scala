@@ -21,5 +21,5 @@ trait Secured {
   
   private def username(request: RequestHeader): Option[String] = request.session.get("username")
   
-  private def onUnauthorized(request: RequestHeader): Result = Results.Redirect(routes.Application.login)
+  private def onUnauthorized(request: RequestHeader): Result = Results.Redirect(routes.Application.showLogin)
 }

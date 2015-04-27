@@ -10,6 +10,7 @@ import models._
 import views._
 import views.html.defaultpages.badRequest
 import util.security._
+import org.joda.time.DateTime
 
 
 object Signup extends Controller with Secured {
@@ -30,9 +31,9 @@ object Signup extends Controller with Secured {
   
   def show(token: String) = Action { implicit request => 
     val usedAvatars = User.all.map(_.avatar)
-    
+
     Token.findByValue(token) match {
-      case Some(dbToken) => Ok(html.signup.player(usedAvatars, token))
+      case Some(dbToken) => Ok(html.signup.player(usedAvatars, dbToken, dbToken.value == Token.InitialToken))
       case None          => Ok(html.signup.expired())
     }
   }
@@ -47,7 +48,7 @@ object Signup extends Controller with Secured {
     else {
       User.create(User(name, email, Codecs.sha1(password), avatar))
       Token.delete(token)
-      Redirect(routes.Application.login)
+      Redirect(routes.Application.showLogin)
     }
   }
   

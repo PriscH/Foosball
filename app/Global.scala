@@ -8,7 +8,7 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     // Create the initial token if no users exist
     if(User.all.isEmpty && Token.all.isEmpty) {    
-      Token.create(Token(Token.InitialToken, Token.Scope.Signup, new DateTime()))
+      Token.create(Token(Token.InitialToken, "", Token.Scope.Signup, new DateTime()))
     }
 
     // Load testing data if the deployment mode is not Production

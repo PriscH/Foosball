@@ -13,8 +13,10 @@ object EloService {
 
   private val StartingElo = 1000.0
   private val StartingChange = 0.0
-  private val EloWeight = 800.0
-  private val KValue = 48.0
+  private val EloWeight = 200.0
+
+  private val ResultWeight = 0.5
+  private val GoalWeight = 1.0 - ResultWeight
 
   // ===== Interface =====
 
@@ -27,25 +29,18 @@ object EloService {
   }
 
   // Elo calculation based on http://sradack.blogspot.com/2008/06/elo-rating-system-multiple-players.html
-  def updateElo(matchResults: Seq[MatchResult], date: DateTime = new DateTime()) = {
-    val players = matchResults.map(_.player)
+  // And http://math.stackexchange.com/questions/1084436/two-leg-games-in-elo-rating-for-football-teams
+  def updateElo(matchWithGames: MatchWithGames) = {
+    val players = matchWithGames.players
     val currentElos = findCurrentElos(players)
+    val eloChanges = calculateMatchEloChanges(matchWithGames, currentElos)
 
-    val totalMatchScore = matchResults.map(_.score).sum
-    val updatedElos = currentElos.map(eloTuple => eloTuple._1 -> {
-        val expectedScore = currentElos.filter(_._1 != eloTuple._1).values.map(opponentElo => estimateScoreVersus(eloTuple._2, opponentElo)).sum / 6.0
-        val actualScore = matchResults.find(_.player == eloTuple._1).get.score.toDouble / totalMatchScore
+    matchWithGames.players.map(player => {
+      val previousElo = currentElos(player)
+      val eloChange = eloChanges(player)
+      val updatedElo = previousElo + eloChange
 
-        // As a win is only 0.5, we multiply the KValue by 2 in order to match the jumps expected from a game where a win is 1.0
-        eloTuple._2 + 2 * KValue * (actualScore - expectedScore)
-      }
-    )
-
-    matchResults.map(result => {
-      val previousElo = currentElos.find(_._1 == result.player).get._2
-      val updatedElo = updatedElos.find(_._1 == result.player).get._2
-
-      PlayerElo.create(PlayerElo(NotAssigned, result.player, date, result.matchId, (updatedElo - previousElo), updatedElo))
+      PlayerElo.create(PlayerElo(NotAssigned, player, matchWithGames.capturedDate, matchWithGames.matchId, eloChange, updatedElo))
     })
   }
   
@@ -75,20 +70,13 @@ object EloService {
    * Should only be used as part of a migration script in response to changes to the Elo calculation algorithm
    */
   def recalculateElo() {
-    val matchResults = MatchResult.all.groupBy(_.matchId)
-    
-    // Find the dates on which the Elos where captured (by confirming the Match result)
-    val matchesByDate = PlayerElo.all.groupBy(_.matchId).map {
-      case (matchId, elos) => elos.head.capturedDate -> matchId
-    }.toMap
-    
+    val matchesWithGames = MatchWithGames.all.sortWith{(a, b) => a.capturedDate.isBefore(b.capturedDate)}
+
     // Remove the old Elos
     PlayerElo.clear
-    
+
     // Recalculate in the same order as the initial calculation
-    matchesByDate.keys.toList.sortWith(_.isBefore(_)).map { date =>
-      updateElo(matchResults(matchesByDate(date)), date)
-    }
+    matchesWithGames.map(updateElo(_))
   }
 
   // ===== Helper Methods =====
@@ -101,6 +89,58 @@ object EloService {
         case None      => default
       }
     }).toMap
+  }
+
+  private def calculateMatchEloChanges(matchWithGames: MatchWithGames, startElos: Map[String, Double]): Map[String, Double] = {
+    val zeroMap = matchWithGames.players.map(_ -> 0.0).toMap
+    matchWithGames.games.foldLeft(zeroMap) {(previousEloChanges, game) => {
+      val gameEloChanges = calculateGameEloChanges(game, matchWithGames.format, startElos)
+      gameEloChanges.map{case (player, eloChange) => player -> (eloChange + previousEloChanges(player))}
+    }}
+  }
+
+  private def calculateGameEloChanges(game: Game, format: Match.Format, startElos: Map[String, Double]): Map[String, Double] = {
+    val leftEloAverage = (startElos(game.leftPlayer1) + startElos(game.leftPlayer2)) / 2
+    val rightEloAverage = (startElos(game.rightPlayer1) + startElos(game.rightPlayer2)) / 2
+
+    val leftExpectedScore = estimateScoreVersus(leftEloAverage, rightEloAverage)
+    val rightExpectedScore = 1.0 - leftExpectedScore
+
+    val resultBasedEloChanges = calculateResultBasedEloChanges(game, format, leftExpectedScore, rightExpectedScore)
+    val goalBasedEloChanges = calculateGoalBasedEloChanges(game, format, leftExpectedScore, rightExpectedScore)
+
+    game.players.map { player =>
+      player -> (resultBasedEloChanges(player) * ResultWeight + goalBasedEloChanges(player) * GoalWeight)
+    }.toMap
+  }
+
+  private def calculateResultBasedEloChanges(game: Game, format: Match.Format, leftExpectedScore: Double, rightExpectedScore: Double): Map[String, Double] = {
+    val leftActualScore = game.leftResult.value / Game.Result.Max
+    val rightActualScore = game.rightResult.value / Game.Result.Max
+
+    game.players.map{ player =>
+      val eloChange = if (game.leftPlayers.contains(player)) format.kValue * (leftActualScore - leftExpectedScore)
+      else format.kValue * (rightActualScore - rightExpectedScore)
+      (player, eloChange)
+    }.toMap
+  }
+
+  private def calculateGoalBasedEloChanges(game: Game, format: Match.Format, leftExpectedScore: Double, rightExpectedScore: Double) = {
+    def normalizeScore(goalDifference: Int): Double = {
+      (goalDifference + Game.MaxScore) / (2.0 * Game.MaxScore)
+    }
+
+    val leftGoalDifference = (game.leftTotal - game.rightTotal)
+    val rightGoalDifference = (game.rightTotal - game.leftTotal)
+
+    val leftActualScore = normalizeScore(leftGoalDifference)
+    val rightActualScore = normalizeScore(rightGoalDifference)
+
+    game.players.map{ player =>
+      val eloChange = if (game.leftPlayers.contains(player)) format.kValue * (leftActualScore - leftExpectedScore)
+      else format.kValue * (rightActualScore - rightExpectedScore)
+      (player, eloChange)
+    }.toMap
   }
 
   // Visible for testing

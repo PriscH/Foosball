@@ -15,14 +15,22 @@ import util.db.AnormExtension._
 /**
  * A Foosball Match, which is in a certain format and has someone that captures it
  */
-case class Match(id: Pk[Long], capturedDate: DateTime, capturedBy: String, format: Match.Format.Value)
+case class Match(id: Pk[Long], capturedDate: DateTime, capturedBy: String, format: Match.Format)
 
 object Match {
-  
-  object Format extends Enumeration {
-    val TwoOnTwo = Value("Two-on-Two")
+
+  sealed abstract class Format(val name: String, val kValue: Double) {
+    override def toString = name
   }
-    
+
+  object Format {
+    case object CompleteMatch extends Format("CompleteMatch", 48.0)
+    case object SingleGame extends Format("SingleGame", 16.0)
+
+    val values = List(CompleteMatch, SingleGame)
+    def apply(name: String) = values.find(_.name == name).get
+  }
+
   // ===== ResultSet Parsers =====
   
   val simple = {
@@ -30,7 +38,7 @@ object Match {
     get[DateTime]       ("match_detail.captured_date") ~
     get[String]         ("match_detail.captured_by") ~
     get[String]         ("match_detail.format") map {
-      case id ~ capturedDate ~ capturedBy ~ format => Match(id, capturedDate, capturedBy, Format.withName(format))
+      case id ~ capturedDate ~ capturedBy ~ format => Match(id, capturedDate, capturedBy, Format(format))
     }
   }
   

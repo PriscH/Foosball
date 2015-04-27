@@ -14,17 +14,23 @@ case class MatchWithResults(foosMatch: Match, matchResults: Seq[MatchResult]) {
   def players: Seq[String] = matchResults.map(_.player)
   
   def resultString(): String = {
-    // Has to be exactly one outright result
-    val outrightResult = " " + matchResults.find(_.outrightResult).get.resultString + " "
-    
-    // May or may not have a pseudo result, but can't have more than one
-    val resultString = matchResults.find(_.pseudoResult) match {
-      case Some(pseudoResult) => outrightResult + "and " + pseudoResult.resultString + " "
-      case None               => outrightResult
+    val winner = matchResults.find(_.result == MatchResult.Result.Winner)
+    val loser = matchResults.find(_.result == MatchResult.Result.Loser)
+
+    val resultString = if (winner.isDefined) {
+      val winString = winner.get + " won"
+      val loseString = if (loser.isDefined)
+                          " and " + loser.get + " lost"
+                       else
+                          ""
+      winString + loseString + " in a match with " + matchResults.filter(!_.hasResult).map(_.player).mkString(", ")
+    } else if (loser.isDefined) {
+      loser.get + " lost in a match with " + matchResults.filter(!_.hasResult).map(_.player).mkString(", ")
+    } else {
+      matchResults.map(_.player).mkString(", ") + " played a match which ended in a draw"
     }
-        
-    // Always more than one "nothing" result
+
     val period = new Period(foosMatch.capturedDate, new DateTime)
-    resultString + " in a match with " + matchResults.filter(_.noResult).map(_.player).mkString(", ") + " " + JodaExtension.formatElapsedTime(period)
+    resultString + " " + JodaExtension.formatElapsedTime(period)
   }  
 }

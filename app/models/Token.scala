@@ -15,7 +15,7 @@ import util.db.AnormExtension._
 /**
  * A security token which can be used to allow access to portions of the site, such as the signup page.
  */
-case class Token(value: String, scope: Token.Scope.Value, capturedDate: DateTime)
+case class Token(value: String, player: String, scope: Token.Scope.Value, capturedDate: DateTime)
 
 object Token {
   
@@ -29,9 +29,10 @@ object Token {
   
   val simple = {
     get[String]   ("token.value") ~
+    get[String]   ("token.player") ~
     get[String]   ("token.scope") ~
     get[DateTime] ("token.captured_date") map {
-      case value ~ scope ~ capturedDate => Token(value, Scope.withName(scope), capturedDate)
+      case value ~ player ~ scope ~ capturedDate => Token(value, player, Scope.withName(scope), capturedDate)
     }
   }
   
@@ -48,8 +49,9 @@ object Token {
   // ===== Persistance Operations =====
 
   def create(token: Token): Token = DB.withConnection { implicit connection =>
-    SQL("insert into token (value, scope, captured_date) values ({value}, {scope}, {capturedDate})").on(
+    SQL("insert into token (value, player, scope, captured_date) values ({value}, {player}, {scope}, {capturedDate})").on(
       'value        -> token.value,
+      'player       -> token.player,
       'scope        -> token.scope.toString,
       'capturedDate -> token.capturedDate
     ).executeInsert()

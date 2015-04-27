@@ -142,12 +142,6 @@
         success: function(data) {
           $("#rankingTable").replaceWith(data.rankings);
           $("#recentMatches").replaceWith(data.recentMatches);
-        },
-        beforeSend: function() {
-          $('.inlineLoader').show();
-        },
-        complete: function() {
-          $('.inlineLoader').hide();
         }
       });
     }
@@ -304,9 +298,7 @@
     <div class="across">
       <div id="history" class="widget">
         <div class="centered">
-          <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
           <h1>Recent matches:</h1>
-          <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
         </div>
 
         @tags.recentMatches(recentMatches)
@@ -344,9 +336,7 @@
   <div class="smallRight">
     <div id="standings" class="widget">
       <div class="centered">
-        <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
         <h1>Current standings:</h1>
-        <img class="inlineLoader" style="display: none;" src="@routes.Assets.at("images/ajax-loader.gif")" alt="Waiting for AJAX repsonse ..." />
       </div>
 
       @tags.rankingTable(playerRankings)

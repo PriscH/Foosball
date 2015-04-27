@@ -74,25 +74,40 @@ object Dashboard extends Controller with Secured {
   
   // TODO: Should probably do this with Reads
   private def parseGames(results: JsValue): Seq[Game] = for (index <- 0 until 3) yield {
-    val winner1 = ((results \ "games")(index) \ "winners")(0).as[String]
-    val winner2 = ((results \ "games")(index) \ "winners")(1).as[String]
-    
-    val loser1 = ((results \ "games")(index) \ "losers")(0).as[String]
-    val loser2 = ((results \ "games")(index) \ "losers")(1).as[String]
-    
-    val score = (((results \ "games")(index)) \ "score").as[String]
+    val leftPlayer1 = (((results \ "games")(index) \ "sides")(0) \ "player1").as[String]
+    val leftPlayer2 = (((results \ "games")(index) \ "sides")(0) \ "player2").as[String]
+
+    val rightPlayer1 = (((results \ "games")(index) \ "sides")(1) \ "player1").as[String]
+    val rightPlayer2 = (((results \ "games")(index) \ "sides")(1) \ "player2").as[String]
+
+    val leftScore1 = (((results \ "games")(index) \ "sides")(0) \ "score1").as[Int]
+    val leftScore2 = (((results \ "games")(index) \ "sides")(0) \ "score2").as[Int]
+
+    val rightScore1 = (((results \ "games")(index) \ "sides")(1) \ "score1").as[Int]
+    val rightScore2 = (((results \ "games")(index) \ "sides")(1) \ "score2").as[Int]
         
-    Game(NotAssigned, 0, winner1, winner2, loser1, loser2, Game.Score.withName(score))
+    Game(NotAssigned, 0, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, rightScore1, rightScore2)
   }
-  
+
   // TODO: This is just the inverse of parseGames
   private def toJson(games: Seq[Game]): JsValue = Json.toJson( Map(
     "games" -> (games map { game =>
       Json.toJson( Map (
-        "winners" -> Json.toJson(game.winners),
-        "losers"  -> Json.toJson(game.losers),
-        "score"   -> Json.toJson(game.score.toString)
+        "sides" -> List(
+          Json.toJson( Map (
+            "player1" -> game.leftPlayer1,
+            "player2" -> game.leftPlayer2,
+            "score1"  -> game.leftScore1.toString,
+            "score2"  -> game.leftScore2.toString
+          )),
+          Json.toJson( Map (
+            "player1" -> game.rightPlayer1,
+            "player2" -> game.rightPlayer2,
+            "score1"  -> game.rightScore1.toString,
+            "score2"  -> game.rightScore2.toString
+          ))
+        )
       ))
-    }    
-  )))
+    })
+  ))
 }

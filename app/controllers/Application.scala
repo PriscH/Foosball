@@ -15,28 +15,27 @@ object Application extends Controller {
   
   val loginForm = Form(
     tuple(
-      "name" -> text,
+      "name"     -> text,
       "password" -> text
     )
   )   
 
   // ===== Authentication Actions =====
   
-  def login = Action { implicit request =>
+  def showLogin = Action { implicit request =>
     if (request.session.get("username").isDefined) {
       Redirect(routes.Dashboard.show)
     } else {
       val users = User.all
     
       if (users.isEmpty) Redirect(routes.Signup.show("initial"))
-      else Ok(html.application.login(users)) 
+      else Ok(html.application.login(users))
     }
   }
   
   def logout = Action { implicit request =>
-    Redirect(routes.Application.login).withNewSession 
+    Redirect(routes.Application.showLogin).withNewSession
   }
-  
   
   def authenticate = Action { implicit request =>
     val (name, password) = loginForm.bindFromRequest.get
@@ -44,7 +43,7 @@ object Application extends Controller {
         
     authentication match {
       case Some(user)  => Redirect(routes.Dashboard.show).withSession("username" -> user.name) 
-      case None        => Redirect(routes.Application.login).flashing("error" -> Messages("password.error"))
+      case None        => Redirect(routes.Application.showLogin).flashing("error" -> Messages("password.error"))
     }
   }
   
@@ -55,7 +54,7 @@ object Application extends Controller {
       Routes.javascriptRouter("jsRoutes")(
         routes.javascript.Assets.at,
 
-        routes.javascript.Application.login,
+        routes.javascript.Application.showLogin,
         routes.javascript.Application.logout,
         routes.javascript.Application.authenticate,
         

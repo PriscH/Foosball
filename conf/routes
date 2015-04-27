@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.login
+GET     /                           controllers.Application.showLogin
 
 # Authentication
 POST    /login                      controllers.Application.authenticate

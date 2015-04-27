@@ -8,47 +8,83 @@ import anorm.SqlParser._
 import scala.collection.mutable.MultiMap
 
 /**
- * A Match consists of multiple Games, with a Game having two Winners and two Losers
+ * A Match consists of multiple Games
  */
-case class Game(id: Pk[Long], matchId: Long, winner1: String, winner2: String, loser1: String, loser2: String, score: Game.Score.Value) {
-  require(!winner1.isEmpty() && !winner2.isEmpty() && !loser1.isEmpty() && !loser2.isEmpty())  
-  require(winner1 != winner2 && winner1 != loser1 && winner1 != loser2)
-  require(winner2 != loser1 && winner2 != loser2)
-  require(loser1 != loser2)
-  
-  val winners = List(winner1, winner2)
-  val losers  = List(loser1, loser2)
-  val players = winners ++ losers
-  
-  def playerScore(player: String): Int =
-    if (winner1 == player || winner2 == player) 2 // Won 2-0 or 2-1
-    else if (score == Game.Score.Two_One) 1       // Lost 2-1
-    else 0                                        // Lost 2-0
-    
+case class Game(id: Pk[Long], matchId: Long, leftPlayer1: String, leftPlayer2: String, rightPlayer1: String, rightPlayer2: String, leftScore1: Int, leftScore2: Int, rightScore1: Int, rightScore2: Int) {
+  require(!leftPlayer1.isEmpty() && !leftPlayer2.isEmpty() && !rightPlayer1.isEmpty() && !rightPlayer2.isEmpty())
+  require(Set(leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2).size == 4)
+
+  val leftPlayers = List(leftPlayer1, leftPlayer2)
+  val rightPlayers = List(rightPlayer1, rightPlayer2)
+  val players = leftPlayers ++ rightPlayers
+
+  val leftTotal = leftScore1 + leftScore2
+  val rightTotal = rightScore1 + rightScore2
+
+  val leftResult = if (leftTotal == Game.MaxScore) Game.Result.WinInTwo
+                   else if (leftTotal > rightTotal) Game.Result.WinOnScore
+                   else if (leftTotal == rightTotal) Game.Result.Draw
+                   else if (leftTotal < rightTotal) Game.Result.LoseOnScore
+                   else Game.Result.LoseInTwo
+
+  val rightResult = if (rightTotal == Game.MaxScore) Game.Result.WinInTwo
+                    else if (rightTotal > leftTotal) Game.Result.WinOnScore
+                    else if (rightTotal == leftTotal) Game.Result.Draw
+                    else if (rightTotal < leftTotal) Game.Result.LoseOnScore
+                    else Game.Result.LoseInTwo
+
+  val winners = if (leftResult == Game.Result.WinInTwo || leftResult == Game.Result.WinOnScore) leftPlayers
+                else if (rightResult == Game.Result.WinInTwo || rightResult == Game.Result.WinOnScore) rightPlayers
+                else Nil
+
+  val losers = if (leftResult == Game.Result.LoseInTwo || leftResult == Game.Result.LoseOnScore) leftPlayers
+               else if (rightResult == Game.Result.LoseInTwo || rightResult == Game.Result.LoseOnScore) rightPlayers
+               else Nil
+
+  def goalDifference(player: String) = if (leftPlayers.contains(player)) leftTotal
+                                       else rightTotal
+
   /**
    * Compares the results of this Game with another.
    * The Winners are compared with each other, the Losers with each other and the Scores.
    * The Id and Match Id are ignored.
    */
-  def equalsResults(other: Game): Boolean =
+  def isSame(other: Game): Boolean =
     winners.toSet == other.winners.toSet &&
     losers.toSet == other.losers.toSet &&
-    score == other.score
+    leftScore1 == other.leftScore1 &&
+    leftScore2 == other.leftScore2 &&
+    rightScore1 == other.rightScore1 &&
+    rightScore2 == other.rightScore2
 }
 
 object Game {
-  
-  object Score extends Enumeration {
-    val Two_Zero = Value("2-0") 
-    val Two_One  = Value("2-1")
+
+  val MaxScore = 10
+
+  sealed abstract class Result(val name: String, val value: Double) {
+    override def toString = name
   }
-  
+
+  object Result {
+    val Max = WinInTwo.value
+
+    case object WinInTwo    extends Result("WinInTwo", 4.0)
+    case object WinOnScore  extends Result("WinOnScore", 3.0)
+    case object Draw        extends Result("Draw", 2.0)
+    case object LoseOnScore extends Result("LoseOnScore", 1.0)
+    case object LoseInTwo   extends Result("LoseInTwo", 0.0)
+
+    val values = List(WinInTwo, WinOnScore, Draw, LoseOnScore, LoseInTwo)
+    def apply(name: String) = values.find(_.name == name).get
+  }
+
   // ===== Overloaded Apply =====
   
   // Allowing this is really ugly, but other than duplicating a portion of Game, I'm not sure how to avoid it
   // It is needed by the controllers to provide the services with the results of a Game, but at that stage the controllers don't have a match id
-  def apply(winner1: String, winner2: String, loser1: String, loser2: String, score: Game.Score.Value): Game = {
-    Game(NotAssigned, 0, winner1, winner2, loser1, loser2, score)
+  def apply(leftPlayer1: String, leftPlayer2: String, rightPlayer1: String, rightPlayer2: String, leftScore1: Int, leftScore2: Int, rightScore1: Int, rightScore2: Int): Game = {
+    Game(NotAssigned, 0, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, rightScore1, rightScore2)
   }
       
   // ===== ResultSet Parsers =====
@@ -56,12 +92,16 @@ object Game {
   val simple = {
     get[Pk[Long]] ("game.id") ~
     get[Long]     ("game.match_id") ~
-    get[String]   ("game.winner1") ~
-    get[String]   ("game.winner2") ~
-    get[String]   ("game.loser1") ~
-    get[String]   ("game.loser2") ~
-    get[String]   ("game.result") map {
-      case id ~ matchId ~ winner1 ~ winner2 ~ loser1 ~ loser2 ~ result => Game(id, matchId, winner1, winner2, loser1, loser2, Score.withName(result))
+    get[String]   ("game.left_player1") ~
+    get[String]   ("game.left_player2") ~
+    get[String]   ("game.right_player1") ~
+    get[String]   ("game.right_player2") ~
+    get[Int]      ("game.left_score1") ~
+    get[Int]      ("game.left_score2") ~
+    get[Int]      ("game.right_score1") ~
+    get[Int]      ("game.right_score2") map {
+      case id ~ matchId ~ leftPlayer1 ~ leftPlayer2 ~ rightPlayer1 ~ rightPlayer2 ~ leftScore1 ~ leftScore2 ~ rightScore1 ~ rightScore2
+            => Game(id, matchId, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, rightScore1, rightScore2)
     }
   }
   
@@ -87,13 +127,19 @@ object Game {
   // ===== Persistance Operations =====
 
   def create(game: Game): Game = DB.withConnection { implicit connection =>
-    SQL("insert into game (match_id, winner1, winner2, loser1, loser2, result) values ({matchId}, {winner1}, {winner2}, {loser1}, {loser2}, {result})").on(
-      'matchId    -> game.matchId,
-      'winner1    -> game.winner1,
-      'winner2    -> game.winner2,
-      'loser1     -> game.loser1,
-      'loser2     -> game.loser2,
-      'result     -> game.score.toString
+    SQL("""
+          insert into game (match_id, left_player1, left_player2, right_player1, right_player2, left_score1, left_score2, right_score1, right_score2)
+                      values ({matchId}, {leftPlayer1}, {leftPlayer2}, {rightPlayer1}, {rightPlayer2}, {leftScore1}, {leftScore2}, {rightScore1}, {rightScore2})
+        """).on(
+      'matchId      -> game.matchId,
+      'leftPlayer1  -> game.leftPlayer1,
+      'leftPlayer2  -> game.leftPlayer2,
+      'rightPlayer1 -> game.rightPlayer1,
+      'rightPlayer2 -> game.rightPlayer2,
+      'leftScore1   -> game.leftScore1,
+      'leftScore2   -> game.leftScore2,
+      'rightScore1  -> game.rightScore1,
+      'rightScore2  -> game.rightScore2
     ).executeInsert().map(newId => game.copy(id = Id(newId))).get
   }
 }

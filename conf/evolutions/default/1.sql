@@ -10,6 +10,7 @@ CREATE TABLE user (
 
 CREATE TABLE token (
   value         VARCHAR(255) NOT NULL,
+  player        VARCHAR(255) NOT NULL,
   scope         VARCHAR(255) NOT NULL,
   captured_date TIMESTAMP    NOT NULL,
   PRIMARY KEY (value)

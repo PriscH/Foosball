@@ -13,34 +13,31 @@ import anorm.SqlParser._
 /**
  * Stores the outcome of a match per player including the actual result, rank and score.
  */
-case class MatchResult(matchId: Long, player: String, result: MatchResult.Result.Value, rank: Int, score: Int) {
+case class MatchResult(matchId: Long, player: String, result: MatchResult.Result, rank: Int, gameScore: Int, goalScore: Int) {
   
-  // Did this player win or lose outright
-  def outrightResult: Boolean = { result == MatchResult.Result.Winner || result == MatchResult.Result.Loser }
-  
-  // Did this player achieve a pseudo win or loss
-  def pseudoResult: Boolean = { result == MatchResult.Result.PseudoWinner || result == MatchResult.Result.PseudoLoser }
-  
-  // Was this player on par with another player, i.e. no result
-  def noResult: Boolean = {result == MatchResult.Result.NoResult }
+  // Did this player win or lose
+  def hasResult: Boolean = { result == MatchResult.Result.Winner || result == MatchResult.Result.Loser }
   
   def resultString: String = result match {
     case MatchResult.Result.Winner       => player + " won"
     case MatchResult.Result.Loser        => player + " lost"
-    case MatchResult.Result.PseudoWinner => player + " was the pseudo-winner"
-    case MatchResult.Result.PseudoLoser  => player + " was the pseudo-loser"
     case _                               => player + " did nothing special"
   }
 }
 
 object MatchResult {
-  
-  object Result extends Enumeration {
-    val Winner       = Value("Winner")
-    val PseudoWinner = Value("Pseudo-Winner")
-    val PseudoLoser  = Value("Pseudo-Loser")
-    val Loser        = Value("Loser")
-    val NoResult     = Value("Nothing")
+
+  sealed abstract class Result(val name: String) {
+    override def toString = name
+  }
+
+  object Result {
+    case object Winner extends Result("Winner")
+    case object Loser extends Result("Loser")
+    case object NoResult extends Result("NoResult")
+
+    val values = List(Winner, Loser, NoResult)
+    def apply(name: String) = values.find(_.name == name).get
   }
   
   // ===== ResultSet Parsers =====
@@ -50,8 +47,9 @@ object MatchResult {
     get[String] ("match_result.player") ~
     get[String] ("match_result.result") ~
     get[Int]    ("match_result.rank") ~
-    get[Int]    ("match_result.score") map {
-      case matchId ~ player ~ result ~ rank ~ score => MatchResult(matchId, player, Result.withName(result), rank, score)
+    get[Int]    ("match_result.game_score") ~
+    get[Int]    ("match_result.goal_score") map {
+      case matchId ~ player ~ result ~ rank ~ gameScore ~ goalScore => MatchResult(matchId, player, Result(result), rank, gameScore, goalScore)
     }
   }
   
@@ -70,14 +68,15 @@ object MatchResult {
   // ===== Persistance Operations =====
 
   def create(matchResult: MatchResult): MatchResult = DB.withConnection { implicit connection =>
-    SQL("insert into match_result values ({matchId}, {player}, {result}, {rank}, {score})").on(
+    SQL("insert into match_result values ({matchId}, {player}, {result}, {rank}, {gameScore}, {goalScore})").on(
       'matchId   -> matchResult.matchId,
       'player    -> matchResult.player,
       'result    -> matchResult.result.toString,
       'rank      -> matchResult.rank,
-      'score     -> matchResult.score
+      'gameScore -> matchResult.gameScore,
+      'goalScore -> matchResult.goalScore
     ).executeInsert()
     
-    return matchResult;
+    return matchResult
   }
 }
