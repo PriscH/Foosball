@@ -33,7 +33,7 @@ object Signup extends Controller with Secured {
     val usedAvatars = User.all.map(_.avatar)
 
     Token.findByValue(token) match {
-      case Some(dbToken) => Ok(html.signup.player(usedAvatars, dbToken, dbToken.value == Token.InitialToken))
+      case Some(dbToken) => Ok(html.signup.player(usedAvatars, dbToken))
       case None          => Ok(html.signup.expired())
     }
   }

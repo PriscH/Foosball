@@ -1,4 +1,4 @@
-@(usedAvatars: Seq[String], token: Token, allowNameChange: Boolean)(implicit request: RequestHeader, flash: Flash)
+@(usedAvatars: Seq[String], token: Token)(implicit request: RequestHeader, flash: Flash)
 
 @main {
   <title>Foosball - Signup</title>
@@ -55,7 +55,7 @@
     @helper.form(routes.Signup.createPlayer) {
       <div class="signupRow">
         <label class="signupLabel">Name:</label>
-        <input class="signupInput" name="name" id="name" type="text" disabled="@(!allowNameChange)" value="@token.player"/>
+        <input class="signupInput" name="name" id="name" type="text" value="@token.player" />
       </div>
 
       <div class="signupRow">

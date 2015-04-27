@@ -18,14 +18,14 @@ case class MatchWithResults(foosMatch: Match, matchResults: Seq[MatchResult]) {
     val loser = matchResults.find(_.result == MatchResult.Result.Loser)
 
     val resultString = if (winner.isDefined) {
-      val winString = winner.get + " won"
+      val winString = winner.get.player + " won"
       val loseString = if (loser.isDefined)
-                          " and " + loser.get + " lost"
+                          " and " + loser.get.player + " lost"
                        else
                           ""
       winString + loseString + " in a match with " + matchResults.filter(!_.hasResult).map(_.player).mkString(", ")
     } else if (loser.isDefined) {
-      loser.get + " lost in a match with " + matchResults.filter(!_.hasResult).map(_.player).mkString(", ")
+      loser.get.player + " lost in a match with " + matchResults.filter(!_.hasResult).map(_.player).mkString(", ")
     } else {
       matchResults.map(_.player).mkString(", ") + " played a match which ended in a draw"
     }

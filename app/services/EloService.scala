@@ -13,7 +13,7 @@ object EloService {
 
   private val StartingElo = 1000.0
   private val StartingChange = 0.0
-  private val EloWeight = 200.0
+  private val EloWeight = 400.0
 
   private val ResultWeight = 0.5
   private val GoalWeight = 1.0 - ResultWeight

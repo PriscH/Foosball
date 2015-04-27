@@ -21,17 +21,20 @@ case class Game(id: Pk[Long], matchId: Long, leftPlayer1: String, leftPlayer2: S
   val leftTotal = leftScore1 + leftScore2
   val rightTotal = rightScore1 + rightScore2
 
+  val gameDiff1 = Math.abs(leftScore1 - rightScore1)
+  val gameDiff2 = Math.abs(leftScore2 - rightScore2)
+
   val leftResult = if (leftTotal == Game.MaxScore) Game.Result.WinInTwo
+                   else if (rightTotal == Game.MaxScore) Game.Result.LoseInTwo
                    else if (leftTotal > rightTotal) Game.Result.WinOnScore
-                   else if (leftTotal == rightTotal) Game.Result.Draw
                    else if (leftTotal < rightTotal) Game.Result.LoseOnScore
-                   else Game.Result.LoseInTwo
+                   else Game.Result.Draw
 
   val rightResult = if (rightTotal == Game.MaxScore) Game.Result.WinInTwo
+                    else if (leftTotal == Game.MaxScore) Game.Result.LoseInTwo
                     else if (rightTotal > leftTotal) Game.Result.WinOnScore
-                    else if (rightTotal == leftTotal) Game.Result.Draw
                     else if (rightTotal < leftTotal) Game.Result.LoseOnScore
-                    else Game.Result.LoseInTwo
+                    else Game.Result.Draw
 
   val winners = if (leftResult == Game.Result.WinInTwo || leftResult == Game.Result.WinOnScore) leftPlayers
                 else if (rightResult == Game.Result.WinInTwo || rightResult == Game.Result.WinOnScore) rightPlayers
@@ -49,13 +52,12 @@ case class Game(id: Pk[Long], matchId: Long, leftPlayer1: String, leftPlayer2: S
    * The Winners are compared with each other, the Losers with each other and the Scores.
    * The Id and Match Id are ignored.
    */
+  // TODO: This isn't complete, it can't differentiate if the players swap but the scores remain i.e. A 0 -  5 B compared with A 5 - 0 B
   def isSame(other: Game): Boolean =
     winners.toSet == other.winners.toSet &&
     losers.toSet == other.losers.toSet &&
-    leftScore1 == other.leftScore1 &&
-    leftScore2 == other.leftScore2 &&
-    rightScore1 == other.rightScore1 &&
-    rightScore2 == other.rightScore2
+    gameDiff1 == other.gameDiff1 &&
+    gameDiff2 == other.gameDiff2
 }
 
 object Game {

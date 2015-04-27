@@ -33,6 +33,7 @@ object MatchService {
    * If more than one Match is found the most recent one will be returned.
    */
   // TODO: Unit test this (probably need to understand the cake pattern first in order to mock the Object calls)
+  // TODO: This doesn't work correctly, it doesn't remove games that already match, so this will fail 5-2 5-1 5-0 vs 5-1 5-1 5-1
   def findRecentConflictingMatch(games: Seq[Game]): Option[Match] = {    
     val matches = Match.findCapturedSince(new DateTime().minusMinutes(ConflictWindowInMinutes))
     val gamesByMatch = Game.findByMatches(matches.map(_.id.get))
@@ -69,8 +70,8 @@ object MatchService {
   private def toMatchWithResults(foosMatch: Match): MatchWithResults = MatchWithResults(foosMatch, MatchResult.findByMatch(foosMatch.id.get))
 
   private def calculateResult(playerWins: Int, winCounts: Iterable[Int]): MatchResult.Result = {
-    if (!winCounts.exists(_ >= playerWins)) MatchResult.Result.Winner
-    else if (!winCounts.exists(_ <= playerWins)) MatchResult.Result.Loser
+    if (winCounts.count(_ >= playerWins) == 1) MatchResult.Result.Winner
+    else if (winCounts.count(_ <= playerWins) == 1) MatchResult.Result.Loser
     else MatchResult.Result.NoResult
   }
 

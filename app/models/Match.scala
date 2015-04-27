@@ -24,8 +24,8 @@ object Match {
   }
 
   object Format {
-    case object CompleteMatch extends Format("CompleteMatch", 48.0)
-    case object SingleGame extends Format("SingleGame", 16.0)
+    case object CompleteMatch extends Format("CompleteMatch", 36.0)
+    case object SingleGame extends Format("SingleGame", 12.0)
 
     val values = List(CompleteMatch, SingleGame)
     def apply(name: String) = values.find(_.name == name).get

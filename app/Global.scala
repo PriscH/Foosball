@@ -35,5 +35,9 @@ object TestingData {
         User("Messi", "messi@mail.com", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4", "Villian")
       ).foreach(User.create)
     }
+
+    if (!Token.findByValue("test").isDefined) {
+      Token.create(Token("test", "Rooney", Token.Scope.Signup, new DateTime()))
+    }
   } 
 }

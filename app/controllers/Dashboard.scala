@@ -5,16 +5,16 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.i18n.Messages
-import play.api.libs.json.Json
-import play.api.libs.json.JsValue
-import play.api.libs.json.JsObject
+import play.api.libs.json._
 import anorm.NotAssigned
 import domain._
 import models._
 import views._
 import services._
-import util.security._
-import util.html.HtmlExtension._
+import _root_.util.security._
+import _root_.util.html.HtmlExtension._
+import org.codehaus.jackson.map.annotate.JsonValueInstantiator
+import play.api.libs.json.JsNumber
 
 object Dashboard extends Controller with Secured {
   
@@ -95,16 +95,16 @@ object Dashboard extends Controller with Secured {
       Json.toJson( Map (
         "sides" -> List(
           Json.toJson( Map (
-            "player1" -> game.leftPlayer1,
-            "player2" -> game.leftPlayer2,
-            "score1"  -> game.leftScore1.toString,
-            "score2"  -> game.leftScore2.toString
+            "player1" -> JsString(game.leftPlayer1),
+            "player2" -> JsString(game.leftPlayer2),
+            "score1"  -> JsNumber(game.leftScore1),
+            "score2"  -> JsNumber(game.leftScore2)
           )),
           Json.toJson( Map (
-            "player1" -> game.rightPlayer1,
-            "player2" -> game.rightPlayer2,
-            "score1"  -> game.rightScore1.toString,
-            "score2"  -> game.rightScore2.toString
+            "player1" -> JsString(game.rightPlayer1),
+            "player2" -> JsString(game.rightPlayer2),
+            "score1"  -> JsNumber(game.rightScore1),
+            "score2"  -> JsNumber(game.rightScore2)
           ))
         )
       ))
