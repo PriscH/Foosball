@@ -18,6 +18,9 @@ GET     /dashboard                  controllers.Dashboard.show
 GET     /dashboard/refresh          controllers.Dashboard.refresh
 POST    /match                      controllers.Dashboard.captureMatch
 
+# Player Selection
+GET     /players                    controllers.Players.show
+
 # Graphs
 GET     /graphs/history             controllers.Graphs.showHistory
 

@@ -17,17 +17,24 @@ object MatchService {
   def findMatchWithGames(matchId: Long): Option[MatchWithGames] = {
     Match.findById(matchId) map { foosMatch => MatchWithGames(foosMatch, Game.findByMatch(foosMatch.id.get)) }
   }
-  
+
+  /**
+   * Returns all recent matches played
+   */
+  def findAllRecentMatches(): Seq[MatchWithResults] = {
+    Match.findRecent(RecentMatchCount).map(toMatchWithResults)
+  }
+
   /**
    * Returns the most recent matches captured in the system, and will always include at least the latest match for the player.
    */
   def findRecentMatchesForPlayer(player: String): Seq[MatchWithResults] = {
-    val recentMatches = Match.findRecent(RecentMatchCount).map(toMatchWithResults)
+    val recentMatches = findAllRecentMatches()
 
     if (recentMatches.exists(_.players contains player)) recentMatches
     else recentMatches.take(RecentMatchCount - 1) ++ Match.findRecentForPlayer(player, 1).map(toMatchWithResults)
   }
-  
+
   /**
    * Searches for a Match with the exact same Game results (ignoring order) within the last 60 minutes.
    * If more than one Match is found the most recent one will be returned.

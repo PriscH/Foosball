@@ -1,0 +1,168 @@
+@(users: Seq[models.User], playerChances: play.api.libs.json.JsValue)(implicit request: RequestHeader, flash: Flash)
+
+@main{
+  <title>Foosball - Select Players</title>
+
+  <script type="text/javascript">
+    var SIMULATION_COUNT = 1000;
+    var SELECTION_COUNT = 4;
+
+    var playerChances = @Html(playerChances.toString);
+    var selectedPlayers = [];
+
+    // ===== Initialization =====
+
+    function updatePlayOrder() {
+      $("#selectedPlayersTable tbody").empty();
+
+      if (selectedPlayers.length <= SELECTION_COUNT) {
+        for (var i = 0; i < selectedPlayers.length; ++i) {
+          addPlayerToOrder(i + 1, selectedPlayers[i], 100);
+        }
+      } else {
+        var playerProbabilities = calculateProbabilities();
+        var playerOrder = pickPlayers();
+
+        for (var i = 0; i < playerOrder.length; ++i) {
+          var player = playerOrder[i];
+          addPlayerToOrder(i + 1, player, playerProbabilities[player]);
+        }
+      }
+
+      highlightTopOrder();
+    }
+
+    function addPlayerToOrder(pos, player, probability) {
+      var tableRow = "<tr player='" + player + "'><td class='rankColumn'>" + pos + ".</td><td class='nameColumn'>" + player + "</td><td>" + probability + "%</td></tr>";
+      $("#selectedPlayersTable tbody").append($.parseHTML(tableRow));
+    }
+
+    function calculateProbabilities() {
+      var playerCount = {};
+      for (var i = 0; i < selectedPlayers.length; ++i) {
+        playerCount[selectedPlayers[i]] = 0;
+      }
+
+      for (var i = 0; i < SIMULATION_COUNT; ++i) {
+        var bag = buildBagOfPlayers();
+
+        for (var j = 0; j < SELECTION_COUNT; ++j) {
+          var pick = Math.floor(Math.random() * bag.length);
+          var pickedPlayer = bag[pick];
+          playerCount[pickedPlayer]++;
+
+          bag = $.grep(bag, function(player) {
+            return player != pickedPlayer;
+          })
+        }
+      }
+
+      // Because we simulate instead of calculate we won't get exactly accurate numbers
+      // To avoid any awkward questions, ensure players with the same number of chances have the same probability
+
+      var playersWithSameChances = {};
+      for (var player in playerChances) {
+        if ($.inArray(player, selectedPlayers) >= 0) {
+          var playerChanceCount = playerChances[player];
+          if (!playersWithSameChances.hasOwnProperty(playerChanceCount)) {
+            playersWithSameChances[playerChanceCount] = [];
+          }
+          playersWithSameChances[playerChanceCount].push(player);
+        }
+      }
+
+      var playerProbabilities = {};
+      for (var chanceCount in playersWithSameChances) {
+        var players = playersWithSameChances[chanceCount];
+        var totalProbability = 0;
+
+        for (var i = 0; i < players.length; ++i) {
+          totalProbability += playerCount[players[i]];
+        }
+        totalProbability = Math.round(totalProbability / players.length);
+
+        for (var i = 0; i < players.length; ++i) {
+          var player = players[i];
+          playerProbabilities[player] = Math.round(totalProbability / SIMULATION_COUNT * 100);
+        }
+      }
+
+      return playerProbabilities;
+    }
+
+    function pickPlayers() {
+      var playerOrder = [];
+
+      var bag = buildBagOfPlayers();
+      for (var i = 0; i < selectedPlayers.length; ++i) {
+        var pick = Math.floor(Math.random() * bag.length);
+        var pickedPlayer = bag[pick];
+        playerOrder.push(pickedPlayer);
+
+        bag = $.grep(bag, function(player) {
+          return player != pickedPlayer;
+        })
+      }
+
+      return playerOrder;
+    }
+
+    function buildBagOfPlayers() {
+      var bag = [];
+      for (var i = 0; i < selectedPlayers.length; ++i) {
+        var player = selectedPlayers[i];
+
+        for (var j = 0; j < playerChances[player]; ++j) {
+          bag.push(player);
+        }
+      }
+      return bag;
+    }
+
+    function highlightTopOrder() {
+      var pos = 0;
+      $("#selectedPlayersTable tbody tr").each(function() {
+        ++pos;
+        if (pos <= SELECTION_COUNT) {
+          $(this).css("font-weight", "bold");
+        }
+      });
+    }
+
+    $(document).ready(function() {
+      // User selects a Player
+      $(".player").click(function(event) {
+        var $this = $(this);
+        var playerName = $this.attr("name");
+
+        if ($this.hasClass("selected")) {
+          $this.removeClass("expose").removeClass("selected");
+
+          // Remove from selectedPlayers
+          selectedPlayers.splice($.inArray(playerName, selectedPlayers), 1);
+        } else {
+	        $this.addClass("expose").addClass("selected");
+	        selectedPlayers.push(playerName);
+	    }
+
+	    updatePlayOrder();
+      });
+    });
+  </script>
+}{
+  <div class="bigLeft">
+    <div id="playersContainer" class="widget selectionWidget">
+      <h1 class="centered">Select available players:</h1>
+      @tags.playerSelection(users)
+    </div>
+  </div>
+  <div class="smallRight">
+    <div id="rankings" class="widget selectionWidget">
+      <div class="centered">
+        <h1>Play order:</h1>
+      </div>
+
+      @tags.selectedPlayers()
+    </div>
+  </div>
+}
