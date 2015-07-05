@@ -44,8 +44,10 @@ case class Game(id: Pk[Long], matchId: Long, leftPlayer1: String, leftPlayer2: S
                else if (rightResult == Game.Result.LoseInTwo || rightResult == Game.Result.LoseOnScore) rightPlayers
                else Nil
 
-  def goalDifference(player: String) = if (leftPlayers.contains(player)) leftTotal
-                                       else rightTotal
+  def goalDifference(player: String) = if (leftPlayers.contains(player)) leftTotal - rightTotal
+                                       else rightTotal - leftTotal
+
+  def goalDifference = Math.abs(leftTotal - rightTotal)
 
   /**
    * Compares the results of this Game with another.

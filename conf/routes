@@ -3,32 +3,35 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.showLogin
+GET         /                                 controllers.Application.showLogin
 
 # Authentication
-POST    /login                      controllers.Application.authenticate
-GET     /logout                     controllers.Application.logout
+POST        /login                            controllers.Application.authenticate
+GET         /logout                           controllers.Application.logout
 
 # Signup
-GET     /signup/:token              controllers.Signup.show(token: String)
-POST    /player                     controllers.Signup.createPlayer
+GET         /signup/:token                    controllers.Signup.show(token: String)
+POST        /player                           controllers.Signup.createPlayer
 
 # Dashboard
-GET     /dashboard                  controllers.Dashboard.show
-GET     /dashboard/refresh          controllers.Dashboard.refresh
-POST    /match                      controllers.Dashboard.captureMatch
+GET         /dashboard                        controllers.Dashboard.show
+GET         /dashboard/refresh                controllers.Dashboard.refresh
+POST        /match                            controllers.Dashboard.captureMatch
 
 # Player Selection
-GET     /players                    controllers.Players.show
+GET         /players                          controllers.Players.show
 
 # Graphs
-GET     /graphs/history             controllers.Graphs.showHistory
+GET         /graphs/history                   controllers.Graphs.showHistory
+
+# Stats
+GET         /stats                            controllers.Stats.show
 
 # Migrations
-GET     /migrations/recalculateElo  controllers.Migrations.recalculateElo
+GET         /migrations/recalculateElo        controllers.Migrations.recalculateElo
 
 # Javascript routing
-GET     /assets/javascripts/routes  controllers.Application.javascriptRoutes
+GET         /assets/javascripts/routes        controllers.Application.javascriptRoutes
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                     controllers.Assets.at(path="/public", file)

@@ -12,6 +12,12 @@ case class MatchWithResults(foosMatch: Match, matchResults: Seq[MatchResult]) {
   def matchId: Long = foosMatch.id.get
   
   def players: Seq[String] = matchResults.map(_.player)
+
+  def winner: Option[String] = playerWithResult(MatchResult.Result.Winner)
+
+  def loser: Option[String] = playerWithResult(MatchResult.Result.Loser)
+
+  def playerWithResult(result: MatchResult.Result): Option[String] = matchResults.find(_.result == result).map(_.player)
   
   def resultString(): String = {
     val winner = matchResults.find(_.result == MatchResult.Result.Winner)

@@ -1,11 +1,11 @@
 package services
 
-import collection.breakOut
-
 import anorm.NotAssigned
-import org.joda.time.DateTime
 import domain._
 import models._
+import org.joda.time.DateTime
+
+import scala.collection.mutable
 
 object MatchService {
   
@@ -23,6 +23,22 @@ object MatchService {
    */
   def findAllRecentMatches(): Seq[MatchWithResults] = {
     Match.findRecent(RecentMatchCount).map(toMatchWithResults)
+  }
+
+  def findAllMatchesWithResults(): Seq[MatchWithResults] = {
+    val foosMatches = Match.all()
+    val matchResults = MatchResult.all()
+    val matchResultsByMatch = matchResults.groupBy(_.matchId)
+
+    foosMatches.map(foosMatch => MatchWithResults(foosMatch, matchResultsByMatch(foosMatch.id.get)))
+  }
+
+  def findAllMatchesWithGames(): Seq[MatchWithGames] = {
+    val foosMatches = Match.all()
+    val games = Game.all()
+    val gamesByMatch = games.groupBy(_.matchId)
+
+    foosMatches.map(foosMatch => MatchWithGames(foosMatch, gamesByMatch(foosMatch.id.get)))
   }
 
   /**
