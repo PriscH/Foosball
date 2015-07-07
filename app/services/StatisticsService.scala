@@ -8,6 +8,7 @@ import scala.collection.mutable
 object StatisticsService {
 
   val NumberOfRecords = 3
+  val MinimumGames = 5
 
   // ===== Interface =====
 
@@ -75,7 +76,9 @@ object StatisticsService {
       }
     }
 
-    val averageNemesisScores = nemesisScoresByPlayer.mapValues { scoresByNemesis => scoresByNemesis.map{ case (nemesis, score) => (nemesis, score._2 / score._1.toDouble)}.toList }
+    val averageNemesisScores = nemesisScoresByPlayer.mapValues{ scoresByNemesis =>
+                                                                scoresByNemesis.filter{ case (nemesis, (gameCount, score)) => gameCount >= MinimumGames }
+                                                                               .map{ case (nemesis, score) => (nemesis, score._2 / score._1.toDouble)}.toList }
     averageNemesisScores.mapValues(nemesisScores => nemesisScores.sortBy(_._2).head._1).toMap
   }
 
@@ -136,7 +139,8 @@ object StatisticsService {
       }
     }
 
-    val averagePartnershipScores = goalDifferencesByPartnership.mapValues(scores => scores._2 / scores._1.toDouble).toList
+    val averagePartnershipScores = goalDifferencesByPartnership.filter{ case (partners, (gameCount, score)) => gameCount >= MinimumGames }
+                                                               .mapValues(scores => scores._2 / scores._1.toDouble).toList
     val strongestPartnerships = averagePartnershipScores.sortBy(x => x._2)(ordering).take(NumberOfRecords)
 
     strongestPartnerships.map(partnershipScore => PartnershipRecord(partnershipScore._1.toList, Record(Math.round(partnershipScore._2).toInt, None)))

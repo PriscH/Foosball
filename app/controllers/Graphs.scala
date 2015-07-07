@@ -16,7 +16,7 @@ object Graphs extends Controller with Secured {
   // ===== Actions =====
   
   def showHistory = SecuredAction { implicit user => implicit request =>
-    Ok(html.graphs.history(User.all, PlayerService.findMostRecentOpponents, loadGraphDataJson, Match.countAllMatches()))
+    Ok(html.graphs.history(User.all, loadGraphDataJson, Match.countAllMatches()))
   }
 
   // ===== Graph Json Builders =====
