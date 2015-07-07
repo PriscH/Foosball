@@ -1,0 +1,25 @@
+@(caption: String, recordHeader: String, matchRecords: Seq[domain.MatchRecord])
+
+<div class="recordBlock">
+  <table class="rankingTable largeRecordTable">
+    <caption class="centered recordCaption">@caption</caption>
+    <thead>
+      <tr>
+        <th class="recordRankColumn"></th>
+        <th class="recordNameColumn">Winners</th>
+        <th class="recordNameColumn">Losers</th>
+        <th class="recordValueColumn">@recordHeader</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for((matchRecord, index) <- matchRecords.zipWithIndex) {
+        <tr>
+          <td class="recordRankColumn">@(index + 1 + ".")</td>
+          <td class="recordNameColumn important">@matchRecord.winners.mkString(" & ")</td>
+          <td class="recordNameColumn">@matchRecord.losers.mkString(" & ")</td>
+          <td class="recordValueColumn important">@matchRecord.record.value</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,23 @@
+@(caption: String, recordHeader: String, playerRecords: Seq[domain.SinglePlayerRecord])
+
+<div class="recordBlock">
+  <table class="rankingTable smallRecordTable">
+    <caption class="centered recordCaption">@caption</caption>
+    <thead>
+      <tr>
+        <th class="recordRankColumn"></th>
+        <th class="recordNameColumn">Player</th>
+        <th class="recordValueColumn">@recordHeader</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for((playerRecord, index) <- playerRecords.zipWithIndex) {
+        <tr>
+          <td class="recordRankColumn">@(index + 1 + ".")</td>
+          <td class="recordNameColumn important">@playerRecord.player</td>
+          <td class="recordValueColumn important">@playerRecord.record.value</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

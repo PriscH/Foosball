@@ -10,12 +10,6 @@ case class Statistics(
   highestScoreDifferences: Seq[MatchRecord],
   strongestPartnerships: Seq[PartnershipRecord],
   weakestPartnerships: Seq[PartnershipRecord],
-/*
-  longestStreaksInFirst: Seq[SinglePlayerRecord],
-  longestStreaksInLast: Seq[SinglePlayerRecord],
-  playerHighestPosition: Map[String, Record],
-  playerAveragePosition: Map[String, Record],
-*/
   playerNemesis: Map[String, String]
 )
 

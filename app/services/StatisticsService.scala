@@ -55,7 +55,7 @@ object StatisticsService {
 
   private def determineWeakestPartnerships(games: Seq[Game]): Seq[PartnershipRecord] = determineBoundaryPartnerships(games, Ordering[Double])
 
-  private def determinePlayerNemesis(matchesWithGames: Seq[MatchWithGames]): Map[String, String] = {
+  private[services] def determinePlayerNemesis(matchesWithGames: Seq[MatchWithGames]): Map[String, String] = {
     val matchesByPlayer = matchesWithGames.foldLeft(new mutable.HashMap[String, mutable.Set[MatchWithGames]] with mutable.MultiMap[String, MatchWithGames]) {
       (acc, foosMatch) => {
         foosMatch.players.foreach(player => acc.addBinding(player, foosMatch))
@@ -76,7 +76,7 @@ object StatisticsService {
     }
 
     val averageNemesisScores = nemesisScoresByPlayer.mapValues { scoresByNemesis => scoresByNemesis.map{ case (nemesis, score) => (nemesis, score._2 / score._1.toDouble)}.toList }
-    averageNemesisScores.mapValues(nemesisScores => nemesisScores.sortBy(_._2)(Ordering[Double].reverse).head._1).toMap
+    averageNemesisScores.mapValues(nemesisScores => nemesisScores.sortBy(_._2).head._1).toMap
   }
 
   // ===== Calculation Helpers ======

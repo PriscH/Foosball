@@ -3,7 +3,28 @@
 @main {
     <title>Foosball - Player Statistics</title>
 }{
-    <div class="error">
-        The signup token is either invalid or has expired. Please request a new token.
+    <div class="centered recordContainer">
+        <div>
+            @tags.singlePlayerRecordTable("Highest Elo Reached", "Highest Elo", stats.highestElos)
+            @tags.singlePlayerRecordTable("Lowest Elo Reached", "Lowest Elo", stats.lowestElos)
+        </div>
+
+        <div>
+            @tags.singlePlayerRecordTable("Longest Winning Streaks", "Winning Streak", stats.longestWinningStreaks)
+            @tags.singlePlayerRecordTable("Longest Losing Streaks", "Losing Streak", stats.longestLosingStreaks)
+        </div>
+
+        <div>
+            @tags.partnershipRecordTable("Strongest Partnerships", "Average Score", stats.strongestPartnerships)
+            @tags.partnershipRecordTable("Weakest Partnerships", "Average Score", stats.weakestPartnerships)
+        </div>
+
+        <div>
+            @tags.matchRecordTable("Highest Goal Differences", "Goal Difference", stats.highestScoreDifferences)
+        </div>
+
+        <div>
+            @tags.mapRecordTable("Player Nemesis", stats.playerNemesis)
+        </div>
     </div>
 }

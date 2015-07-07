@@ -212,6 +212,26 @@ class StatisticsServiceSpec extends Specification {
     }
   }
 
+  "The player nemesis" should {
+    "be empty when no matches have been played" in {
+      val playerNemesis = StatisticsService.determinePlayerNemesis(Seq())
+      playerNemesis must beEmpty
+    }
+
+    "be the opponent with whom the player performs worst" in {
+      val matches = List(
+        buildMatchWithGame(1, "Ronaldo", "Zidane",   "Maradona", "Messi", 4),
+        buildMatchWithGame(2, "Ronaldo", "Zidane",   "Beckham",  "Pele",  0),
+        buildMatchWithGame(3, "Ronaldo", "Maradona", "Beckham", "Pele",   8)
+      )
+
+      val playerNemesis = StatisticsService.determinePlayerNemesis(matches)
+
+      playerNemesis.keys must haveSize(6)
+      playerNemesis("Ronaldo") must beEqualTo("Zidane")
+    }
+  }
+
   // ===== Builders =====
 
   private def buildPlayerElo(eloPos: Int, player: String, elo: Double): PlayerElo = PlayerElo(NotAssigned, player, DateTime.now.plusMinutes(eloPos), 1L, 0.0, elo)
