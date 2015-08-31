@@ -1,4 +1,4 @@
-@(caption: String, playerMap: Map[String, String])
+@(caption: String, playerMap: Map[String, Option[String]])
 
 <div class="recordBlock">
   <table class="rankingTable smallRecordTable">
@@ -13,7 +13,7 @@
       @for((player, nemesis) <- playerMap.toList) {
         <tr>
           <td class="recordNameColumn important">@player</td>
-          <td class="recordNameColumn">@nemesis</td>
+          <td class="recordNameColumn">@nemesis.getOrElse(<i>None</i>)</td>
         </tr>
       }
     </tbody>

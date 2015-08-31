@@ -17,10 +17,10 @@ object Players extends Controller with Secured {
       player.name -> {
         val mostRecentMatchIndex = recentMatches.indexWhere(_.players.contains(player.name))
         mostRecentMatchIndex match {
-          case 0 => 2
+          case 0 => 1
           case 1 => 3
-          case 2 => 4
-          case -1 => 5
+          case 2 => 5
+          case -1 => 8
         }
       }
     }.toMap

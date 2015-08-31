@@ -10,7 +10,7 @@ case class Statistics(
   highestScoreDifferences: Seq[MatchRecord],
   strongestPartnerships: Seq[PartnershipRecord],
   weakestPartnerships: Seq[PartnershipRecord],
-  playerNemesis: Map[String, String]
+  playerNemesis: Map[String, Option[String]]
 )
 
 case class Record(value: Int, date: Option[DateTime] = Option.empty)
