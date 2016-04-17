@@ -10,7 +10,7 @@ import scala.collection.mutable.MultiMap
 /**
  * A Match consists of multiple Games
  */
-case class Game(id: Pk[Long], matchId: Long, leftPlayer1: String, leftPlayer2: String, rightPlayer1: String, rightPlayer2: String, leftScore1: Int, leftScore2: Int, rightScore1: Int, rightScore2: Int) {
+case class Game(id: Option[Long], matchId: Long, leftPlayer1: String, leftPlayer2: String, rightPlayer1: String, rightPlayer2: String, leftScore1: Int, leftScore2: Int, rightScore1: Int, rightScore2: Int) {
   require(!leftPlayer1.isEmpty() && !leftPlayer2.isEmpty() && !rightPlayer1.isEmpty() && !rightPlayer2.isEmpty())
   require(Set(leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2).size == 4)
 
@@ -88,22 +88,22 @@ object Game {
   // Allowing this is really ugly, but other than duplicating a portion of Game, I'm not sure how to avoid it
   // It is needed by the controllers to provide the services with the results of a Game, but at that stage the controllers don't have a match id
   def apply(leftPlayer1: String, leftPlayer2: String, rightPlayer1: String, rightPlayer2: String, leftScore1: Int, leftScore2: Int, rightScore1: Int, rightScore2: Int): Game = {
-    Game(NotAssigned, 0, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, rightScore1, rightScore2)
+    Game(None, 0, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, rightScore1, rightScore2)
   }
       
   // ===== ResultSet Parsers =====
   
   val simple = {
-    get[Pk[Long]] ("game.id") ~
-    get[Long]     ("game.match_id") ~
-    get[String]   ("game.left_player1") ~
-    get[String]   ("game.left_player2") ~
-    get[String]   ("game.right_player1") ~
-    get[String]   ("game.right_player2") ~
-    get[Int]      ("game.left_score1") ~
-    get[Int]      ("game.left_score2") ~
-    get[Int]      ("game.right_score1") ~
-    get[Int]      ("game.right_score2") map {
+    get[Option[Long]] ("game.id") ~
+    get[Long]         ("game.match_id") ~
+    get[String]       ("game.left_player1") ~
+    get[String]       ("game.left_player2") ~
+    get[String]       ("game.right_player1") ~
+    get[String]       ("game.right_player2") ~
+    get[Int]          ("game.left_score1") ~
+    get[Int]          ("game.left_score2") ~
+    get[Int]          ("game.right_score1") ~
+    get[Int]          ("game.right_score2") map {
       case id ~ matchId ~ leftPlayer1 ~ leftPlayer2 ~ rightPlayer1 ~ rightPlayer2 ~ leftScore1 ~ leftScore2 ~ rightScore1 ~ rightScore2
             => Game(id, matchId, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, rightScore1, rightScore2)
     }
@@ -144,6 +144,6 @@ object Game {
       'leftScore2   -> game.leftScore2,
       'rightScore1  -> game.rightScore1,
       'rightScore2  -> game.rightScore2
-    ).executeInsert().map(newId => game.copy(id = Id(newId))).get
+    ).executeInsert().map(newId => game.copy(id = Some(newId))).get
   }
 }

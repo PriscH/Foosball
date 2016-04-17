@@ -1,16 +1,15 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.i18n.Messages
-import play.api.libs.Codecs
 import models._
-import views._
-import views.html.defaultpages.badRequest
+import play.api.Play.current
+import play.api.data.Forms._
+import play.api.data._
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
+import play.api.libs.Codecs
+import play.api.mvc._
 import util.security._
-import org.joda.time.DateTime
+import views._
 
 
 object Signup extends Controller with Secured {

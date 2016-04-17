@@ -1,9 +1,8 @@
 package services
 
-import anorm.{Id, NotAssigned}
 import domain.{MatchWithGames, MatchWithResults}
 import models.{Game, MatchResult, Match, PlayerElo}
-import org.joda.time.{DateTime, DateMidnight}
+import org.joda.time.DateTime
 import org.specs2.mutable._
 
 class StatisticsServiceSpec extends Specification {
@@ -42,9 +41,9 @@ class StatisticsServiceSpec extends Specification {
       val lowestElos = StatisticsService.determineBoundaryElos(playerElos, Ordering[Double])
 
       lowestElos must haveSize(3)
-      lowestElos.map(x => (x.player, x.record.value)) must contain(
+      lowestElos.map(x => (x.player, x.record.value)) must contain(exactly(
         ("Zidane", 800), ("Ronaldo", 900), ("Maradona", 1100)
-      ).inOrder
+      ))
     }
 
     "contain the latest elos" in {
@@ -58,9 +57,9 @@ class StatisticsServiceSpec extends Specification {
       val lowestElos = StatisticsService.determineBoundaryElos(playerElos, Ordering[Double])
 
       lowestElos must haveSize(3)
-      lowestElos.map(x => (x.player, x.record.value)) must contain(
+      lowestElos.map(x => (x.player, x.record.value)) must contain(exactly(
         ("Messi", 1000), ("Maradona", 1000), ("Zidane", 1000)
-      ).inOrder
+      ))
     }
   }
 
@@ -94,9 +93,9 @@ class StatisticsServiceSpec extends Specification {
       val longestWinningStreaks = StatisticsService.determineLongestStreaks(matches, MatchResult.Result.Winner)
 
       longestWinningStreaks must haveSize(3)
-      longestWinningStreaks.map(x => (x.player, x.record.value)) must contain(
+      longestWinningStreaks.map(x => (x.player, x.record.value)) must contain(exactly(
         ("Ronaldo", 3), ("Ronaldo", 2), ("Zidane", 1)
-      ).inOrder
+      ))
     }
 
     "not be interrupted if the player did not play" in {
@@ -112,9 +111,9 @@ class StatisticsServiceSpec extends Specification {
       val longestWinningStreaks = StatisticsService.determineLongestStreaks(matches, MatchResult.Result.Winner)
 
       longestWinningStreaks must haveSize(2)
-      longestWinningStreaks.map(x => (x.player, x.record.value)) must contain(
+      longestWinningStreaks.map(x => (x.player, x.record.value)) must contain(exactly(
         ("Ronaldo", 5), ("Zidane", 1)
-      ).inOrder
+      ))
     }
 
     "contain the latest streaks" in {
@@ -128,9 +127,9 @@ class StatisticsServiceSpec extends Specification {
       val longestWinningStreaks = StatisticsService.determineLongestStreaks(matches, MatchResult.Result.Winner)
 
       longestWinningStreaks must haveSize(3)
-      longestWinningStreaks.map(x => (x.player, x.record.value)) must contain(
+      longestWinningStreaks.map(x => (x.player, x.record.value)) must contain(exactly(
         ("Messi", 1), ("Maradona", 1), ("Zidane", 1)
-      ).inOrder
+      ))
     }
   }
 
@@ -163,9 +162,9 @@ class StatisticsServiceSpec extends Specification {
       val losers = Seq("Maradona", "Messi")
 
       highestScoreDifferences must haveSize(3)
-      highestScoreDifferences.map(x => (x.winners, x.losers, x.record.value)) must contain(
+      highestScoreDifferences.map(x => (x.winners, x.losers, x.record.value)) must contain(exactly(
         (winners, losers, 10), (winners, losers, 7), (winners, losers,5)
-      ).inOrder
+      ))
     }
 
     "contain the latest score differences" in {
@@ -206,9 +205,9 @@ class StatisticsServiceSpec extends Specification {
       val weakestPartnerships = StatisticsService.determineBoundaryPartnerships(games, Ordering[Double])
 
       weakestPartnerships must haveSize(3)
-      weakestPartnerships.map(x => (x.players, x.record.value)) must contain(
+      weakestPartnerships.map(x => (x.players, x.record.value)) must contain(exactly(
         (Seq("Beckham", "Messi"), -10), (Seq("Beckham", "Pele"), -8), (Seq("Maradona", "Messi"), -6)
-      ).inOrder
+      ))
     }
   }
 

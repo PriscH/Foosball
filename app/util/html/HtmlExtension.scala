@@ -1,7 +1,7 @@
 package util.html
 
 import play.api.libs.json._
-import play.api.templates.Html
+import play.twirl.api.Html
 
 object HtmlExtension {
 

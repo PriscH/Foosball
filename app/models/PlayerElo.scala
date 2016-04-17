@@ -12,19 +12,19 @@ import java.math.BigDecimal
 /**
  * Tracks the history of changes to a player's elo, with the latest capturedDate representing the current elo
  */
-case class PlayerElo(id: Pk[Long], player: String, capturedDate: DateTime, matchId: Long, change: Double, elo: Double)
+case class PlayerElo(id: Option[Long], player: String, capturedDate: DateTime, matchId: Long, change: Double, elo: Double)
 
 object PlayerElo {
 
   // ===== ResultSet Parsers =====
   
   val simple = {
-    get[Pk[Long]] ("player_elo.id") ~
-    get[String]   ("player_elo.player") ~
-    get[DateTime] ("player_elo.captured_date") ~
-    get[Long]     ("player_elo.match_id") ~
-    get[Double]   ("player_elo.elo_change") ~
-    get[Double]   ("player_elo.elo") map {
+    get[Option[Long]] ("player_elo.id") ~
+    get[String]       ("player_elo.player") ~
+    get[DateTime]     ("player_elo.captured_date") ~
+    get[Long]         ("player_elo.match_id") ~
+    get[Double]       ("player_elo.elo_change") ~
+    get[Double]       ("player_elo.elo") map {
       case id ~ player ~ capturedDate ~ matchId ~ change ~ elo => PlayerElo(id, player, capturedDate, matchId, change, elo)
     }
   }
@@ -54,7 +54,7 @@ object PlayerElo {
       'matchId      -> playerElo.matchId,
       'change       -> playerElo.change,
       'elo          -> playerElo.elo
-    ).executeInsert().map(newId => playerElo.copy(id = Id(newId))).get
+    ).executeInsert().map(newId => playerElo.copy(id = Some(newId))).get
   }
   
   def clear() = DB.withConnection { implicit connection =>

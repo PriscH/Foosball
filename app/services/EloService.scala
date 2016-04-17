@@ -1,10 +1,6 @@
 package services
 
-import scala.math
-
-import anorm.NotAssigned
-
-import org.joda.time.{DateMidnight, DateTime}
+import org.joda.time.DateTime
 
 import models._
 import domain._
@@ -40,7 +36,7 @@ object EloService {
       val eloChange = eloChanges(player)
       val updatedElo = previousElo + eloChange
 
-      PlayerElo.create(PlayerElo(NotAssigned, player, matchWithGames.capturedDate, matchWithGames.matchId, eloChange, updatedElo))
+      PlayerElo.create(PlayerElo(None, player, matchWithGames.capturedDate, matchWithGames.matchId, eloChange, updatedElo))
     })
   }
   
@@ -60,7 +56,7 @@ object EloService {
         case None      => if (eloDates.isEmpty) new DateTime()
                           else eloDates.sortBy(_.getMillis).last
       }
-    } yield PlayerElo(NotAssigned, player, firstDate, 0, StartingChange, StartingElo)
+    } yield PlayerElo(None, player, firstDate, 0, StartingChange, StartingElo)
     
     implicitElos ++ explicitElos
   }

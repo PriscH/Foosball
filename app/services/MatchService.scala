@@ -71,7 +71,7 @@ object MatchService {
   }
   
   def captureMatch(games: Seq[Game])(implicit user: User) {
-    val foosMatch = Match.create(Match(NotAssigned, new DateTime(), user.name, Match.Format.CompleteMatch))
+    val foosMatch = Match.create(Match(None, new DateTime(), user.name, Match.Format.CompleteMatch))
     val persistedGames = games.map(game => Game.create(game.copy(matchId = foosMatch.id.get))) // This is ugly :(
     val matchWithGames = MatchWithGames(foosMatch, persistedGames)
 

@@ -15,7 +15,7 @@ object AnormExtension {
    */
   val dateFormatGeneration: DateTimeFormatter = DateTimeFormat.forPattern("yyyyMMddHHmmssSS");
 
-  implicit def rowToDateTime: Column[DateTime] = Column.nonNull { (value, meta) =>
+  implicit def rowToDateTime: Column[DateTime] = Column.nonNull1 { (value, meta) =>
     val MetaDataItem(qualified, nullable, clazz) = meta
     value match {
       case ts: java.sql.Timestamp => Right(new DateTime(ts.getTime))
@@ -34,7 +34,7 @@ object AnormExtension {
   /*
    * Allows scala's BigDecimal to be used as Doubles with Anorm
    */
-  implicit def rowToDouble: Column[Double] = Column.nonNull { (value, meta) =>
+  implicit def rowToDouble: Column[Double] = Column.nonNull1 { (value, meta) =>
     val MetaDataItem(qualified, nullable, clazz) = meta
     
     value match {

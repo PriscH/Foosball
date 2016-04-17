@@ -1,6 +1,6 @@
 package domain
 
-import org.joda.time.{DateTime, DateMidnight}
+import org.joda.time.DateTime
 
 case class Statistics(
   highestElos: Seq[SinglePlayerRecord],

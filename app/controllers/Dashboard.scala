@@ -1,20 +1,17 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.i18n.Messages
-import play.api.libs.json._
-import anorm.NotAssigned
-import domain._
-import models._
-import views._
-import services._
-import _root_.util.security._
 import _root_.util.html.HtmlExtension._
-import org.codehaus.jackson.map.annotate.JsonValueInstantiator
-import play.api.libs.json.JsNumber
+import _root_.util.security._
+import models._
+import play.api.Play.current
+import play.api.data.Forms._
+import play.api.data._
+import play.api.i18n.Messages
+import play.api.i18n.Messages.Implicits._
+import play.api.libs.json.{JsNumber, _}
+import play.api.mvc._
+import services._
+import views._
 
 object Dashboard extends Controller with Secured {
   
@@ -36,8 +33,8 @@ object Dashboard extends Controller with Secured {
     val recentMatches = MatchService.findRecentMatchesForPlayer(user.name)
     val playerRankings = RankingService.loadCurrentRankings.sortBy(_.rank)
     
-    if (flash.get(FlashConflictingMatch).isDefined) {
-      val conflictingMatch = MatchService.findMatchWithGames(flash.get(FlashConflictingMatch).get.toLong)
+    if (request.flash.get(FlashConflictingMatch).isDefined) {
+      val conflictingMatch = MatchService.findMatchWithGames(request.flash.get(FlashConflictingMatch).get.toLong)
       val conflictingMatchJson = conflictingMatch map(foosMatch => toJson(foosMatch.games))
       Ok(html.dashboard.index(User.all, recentMatches, playerRankings, conflictingMatch, conflictingMatchJson))
     } else {    
@@ -86,7 +83,7 @@ object Dashboard extends Controller with Secured {
     val rightScore1 = (((results \ "games")(index) \ "sides")(1) \ "score1").as[Int]
     val rightScore2 = (((results \ "games")(index) \ "sides")(1) \ "score2").as[Int]
         
-    Game(NotAssigned, 0, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, rightScore1, rightScore2)
+    Game(None, 0, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, rightScore1, rightScore2)
   }
 
   // TODO: This is just the inverse of parseGames

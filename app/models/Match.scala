@@ -15,7 +15,7 @@ import util.db.AnormExtension._
 /**
  * A Foosball Match, which is in a certain format and has someone that captures it
  */
-case class Match(id: Pk[Long], capturedDate: DateTime, capturedBy: String, format: Match.Format)
+case class Match(id: Option[Long], capturedDate: DateTime, capturedBy: String, format: Match.Format)
 
 object Match {
 
@@ -34,7 +34,7 @@ object Match {
   // ===== ResultSet Parsers =====
   
   val simple = {
-    get[Pk[Long]]       ("match_detail.id") ~
+    get[Option[Long]]   ("match_detail.id") ~
     get[DateTime]       ("match_detail.captured_date") ~
     get[String]         ("match_detail.captured_by") ~
     get[String]         ("match_detail.format") map {
@@ -84,6 +84,6 @@ object Match {
       'capturedDate -> foosMatch.capturedDate.toDate(),
       'capturedBy   -> foosMatch.capturedBy,
       'format       -> foosMatch.format.toString
-    ).executeInsert().map(newId => foosMatch.copy(id = Id(newId))).get
+    ).executeInsert().map(newId => foosMatch.copy(id = Some(newId))).get
   }
 }
