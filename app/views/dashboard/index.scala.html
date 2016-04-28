@@ -269,7 +269,9 @@
       })
 
 	    // Adjust the standings height to match the results heigh
-      $("#standings").height($("#resultsContainer").height());
+	  var containerHeight = Math.max($("#standings").height(), $("#resultsContainer").height())
+      $("#standings").height(containerHeight);
+      $("#resultsContainer").height(containerHeight);
 
       // Refresh the widgets every 10 seconds
       setInterval(refreshWidgets, 10000);

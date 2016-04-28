@@ -16,7 +16,23 @@ object Graphs extends Controller with Secured {
   // ===== Actions =====
   
   def showHistory = SecuredAction { implicit user => implicit request =>
-    Ok(html.graphs.history(User.all, loadGraphDataJson, Match.countAllMatches()))
+    Ok(html.graphs.history(User.all, loadDefaultSelectedPlayers, loadGraphDataJson, Match.countAllMatches()))
+  }
+
+  // ===== Data Loaders  =====
+
+  private def loadDefaultSelectedPlayers(implicit user: User): Seq[String] = {
+    val latestPlayerElos = PlayerElo.findLatestElos();
+    
+    if (latestPlayerElos.isEmpty) {
+      PlayerService.findMostRecentOpponents
+    } else {
+      val highestPlayer = latestPlayerElos.maxBy(_.elo).player
+      val lowestPlayer = latestPlayerElos.minBy(_.elo).player
+
+      val defaultPlayers = PlayerService.findMostRecentOpponents :+ highestPlayer :+ lowestPlayer
+      defaultPlayers.distinct
+    }
   }
 
   // ===== Graph Json Builders =====

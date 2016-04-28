@@ -12,5 +12,4 @@ object PlayerService {
       case None            => Nil
     }
   }
-
 }

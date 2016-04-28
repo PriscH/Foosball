@@ -1,4 +1,4 @@
-@(players: Seq[models.User], graphData: play.api.libs.json.JsValue, matchCount: Long)(implicit request: RequestHeader, flash: Flash)
+@(players: Seq[models.User], defaultPlayers: Seq[String], graphData: play.api.libs.json.JsValue, matchCount: Long)(implicit request: RequestHeader, flash: Flash)
 
 @main {
   <title>Foosball - ELO History</title>
@@ -7,7 +7,7 @@
   <script type="text/javascript">
     var players = @Html(players.map(player => s"'${player.name}'").mkString("[", ",", "]"));
     var playerAvatars = @Html(players.map(player => s"'${player.name}':'${player.avatar}'").mkString("{", ",", "}"));
-    var selectedPlayers = @Html(players.map(player => s"'${player.name}'").mkString("[", ",", "]"));
+    var selectedPlayers = @Html(defaultPlayers.mkString("['", "','", "']"));
     var graphData = @Html(graphData.toString);
 
     var startMatch = 0;
