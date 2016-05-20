@@ -233,10 +233,10 @@ class StatisticsServiceSpec extends Specification {
 
   // ===== Builders =====
 
-  private def buildPlayerElo(eloPos: Int, player: String, elo: Double): PlayerElo = PlayerElo(NotAssigned, player, DateTime.now.plusMinutes(eloPos), 1L, 0.0, elo)
+  private def buildPlayerElo(eloPos: Int, player: String, elo: Double): PlayerElo = PlayerElo(None, player, DateTime.now.plusMinutes(eloPos), 1L, 0.0, elo)
 
   private def buildMatchForResult(matchPos: Int, player1: String, player2: String, player3: String, player4: String, winner: Option[String], loser: Option[String]): MatchWithResults = {
-    val foosMatch = Match(Id(matchPos), DateTime.now.plusMinutes(matchPos), "User", Match.Format.CompleteMatch)
+    val foosMatch = Match(Some(matchPos), DateTime.now.plusMinutes(matchPos), "User", Match.Format.CompleteMatch)
     val playerResults = Seq(player1, player2, player3, player4).map { player =>
       val result = Some(player) match {
         case `winner` => MatchResult.Result.Winner
@@ -250,7 +250,7 @@ class StatisticsServiceSpec extends Specification {
   }
 
   private def buildMatchWithGame(matchPos: Int, leftPlayer1: String, leftPlayer2: String, rightPlayer1: String, rightPlayer2: String, goalDifference: Int): MatchWithGames = {
-    val foosMatch = Match(Id(matchPos), DateTime.now.plusMinutes(matchPos), "User", Match.Format.CompleteMatch)
+    val foosMatch = Match(Some(matchPos), DateTime.now.plusMinutes(matchPos), "User", Match.Format.CompleteMatch)
     val game = buildGame(matchPos, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, goalDifference)
     MatchWithGames(foosMatch, Seq(game))
   }
@@ -258,7 +258,7 @@ class StatisticsServiceSpec extends Specification {
   private def buildGame(gamePos: Int, leftPlayer1: String, leftPlayer2: String, rightPlayer1: String, rightPlayer2: String, goalDifference: Int): Game = {
     val leftScore1 = if (goalDifference == 0) 0 else goalDifference / 2
     val leftScore2 = if (goalDifference == 0) 0 else if (goalDifference % 2 == 0) goalDifference / 2 else goalDifference / 2 + 1
-    Game(Id(gamePos), gamePos, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, 0, 0)
+    Game(Some(gamePos), gamePos, leftPlayer1, leftPlayer2, rightPlayer1, rightPlayer2, leftScore1, leftScore2, 0, 0)
   }
 
 }
